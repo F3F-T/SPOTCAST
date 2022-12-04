@@ -15,6 +15,7 @@ public class Message  extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
+    @Column(name = "message_id")
     private Long id;
 
     private String content;

@@ -12,11 +12,11 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class
-Scrap {
+public class Scrap {
 
     @Id
     @GeneratedValue
+    @Column(name = "scrap_id")
     private Long id;
 
     private String name;
