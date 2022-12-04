@@ -15,6 +15,7 @@ public class Likes {
 
     @Id
     @GeneratedValue
+    @Column(name = "likes_id")
     private Long id;
 
     @ManyToOne
