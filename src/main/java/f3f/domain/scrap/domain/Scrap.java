@@ -1,6 +1,5 @@
 package f3f.domain.scrap.domain;
 
-import f3f.domain.board.domain.Board;
 import f3f.domain.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -25,6 +24,7 @@ public class Scrap {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY , mappedBy = "scrap")
-    private List<Board> boardList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "scrap", fetch = FetchType.LAZY)
+    private List<ScrapBoard> scrapBoardList = new ArrayList<>();
 }
