@@ -20,4 +20,9 @@ public class UserBase extends BaseTimeEntity {
     @Embedded
     private LoginBase loginBase;
 
+    @Enumerated(value = EnumType.STRING)
+    private UserType userType;
+
+    private String information;
+
 }
