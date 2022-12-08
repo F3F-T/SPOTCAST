@@ -40,7 +40,7 @@ public class User extends UserBase {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Bookmark> bookmarkList = new ArrayList<>();
 
-    @OneToOne
-    @JoinColumn(name = "portfolio_id")
+    @OneToOne(fetch = FetchType.LAZY , mappedBy = "user")
+    @JoinColumn(name = "portfolio_id" )
     private Portfolio portfolio;
 }
