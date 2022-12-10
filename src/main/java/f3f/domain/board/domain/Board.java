@@ -28,6 +28,8 @@ public class Board extends BaseTimeEntity {
 
     private String content;
 
+    private long viewCount;
+
     @Enumerated(EnumType.STRING)
     private BoardType boardType;
 

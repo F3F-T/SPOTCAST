@@ -1,4 +1,4 @@
 package f3f.domain.teamApply.exception;
 
-public class TeamApplyException {
+public class ApplyException {
 }
