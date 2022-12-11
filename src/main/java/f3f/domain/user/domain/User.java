@@ -4,7 +4,7 @@ import f3f.domain.board.domain.Board;
 import f3f.domain.bookmark.domain.Bookmark;
 import f3f.domain.comment.domain.Comment;
 import f3f.domain.likes.domain.Likes;
-import f3f.domain.model.LoginBase;
+import f3f.domain.model.LoginType;
 import f3f.domain.model.UserBase;
 import f3f.domain.model.UserType;
 import f3f.domain.portfolio.domain.Portfolio;
@@ -52,18 +52,21 @@ public class User extends UserBase {
     private Portfolio portfolio;
 
     @Builder
-    public User(Long id, LoginBase loginBase, UserType userType, String information, String phone) {
-        super(id, loginBase, userType, information);
+    public User(Long id, String email, String password, LoginType loginType, UserType userType, String information, String phone) {
+        super(id, email, password, loginType, userType, information);
         this.phone = phone;
     }
 
     public UserInfoDTO toFindUserDto(){
         return UserInfoDTO.builder()
-                .loginBase(this.getLoginBase())
-                .phone(this.getPhone())
-                .information(this.getInformation())
+                .email(this.getEmail())
+                .password(this.getPassword())
+                .loginType(this.getLoginType())
                 .userType(this.getUserType())
+                .information(this.getInformation())
+                .phone(this.getPhone())
                 .build();
+
     }
 
 }

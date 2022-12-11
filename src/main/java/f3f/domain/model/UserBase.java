@@ -17,8 +17,11 @@ public class UserBase extends BaseTimeEntity {
     @Column(name = "user_id")
     private Long id;
 
-    @Embedded
-    private LoginBase loginBase;
+    private String email;
+
+    private String password;
+
+    private  LoginType loginType;
 
     @Enumerated(value = EnumType.STRING)
     private UserType userType;
