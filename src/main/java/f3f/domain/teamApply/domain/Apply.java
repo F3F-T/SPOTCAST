@@ -12,11 +12,11 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeamApply extends BaseTimeEntity {
+public class Apply extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
-    @Column(name = "teamApply_id")
+    @Column(name = "apply_id")
     private Long id;
 
     private String application;

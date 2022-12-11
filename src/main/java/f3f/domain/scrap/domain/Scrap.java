@@ -24,7 +24,6 @@ public class Scrap {
     @JoinColumn(name = "user_id")
     private User user;
 
-
     @OneToMany(mappedBy = "scrap", fetch = FetchType.LAZY)
     private List<ScrapBoard> scrapBoardList = new ArrayList<>();
 }
