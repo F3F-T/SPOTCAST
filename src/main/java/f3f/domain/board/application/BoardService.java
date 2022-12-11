@@ -3,6 +3,7 @@ package f3f.domain.board.application;
 import f3f.domain.board.dao.BoardRepository;
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.dto.BoardDTO;
+import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
 import f3f.domain.board.exception.BoardNotFoundException;
 import f3f.domain.board.exception.NotFoundBoardCategoryException;
 import f3f.domain.board.exception.NotFoundBoardUserException;
@@ -52,7 +53,7 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public BoardDTO.BoardInfoDTO getBoardInfo(long boardId) {
+    public BoardInfoDTO getBoardInfo(long boardId) {
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFoundException::new);

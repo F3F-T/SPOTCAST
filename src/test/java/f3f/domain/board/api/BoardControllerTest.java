@@ -1,21 +1,29 @@
-package f3f.domain.board.application;
+package f3f.domain.board.api;
 
-import f3f.domain.board.dao.BoardRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import f3f.domain.board.application.BoardService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.test.web.servlet.MockMvc;
 
-@ExtendWith(MockitoExtension.class)
-class BoardServiceTest {
+@ExtendWith(RestDocumentationExtension.class)
+@WebMvcTest(BoardController.class)
+@MockBean(JpaMetamodelMappingContext.class)
+class BoardControllerTest {
+
+    @MockBean
+    private BoardService boardService;
+
+    private MockMvc mockMvc;
 
     @Autowired
-    BoardRepository boardRepository;
-
-    @InjectMocks
-    BoardService boardService;
+    ObjectMapper objectMapper;
 
 
     @Test
@@ -99,4 +107,5 @@ class BoardServiceTest {
 
         //then
     }
+
 }
