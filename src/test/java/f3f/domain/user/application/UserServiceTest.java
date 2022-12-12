@@ -1,9 +1,25 @@
 package f3f.domain.user.application;
 
+import f3f.domain.user.dao.UserRepository;
+import f3f.global.encrypt.EncryptionService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
+
+    @Mock
+    UserRepository userRepository;
+
+    @Mock
+    EncryptionService encryptionService;
+
+    @InjectMocks
+    UserService userService;
 
 
     @Test
