@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static f3f.domain.user.dto.UserDTO.*;
@@ -121,7 +122,7 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
 
         if(!user.getLoginType().equals(LoginType.GENERAL_LOGIN)){
-            throw new NotGeneralLoginType("비밀번호 변경이 불가능합니다.");
+            throw new NotGeneralLoginType(user.getLoginType().name()+" 로그인으로 회원가입 되어있습니다.");
         }
 
         user.updatePassword(afterPassword);
@@ -133,13 +134,7 @@ public class UserService {
      * @param request
      * @return
      */
-    public List<EmailListResponse> findEmailByForgot(FindEmailRequest request){
-        String name = request.getName();
-        String phone = request.getPhone();
 
-        return userRepository.findByNameAndPhone(name, phone)
-                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
-    }
 
     /**
      * 닉네임 수정

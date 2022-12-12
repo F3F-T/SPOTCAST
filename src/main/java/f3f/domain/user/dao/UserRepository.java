@@ -5,6 +5,7 @@ import f3f.domain.user.dto.UserDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,5 +18,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmailAndPassword(String email, String password);
 
-    Optional<List<UserDTO.EmailListResponse>> findByNameAndPhone(String name, String phone);
 }

@@ -10,6 +10,7 @@ import f3f.domain.model.UserBase;
 import f3f.domain.model.UserType;
 import f3f.domain.portfolio.domain.Portfolio;
 import f3f.domain.teamApply.domain.Apply;
+import f3f.domain.user.dto.UserDTO;
 import f3f.domain.user.dto.UserDTO.UserInfoDTO;
 import lombok.*;
 

@@ -12,15 +12,10 @@ import f3f.domain.user.exception.UnauthenticatedUserException;
 import f3f.domain.user.exception.UserNotFoundException;
 import f3f.global.encrypt.EncryptionService;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -426,16 +421,5 @@ class UserServiceTest {
         assertThrows(NotGeneralLoginType.class,() -> userService.updatePasswordByForgot(passwordRequest));
     }
 
-    @Test
-    @DisplayName("이메일찾기 성공 - 이름과 휴대폰 번호로 조회했을 때 정보가 존재하는 경우")
-    public  void success_FindEmailByForgot() throws Exception{
-        //given
-        UserDTO.SaveRequest saveRequest = createUserDto();
-        Long userId = userService.saveUser(saveRequest);
-        User user = userRepository.findById(userId).get();
 
-        //when
-
-        //then
-    }
 }
