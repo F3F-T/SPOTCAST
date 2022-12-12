@@ -9,9 +9,12 @@ import f3f.global.encrypt.EncryptionService;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Builder
@@ -23,10 +26,14 @@ public class UserDTO {
 
 
 
+        @Email
         @NotBlank
         private String email;
 
+        @Length(min = 8, max = 20)
+        @NotBlank
         private String password;
+
 
         @Enumerated(value = EnumType.STRING)
         private LoginUserType loginUserType;
@@ -37,8 +44,11 @@ public class UserDTO {
         @Enumerated(value = EnumType.STRING)
         private UserType userType;
 
+        @NotBlank
         private String information;
 
+        @NotBlank
+        @Length(min = 10, max = 11)
         private String phone;
 
 

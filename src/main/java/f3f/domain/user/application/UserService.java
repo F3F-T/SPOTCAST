@@ -31,16 +31,19 @@ public class UserService {
     private final HttpSession session;
 
 
-    public void saveUser(SaveRequest userDto){
+    public Long saveUser(SaveRequest userDto){
         if(emailDuplicateCheck(userDto.getEmail())){
             throw new DuplicateEmailException();
         }
 
         userDto.passwordEncryption(encryptionService);
-        userRepository.save(userDto.toEntity());
+        User user = userDto.toEntity();
+        userRepository.save(user);
 
+        return user.getId();
     }
 
+    
     @Transactional(readOnly = true)
     public void login(LoginRequest userDto){
         existsByEmailAndPassword(userDto);
@@ -53,7 +56,7 @@ public class UserService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
-        session.setAttribute(LOGIN_STATUS,user.getLoginType());
+        session.setAttribute(LOGIN_STATUS,user.getLoginUserType());
     }
 
     @Transactional(readOnly = true)
