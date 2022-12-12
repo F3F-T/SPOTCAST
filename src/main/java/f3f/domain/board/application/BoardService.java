@@ -4,14 +4,23 @@ import f3f.domain.board.dao.BoardRepository;
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
-import f3f.domain.board.exception.NotFoundBoardException;
+import f3f.domain.board.exception.BoardMissMatchUserException;
 import f3f.domain.board.exception.NotFoundBoardCategoryException;
+import f3f.domain.board.exception.NotFoundBoardException;
 import f3f.domain.board.exception.NotFoundBoardUserException;
+import f3f.domain.category.dao.CategoryRepository;
+import f3f.domain.category.domain.Category;
+import f3f.domain.category.exception.NotFoundCategoryException;
+import f3f.domain.user.dao.UserRepository;
+import f3f.domain.user.domain.User;
+import f3f.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 /*
  * 필요한 기능
  * 1. 게시글 저장
@@ -28,7 +37,8 @@ import java.util.List;
 public class BoardService {
 
     private final BoardRepository boardRepository;
-
+    private final CategoryRepository categoryRepository;
+    private final UserRepository  userRepository;
     @Transactional
     public void saveBoard(BoardDTO.SaveRequest request) {
 
@@ -44,9 +54,16 @@ public class BoardService {
     }
 
     @Transactional
-    public Board updateBoard(long boardId, BoardDTO.SaveRequest request) {
+    public Board updateBoard(long boardId, long userId, BoardDTO.SaveRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new NotFoundBoardException("존재하지 않는 게시글입니다."));
+
+        if (user.getId() != board.getUser().getId()){
+            throw new BoardMissMatchUserException();
+        }
 
         board.updateBoard(request);
 
@@ -54,22 +71,31 @@ public class BoardService {
     }
 
     @Transactional
-    public Board deleteBoard(long boardId) {
+    public Board deleteBoard(long boardId, long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new NotFoundBoardException("존재하지 않는 게시글입니다."));
 
+        if (user.getId() != board.getUser().getId()){
+            throw new BoardMissMatchUserException();
+        }
         boardRepository.deleteById(board.getId());
 
         return board;
     }
 
     @Transactional(readOnly = true)
-    public BoardInfoDTO getBoardInfo(long boardId) {
+    public BoardInfoDTO getBoardInfo(long boardId , long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(NotFoundBoardException::new);
-
+        if (user.getId() != board.getUser().getId()){
+            throw new BoardMissMatchUserException();
+        }
         return board.toBoardInfoDTO();
     }
 
@@ -86,6 +112,12 @@ public class BoardService {
      */
     @Transactional(readOnly = true)
     public List<BoardInfoDTO> getBoardListByCategoryId(long categoryId){
-        return null;
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(NotFoundCategoryException::new);
+
+        List<BoardInfoDTO> boardInfoList = boardRepository.findByCatrgoryId(category.getId()).stream()
+                .map(Board::toBoardInfoDTO).collect(Collectors.toList());
+
+        return boardInfoList;
     }
 }
