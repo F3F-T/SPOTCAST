@@ -16,11 +16,11 @@ public class ScrapBoard {
     @Column(name = "scrapPost_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scrap_id")
     private Scrap scrap;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 }
