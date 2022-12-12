@@ -93,6 +93,7 @@ public class BoardService {
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(NotFoundBoardException::new);
+
         if (user.getId() != board.getUser().getId()){
             throw new BoardMissMatchUserException();
         }
