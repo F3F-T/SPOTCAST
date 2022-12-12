@@ -14,6 +14,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Getter
 @Builder
@@ -37,6 +38,8 @@ public class UserDTO {
         private String name;
 
         @NotBlank
+        @Length(min = 3, max = 20)
+        @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9-_]{3,20}$")
         private String nickname;
 
         @Enumerated(value = EnumType.STRING)
@@ -158,6 +161,7 @@ public class UserDTO {
         }
 
         public void passwordEncryption(EncryptionService encryptionService) {
+            this.beforePassword = encryptionService.encrypt(beforePassword);
             this.afterPassword = encryptionService.encrypt(afterPassword);
         }
     }

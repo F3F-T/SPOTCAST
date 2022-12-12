@@ -7,6 +7,7 @@ import f3f.domain.user.dao.UserRepository;
 import f3f.domain.user.domain.User;
 import f3f.domain.user.dto.UserDTO;
 import f3f.domain.user.exception.DuplicateEmailException;
+import f3f.domain.user.exception.UnauthenticatedUserException;
 import f3f.domain.user.exception.UserNotFoundException;
 import f3f.global.encrypt.EncryptionService;
 import org.assertj.core.api.Assertions;
@@ -233,46 +234,45 @@ class UserServiceTest {
                 userService.findMyPageInfo(email));
     }
     @Test
-    @DisplayName("회원정보수정_성공")
-    void success_UpdateUser()throws Exception{
+    @DisplayName("비밀번호변경_성공 - 이전 비밀번호가 같고 비밀번호 변경 후 유저의 비밀번호와 request 비밀번호가 같은 경우")
+    void success_UpdatePassword()throws Exception{
         //given
+        UserDTO.SaveRequest saveRequest = createUserDto();
+        Long userId = userService.saveUser(saveRequest);
+        User user = userRepository.findById(userId).get();
 
         //when
+        UserDTO.UpdatePasswordRequest passwordRequest = UserDTO.UpdatePasswordRequest.builder()
+                .email(user.getEmail())
+                .beforePassword("test1234")
+                .afterPassword("asdfqwer")
+                .build();
+
+
+        userService.updatePassword(passwordRequest);
+        String afterPassword = passwordRequest.getAfterPassword();
 
         //then
-
+        assertThat(user.getPassword()).isEqualTo(afterPassword);
     }
 
     @Test
-    @DisplayName("회원정보수정_실패")
-    void fail_UpdateUser()throws Exception{
+    @DisplayName("비밀번호변경_실패 - 이전 비밀번호가 다른 경우 비밀번호 변경 실패")
+    void fail_UpdatePassword()throws Exception{
         //given
+        UserDTO.SaveRequest saveRequest = createUserDto();
+        Long userId = userService.saveUser(saveRequest);
+        User user = userRepository.findById(userId).get();
 
         //when
+        UserDTO.UpdatePasswordRequest passwordRequest = UserDTO.UpdatePasswordRequest.builder()
+                .email(user.getEmail())
+                .beforePassword("qwer1234")
+                .afterPassword("asdfqwer")
+                .build();
 
         //then
-
+        assertThrows(UnauthenticatedUserException.class,() -> userService.updatePassword(passwordRequest));
     }
 
-    @Test
-    @DisplayName("회원탈퇴_성공")
-    void success_DeleteUser()throws Exception{
-        //given
-
-        //when
-
-        //then
-
-    }
-
-    @Test
-    @DisplayName("회원탈퇴_실패")
-    void fail_DeleteUser()throws Exception{
-        //given
-
-        //when
-
-        //then
-
-    }
 }

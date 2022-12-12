@@ -2,7 +2,7 @@ package f3f.domain.model;
 
 public enum UserType {
 
-    USER(1,"user"),COMPANY(2,"company");
+    USER(1,"user"),ADMIN(2,"admin"),COMPANY(3,"company");
 
     private long id;
     private String type;
