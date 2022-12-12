@@ -15,5 +15,5 @@ public class LoginBase {
 
     protected String password;
 
-    protected  LoginType loginType;
+    protected LoginUserType loginUserType;
 }

@@ -1,8 +1,10 @@
 package f3f.domain.user.dto;
 
 import f3f.domain.model.LoginType;
+import f3f.domain.model.LoginUserType;
 import f3f.domain.model.UserType;
 import f3f.domain.user.domain.User;
+import f3f.global.encrypt.EncryptionService;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,6 +20,10 @@ public class UserDTO {
 
         private String password;
 
+        @Enumerated(value = EnumType.STRING)
+        private LoginUserType loginUserType;
+
+        @Enumerated(value = EnumType.STRING)
         private LoginType loginType;
 
         @Enumerated(value = EnumType.STRING)
@@ -27,11 +33,17 @@ public class UserDTO {
 
         private String phone;
 
+
+        public void passwordEncryption(EncryptionService encryptionService) {
+            this.password = encryptionService.encrypt(password);
+        }
+
         @Builder
-        public SaveRequest(String email, String password, LoginType loginType,
-                           UserType userType, String information, String phone) {
+        public SaveRequest(String email, String password, LoginUserType loginUserType,
+                           LoginType loginType,UserType userType, String information, String phone) {
             this.email = email;
             this.password = password;
+            this.loginUserType = loginUserType;
             this.loginType = loginType;
             this.userType = userType;
             this.information = information;
@@ -44,6 +56,7 @@ public class UserDTO {
                 return User.builder()
                         .email(this.email)
                         .password(this.password)
+                        .loginUserType(this.loginUserType)
                         .loginType(this.loginType)
                         .userType(this.userType)
                         .phone(this.phone)
@@ -59,6 +72,10 @@ public class UserDTO {
 
         private String password;
 
+        @Enumerated(value = EnumType.STRING)
+        private LoginUserType loginUserType;
+
+        @Enumerated(value = EnumType.STRING)
         private LoginType loginType;
 
         @Enumerated(value = EnumType.STRING)
@@ -69,10 +86,11 @@ public class UserDTO {
         private String phone;
 
         @Builder
-        public UserInfoDTO(String email, String password, LoginType loginType, UserType userType,
-                           String information, String phone) {
+        public UserInfoDTO(String email, String password, LoginUserType loginUserType, LoginType loginType,
+                           UserType userType, String information, String phone) {
             this.email = email;
             this.password = password;
+            this.loginUserType = loginUserType;
             this.loginType = loginType;
             this.userType = userType;
             this.information = information;

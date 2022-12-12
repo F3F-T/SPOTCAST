@@ -21,10 +21,15 @@ public class UserBase extends BaseTimeEntity {
 
     private String password;
 
-    private  LoginType loginType;
+    @Enumerated(value = EnumType.STRING)
+    private LoginUserType loginUserType;
+
+    @Enumerated(value = EnumType.STRING)
+    private LoginType loginType;
 
     @Enumerated(value = EnumType.STRING)
     private UserType userType;
+
 
     private String information;
 

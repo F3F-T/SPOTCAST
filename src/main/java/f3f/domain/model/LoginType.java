@@ -1,13 +1,14 @@
 package f3f.domain.model;
 
 public enum LoginType {
-    GENERAL_USER(1,"user"),ADMIN_USER(2,"admin"),COMPANY_USER(3,"company");
+    //
+    GENERAL_LOGIN(1,"general"),GOOGLE_LOGIN(2,"google"),KAKAO_LOGIN(3,"kakao"),NAVER_LOGIN(3,"naver");
 
     private long id;
-    private String name;
+    private String type;
 
-    LoginType(long id, String name) {
+    LoginType(long id, String type) {
         this.id = id;
-        this.name = name;
+        this.type = type;
     }
 }
