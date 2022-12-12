@@ -7,6 +7,7 @@ import f3f.domain.user.dao.UserRepository;
 import f3f.domain.user.domain.User;
 import f3f.domain.user.dto.UserDTO;
 import f3f.domain.user.exception.DuplicateEmailException;
+import f3f.domain.user.exception.NotGeneralLoginType;
 import f3f.domain.user.exception.UnauthenticatedUserException;
 import f3f.domain.user.exception.UserNotFoundException;
 import f3f.global.encrypt.EncryptionService;
@@ -71,6 +72,19 @@ class UserServiceTest {
                 .build();
         return saveRequest;
     }
+    private UserDTO.SaveRequest createGoogleUserDto() {
+        UserDTO.SaveRequest saveRequest = UserDTO.SaveRequest.builder()
+                .email("test123@test.com")
+                .password("test1234")
+                .phone("01011112222")
+                .userType(UserType.USER)
+                .loginUserType(LoginUserType.GENERAL_USER)
+                .loginType(LoginType.GOOGLE_LOGIN)
+                .information("test")
+                .build();
+        return saveRequest;
+    }
+
     private UserDTO.SaveRequest createFailByPasswordUserDto() {
         UserDTO.SaveRequest saveRequest = UserDTO.SaveRequest.builder()
                 .email("test123@test.com")
@@ -234,7 +248,7 @@ class UserServiceTest {
                 userService.findMyPageInfo(email));
     }
     @Test
-    @DisplayName("비밀번호변경_성공 - 이전 비밀번호가 같고 비밀번호 변경 후 유저의 비밀번호와 request 비밀번호가 같은 경우")
+    @DisplayName("비밀번호변경_성공 로그인 O - 이전 비밀번호가 같고 비밀번호 변경 후 유저의 비밀번호와 request 비밀번호가 같은 경우")
     void success_UpdatePassword()throws Exception{
         //given
         UserDTO.SaveRequest saveRequest = createUserDto();
@@ -257,7 +271,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("비밀번호변경_실패 - 이전 비밀번호가 다른 경우 비밀번호 변경 실패")
+    @DisplayName("비밀번호변경_실패 로그인 O - 이전 비밀번호가 다른 경우 비밀번호 변경 실패")
     void fail_UpdatePassword()throws Exception{
         //given
         UserDTO.SaveRequest saveRequest = createUserDto();
@@ -275,4 +289,77 @@ class UserServiceTest {
         assertThrows(UnauthenticatedUserException.class,() -> userService.updatePassword(passwordRequest));
     }
 
+    @Test
+    @DisplayName("비밀번호변경_실패 로그인 O - 일반 회원가입 유저가 아닌 경우")
+    void fail_UpdatePassword_NotGeneralType()throws Exception{
+        //given
+        UserDTO.SaveRequest saveRequest = createGoogleUserDto();
+        Long userId = userService.saveUser(saveRequest);
+        User user = userRepository.findById(userId).get();
+
+        //when
+        UserDTO.UpdatePasswordRequest passwordRequest = UserDTO.UpdatePasswordRequest.builder()
+                .email(user.getEmail())
+                .beforePassword("qwer1234")
+                .afterPassword("asdfqwer")
+                .build();
+
+        //then
+        assertThrows(NotGeneralLoginType.class,() -> userService.updatePassword(passwordRequest));
+    }
+
+    @Test
+    @DisplayName("비밀번호변경_성공 로그인 X - 이메일이 존재하는 경우 성공")
+    void success_UpdatePasswordByForgot()throws Exception{
+        //given
+        UserDTO.SaveRequest saveRequest = createUserDto();
+        Long userId = userService.saveUser(saveRequest);
+        User user = userRepository.findById(userId).get();
+
+        //when
+        UserDTO.UpdatePasswordRequest passwordRequest = UserDTO.UpdatePasswordRequest.builder()
+                .email(user.getEmail())
+                .afterPassword("asdfqwer")
+                .build();
+
+
+        userService.updatePasswordByForgot(passwordRequest);
+        String afterPassword = passwordRequest.getAfterPassword();
+
+        //then
+        assertThat(user.getPassword()).isEqualTo(afterPassword);
+    }
+
+    @Test
+    @DisplayName("비밀번호변경_실패 로그인 X - 이메일이 존재하지 않는 경우 비밀번호 변경 실패")
+    void fail_UpdatePasswordByForgot()throws Exception{
+        //given
+
+        //when
+        UserDTO.UpdatePasswordRequest passwordRequest = UserDTO.UpdatePasswordRequest.builder()
+                .email("test")
+                .afterPassword("asdfqwer")
+                .build();
+
+        //then
+        assertThrows(UserNotFoundException.class,() -> userService.updatePasswordByForgot(passwordRequest));
+    }
+    @Test
+    @DisplayName("비밀번호변경_실패 로그인 X - 일반 회원가입 유저가 아닌 경우")
+    void fail_UpdatePasswordByForgot_NotGeneralType()throws Exception{
+        //given
+        UserDTO.SaveRequest saveRequest = createGoogleUserDto();
+        Long userId = userService.saveUser(saveRequest);
+        User user = userRepository.findById(userId).get();
+
+        //when
+        UserDTO.UpdatePasswordRequest passwordRequest = UserDTO.UpdatePasswordRequest.builder()
+                .email(user.getEmail())
+                .afterPassword("asdfqwer")
+                .build();
+
+
+        //then
+        assertThrows(NotGeneralLoginType.class,() -> userService.updatePasswordByForgot(passwordRequest));
+    }
 }

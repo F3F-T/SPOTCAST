@@ -184,13 +184,13 @@ public class UserDTO {
     public static class EmailListResponse {
         private Long id;
         private String email;
-        private LoginUserType loginUserType;
+        private LoginType loginType;
 
         @Builder
-        public EmailListResponse(Long id, String email, LoginUserType loginUserType) {
+        public EmailListResponse(Long id, String email, LoginType loginType) {
             this.id = id;
             this.email = email;
-            this.loginUserType = loginUserType;
+            this.loginType = loginType;
         }
     }
 

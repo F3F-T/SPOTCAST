@@ -1,12 +1,10 @@
 package f3f.domain.user.application;
 
+import f3f.domain.model.LoginType;
 import f3f.domain.user.dao.UserRepository;
 import f3f.domain.user.domain.User;
 import f3f.domain.user.dto.UserDTO.SaveRequest;
-import f3f.domain.user.exception.DuplicateEmailException;
-import f3f.domain.user.exception.DuplicateNicknameException;
-import f3f.domain.user.exception.UnauthenticatedUserException;
-import f3f.domain.user.exception.UserNotFoundException;
+import f3f.domain.user.exception.*;
 import f3f.global.encrypt.EncryptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -95,12 +93,18 @@ public class UserService {
         String beforePassword = request.getBeforePassword();
         String afterPassword = request.getAfterPassword();
 
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
+
+        if(!user.getLoginType().equals(LoginType.GENERAL_LOGIN)){
+            throw new NotGeneralLoginType("비밀번호 변경이 불가능합니다.");
+        }
+
         if(!userRepository.existsByEmailAndPassword(request.getEmail(),beforePassword)){
             throw new UnauthenticatedUserException("잘못된 정보입니다.");
         }
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
         user.updatePassword(afterPassword);
     }
 
@@ -115,6 +119,10 @@ public class UserService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
+
+        if(!user.getLoginType().equals(LoginType.GENERAL_LOGIN)){
+            throw new NotGeneralLoginType("비밀번호 변경이 불가능합니다.");
+        }
 
         user.updatePassword(afterPassword);
 
