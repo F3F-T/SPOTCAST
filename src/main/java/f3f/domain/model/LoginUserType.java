@@ -1,5 +1,8 @@
 package f3f.domain.model;
 
+import lombok.Getter;
+
+@Getter
 public enum LoginUserType {
     GENERAL_USER(1,"user"),ADMIN_USER(2,"admin"),COMPANY_USER(3,"company");
 
