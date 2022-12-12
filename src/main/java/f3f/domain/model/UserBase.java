@@ -19,7 +19,8 @@ public class UserBase extends BaseTimeEntity {
 
     private String email;
 
-    private String password;
+    private String name;
+    protected String password;
 
     @Enumerated(value = EnumType.STRING)
     private LoginUserType loginUserType;
@@ -31,6 +32,6 @@ public class UserBase extends BaseTimeEntity {
     private UserType userType;
 
 
-    private String information;
+    protected String information;
 
 }

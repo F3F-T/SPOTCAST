@@ -1,6 +1,5 @@
 package f3f.domain.user.dto;
 
-import com.sun.istack.NotNull;
 import f3f.domain.model.LoginType;
 import f3f.domain.model.LoginUserType;
 import f3f.domain.model.UserType;
@@ -34,6 +33,11 @@ public class UserDTO {
         @NotBlank
         private String password;
 
+        @NotBlank
+        private String name;
+
+        @NotBlank
+        private String nickname;
 
         @Enumerated(value = EnumType.STRING)
         private LoginUserType loginUserType;
@@ -57,10 +61,12 @@ public class UserDTO {
         }
 
         @Builder
-        public SaveRequest(String email, String password, LoginUserType loginUserType,
-                           LoginType loginType,UserType userType, String information, String phone) {
+        public SaveRequest(String email, String password, String name, String nickname,
+                           LoginUserType loginUserType, LoginType loginType, UserType userType, String information, String phone) {
             this.email = email;
             this.password = password;
+            this.name = name;
+            this.nickname = nickname;
             this.loginUserType = loginUserType;
             this.loginType = loginType;
             this.userType = userType;
@@ -68,12 +74,12 @@ public class UserDTO {
             this.phone = phone;
         }
 
-
-
         public User toEntity(){
                 return User.builder()
                         .email(this.email)
                         .password(this.password)
+                        .nickname(this.nickname)
+                        .name(this.name)
                         .loginUserType(this.loginUserType)
                         .loginType(this.loginType)
                         .userType(this.userType)
@@ -84,10 +90,13 @@ public class UserDTO {
     }
 
     @Getter
-    public static class FindUserDTO {
+    public static class UserInfoDTO {
 
         private String email;
 
+        private String name;
+
+        private String nickname;
         @Enumerated(value = EnumType.STRING)
         private LoginUserType loginUserType;
 
@@ -102,17 +111,17 @@ public class UserDTO {
         private String phone;
 
         @Builder
-        public FindUserDTO(String email, LoginUserType loginUserType, LoginType loginType,
-                           UserType userType, String information, String phone) {
+        public UserInfoDTO(String email, String name, String nickname, LoginUserType loginUserType,
+                           LoginType loginType, UserType userType, String information, String phone) {
             this.email = email;
+            this.name = name;
+            this.nickname = nickname;
             this.loginUserType = loginUserType;
             this.loginType = loginType;
             this.userType = userType;
             this.information = information;
             this.phone = phone;
         }
-
-
     }
 
     @Getter
@@ -133,4 +142,52 @@ public class UserDTO {
             this.password = encryptionService.encrypt(password);
         }
     }
+
+    @Getter
+    public static class UpdatePasswordRequest{
+
+        private String email;
+        private String beforePassword;
+        private String afterPassword;
+
+        @Builder
+        public UpdatePasswordRequest(String email, String beforePassword, String afterPassword) {
+            this.email = email;
+            this.beforePassword = beforePassword;
+            this.afterPassword = afterPassword;
+        }
+
+        public void passwordEncryption(EncryptionService encryptionService) {
+            this.afterPassword = encryptionService.encrypt(afterPassword);
+        }
+    }
+
+    @Getter
+    public static class FindEmailRequest{
+
+        private String name;
+        private String phone;
+
+        @Builder
+        public FindEmailRequest(String name, String phone) {
+            this.name = name;
+            this.phone = phone;
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class EmailListResponse {
+        private Long id;
+        private String email;
+        private LoginUserType loginUserType;
+
+        @Builder
+        public EmailListResponse(Long id, String email, LoginUserType loginUserType) {
+            this.id = id;
+            this.email = email;
+            this.loginUserType = loginUserType;
+        }
+    }
+
 }
