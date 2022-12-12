@@ -1,6 +1,6 @@
 package f3f.domain.category.domain;
 
-import f3f.domain.board.domain.Board;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,22 +20,24 @@ public class Category {
 
     private String name;
 
-    private Long depth;
+    private Integer depth;
 
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Category parentCategory;
 
     @OneToMany(mappedBy = "parentCategory", fetch = FetchType.LAZY)
     private List<Category> child = new ArrayList<>();
 
-    @OneToMany(mappedBy = "category",fetch = FetchType.LAZY)
-    private List<Board> boardList = new ArrayList<>();
+//    @OneToMany(mappedBy = "category",fetch = FetchType.LAZY)
+//    private List<Board> boardList = new ArrayList<>();
 
-    public Category(Long id, String name, Long depth, Category parentCategory) {
-        this.id = id;
+    @Builder
+    public Category(String name, Integer depth,Category parentCategory, List<Category> child) {
         this.name = name;
         this.depth = depth;
         this.parentCategory = parentCategory;
+        this.child = child;
     }
 
     public void updateCategory(Category category){
