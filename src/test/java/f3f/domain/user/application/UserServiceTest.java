@@ -69,6 +69,8 @@ class UserServiceTest {
                 .loginUserType(LoginUserType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("test")
+                .name("lim")
+                .nickname("dong")
                 .build();
         return saveRequest;
     }
@@ -81,6 +83,8 @@ class UserServiceTest {
                 .loginUserType(LoginUserType.GENERAL_USER)
                 .loginType(LoginType.GOOGLE_LOGIN)
                 .information("test")
+                .name("lim")
+                .nickname("dong")
                 .build();
         return saveRequest;
     }
@@ -94,6 +98,8 @@ class UserServiceTest {
                 .loginUserType(LoginUserType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("test")
+                .name("lim")
+                .nickname("dong")
                 .build();
         return saveRequest;
     }
@@ -107,6 +113,8 @@ class UserServiceTest {
                 .loginUserType(LoginUserType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("test")
+                .name("lim")
+                .nickname("dong")
                 .build();
         return saveRequest;
     }
@@ -120,10 +128,37 @@ class UserServiceTest {
                 .loginUserType(LoginUserType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("")
+                .name("lim")
+                .nickname("dong")
                 .build();
         return saveRequest;
     }
-
+    private UserDTO.SaveRequest createFailByNameUserDto() {
+        UserDTO.SaveRequest saveRequest = UserDTO.SaveRequest.builder()
+                .email("test123@test.com")
+                .password("test1234")
+                .phone("01011112222")
+                .userType(UserType.USER)
+                .loginUserType(LoginUserType.GENERAL_USER)
+                .loginType(LoginType.GENERAL_LOGIN)
+                .information("")
+                .nickname("dong")
+                .build();
+        return saveRequest;
+    }
+    private UserDTO.SaveRequest createFailByNicknameUserDto() {
+        UserDTO.SaveRequest saveRequest = UserDTO.SaveRequest.builder()
+                .email("test123@test.com")
+                .password("test1234")
+                .phone("01011112222")
+                .userType(UserType.USER)
+                .loginUserType(LoginUserType.GENERAL_USER)
+                .loginType(LoginType.GENERAL_LOGIN)
+                .information("")
+                .name("lim")
+                .build();
+        return saveRequest;
+    }
     private UserDTO.SaveRequest createFailByEmailUserDto() {
         UserDTO.SaveRequest saveRequest = UserDTO.SaveRequest.builder()
                 .email("test123")
@@ -133,9 +168,12 @@ class UserServiceTest {
                 .loginUserType(LoginUserType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("test")
+                .name("lim")
+                .nickname("dong")
                 .build();
         return saveRequest;
     }
+
     @Test
     @DisplayName("회원가입 성공")
     void success_SaveUser()throws Exception{
@@ -207,6 +245,32 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("이름 오류로 회원가입 실패")
+    void fail_SaveUser_ByName()throws Exception{
+        //given
+        UserDTO.SaveRequest saveRequest = createFailByNameUserDto();
+
+        //when
+        Set<ConstraintViolation<UserDTO.SaveRequest>> violations = validator.validate(saveRequest);
+
+        //then
+        assertThat(violations.size()).isGreaterThan(0);
+    }
+
+    @Test
+    @DisplayName("정보 오류로 회원가입 실패")
+    void fail_SaveUser_ByNickname()throws Exception{
+        //given
+        UserDTO.SaveRequest saveRequest = createFailByNicknameUserDto();
+
+        //when
+        Set<ConstraintViolation<UserDTO.SaveRequest>> violations = validator.validate(saveRequest);
+
+        //then
+        assertThat(violations.size()).isGreaterThan(0);
+    }
+
+    @Test
     @DisplayName("정보 오류로 회원가입 실패")
     void fail_SaveUser_ByInformation()throws Exception{
         //given
@@ -217,7 +281,6 @@ class UserServiceTest {
 
         //then
         assertThat(violations.size()).isGreaterThan(0);
-
     }
 
     @Test
@@ -361,5 +424,18 @@ class UserServiceTest {
 
         //then
         assertThrows(NotGeneralLoginType.class,() -> userService.updatePasswordByForgot(passwordRequest));
+    }
+
+    @Test
+    @DisplayName("이메일찾기 성공 - 이름과 휴대폰 번호로 조회했을 때 정보가 존재하는 경우")
+    public  void success_FindEmailByForgot() throws Exception{
+        //given
+        UserDTO.SaveRequest saveRequest = createUserDto();
+        Long userId = userService.saveUser(saveRequest);
+        User user = userRepository.findById(userId).get();
+
+        //when
+
+        //then
     }
 }
