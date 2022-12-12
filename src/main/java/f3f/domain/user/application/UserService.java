@@ -6,78 +6,37 @@ import f3f.domain.user.dto.UserDTO;
 import f3f.domain.user.dto.UserDTO.SaveRequest;
 import f3f.domain.user.exception.DuplicateEmailException;
 import f3f.domain.user.exception.UserNotFoundException;
+import f3f.global.encrypt.EncryptionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
+    private final EncryptionService encryptionService;
 
 
-    /**
-     * 로그인
-     * @param request
-     * @return
-     */
-    public UserDTO.LoginRequest login(UserDTO.LoginRequest request){
-        return null;
-    }
-
-    /**
-     * 로그아웃
-     * @param request
-     * @return
-     */
-    public UserDTO.LoginRequest logout(UserDTO.LoginRequest request){
-        return null;
-    }
-    /**
-     * 회원가입
-     * @param request
-     */
-    @Transactional
-    public void saveUser(SaveRequest request){
-
-        if (!userRepository.existsByEmail(request.getEmail())){
-            throw new DuplicateEmailException("이메일 중복");
+    private void saveUser(UserDTO.SaveRequest userDto){
+        if(emailDuplicateCheck(userDto.getEmail())){
+            throw new DuplicateEmailException();
         }
-        userRepository.save(request.toEntity());
+
+        userDto.passwordEncryption(encryptionService);
+        userRepository.save(userDto.toEntity());
+
     }
 
-    /**
-     * 유저 INFO
-     * @param userId
-     * @return
-     */
-    //로그인 체크
+
+
     @Transactional(readOnly = true)
-    public UserDTO.UserInfoDTO getUserInfoById(long userId){
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        return user.toFindUserDto();
-    }
-
-    /**
-     * 유저 정보 수정
-     * @param userId
-     * @param request
-     */
-    //로그인 체크
-    @Transactional
-    public void updateUser(long userId, SaveRequest request){
-
-    }
-
-    /**
-     * 회원 탈퇴
-     * @param userId
-     */
-    //로그인 체크
-    @Transactional
-    public void deleteUser(long userId){
-
+    private boolean emailDuplicateCheck(String email) {
+        return userRepository.existsByEmail(email);
     }
 
 
