@@ -84,11 +84,9 @@ public class UserDTO {
     }
 
     @Getter
-    public static class UserInfoDTO {
+    public static class FindUserDTO {
 
         private String email;
-
-        private String password;
 
         @Enumerated(value = EnumType.STRING)
         private LoginUserType loginUserType;
@@ -104,10 +102,9 @@ public class UserDTO {
         private String phone;
 
         @Builder
-        public UserInfoDTO(String email, String password, LoginUserType loginUserType, LoginType loginType,
+        public FindUserDTO(String email, LoginUserType loginUserType, LoginType loginType,
                            UserType userType, String information, String phone) {
             this.email = email;
-            this.password = password;
             this.loginUserType = loginUserType;
             this.loginType = loginType;
             this.userType = userType;

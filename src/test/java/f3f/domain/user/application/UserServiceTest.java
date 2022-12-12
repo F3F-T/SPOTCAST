@@ -7,6 +7,7 @@ import f3f.domain.user.dao.UserRepository;
 import f3f.domain.user.domain.User;
 import f3f.domain.user.dto.UserDTO;
 import f3f.domain.user.exception.DuplicateEmailException;
+import f3f.domain.user.exception.UserNotFoundException;
 import f3f.global.encrypt.EncryptionService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -204,7 +205,33 @@ class UserServiceTest {
 
     }
 
+    @Test
+    @DisplayName("회원정보조회_성공")
+    void success_findMyPageInfo()throws Exception{
+        //given
+        Long userId = userService.saveUser(createUserDto());
+        Optional<User> byId = userRepository.findById(userId);
+        String email = byId.get().getEmail();
 
+        //when
+        String findEmail = userService.findMyPageInfo(email).getEmail();
+
+        //then
+        Assertions.assertThat(email).isEqualTo(findEmail);
+    }
+
+    @Test
+    @DisplayName("회원정보조회_실패")
+    void fail_findMyPageInfo()throws Exception{
+        //given
+        String email = "test@te.com";
+
+        //when
+
+        //then
+        assertThrows(UserNotFoundException.class, ()->
+                userService.findMyPageInfo(email));
+    }
     @Test
     @DisplayName("회원정보수정_성공")
     void success_UpdateUser()throws Exception{

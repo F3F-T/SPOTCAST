@@ -10,7 +10,8 @@ import f3f.domain.model.UserBase;
 import f3f.domain.model.UserType;
 import f3f.domain.portfolio.domain.Portfolio;
 import f3f.domain.teamApply.domain.Apply;
-import f3f.domain.user.dto.UserDTO.UserInfoDTO;
+import f3f.domain.user.dto.UserDTO;
+import f3f.domain.user.dto.UserDTO.FindUserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -59,10 +60,9 @@ public class User extends UserBase {
     }
 
 
-    public UserInfoDTO toFindUserDto(){
-        return UserInfoDTO.builder()
+    public FindUserDTO toFindUserDto(){
+        return FindUserDTO.builder()
                 .email(this.getEmail())
-                .password(this.getPassword())
                 .loginUserType(this.getLoginUserType())
                 .loginType(this.getLoginType())
                 .userType(this.getUserType())
