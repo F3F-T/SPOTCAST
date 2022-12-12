@@ -31,13 +31,18 @@ public class UserService {
     private final HttpSession session;
 
 
-    public Long saveUser(SaveRequest userDto){
-        if(emailDuplicateCheck(userDto.getEmail())){
+    /**
+     * 회원가입
+     * @param saveRequest
+     * @return
+     */
+    public Long saveUser(SaveRequest saveRequest){
+        if(emailDuplicateCheck(saveRequest.getEmail())){
             throw new DuplicateEmailException();
         }
 
-        userDto.passwordEncryption(encryptionService);
-        User user = userDto.toEntity();
+        saveRequest.passwordEncryption(encryptionService);
+        User user = saveRequest.toEntity();
         userRepository.save(user);
 
         return user.getId();
@@ -45,12 +50,26 @@ public class UserService {
 
     
     @Transactional(readOnly = true)
-    public void login(LoginRequest userDto){
-        existsByEmailAndPassword(userDto);
-        String email = userDto.getEmail();
+    public void login(LoginRequest loginRequest){
+        existsByEmailAndPassword(loginRequest);
+        String email = loginRequest.getEmail();
         setLoginUserType(email);
         session.setAttribute(EMAIL,email);
     }
+
+    @Transactional(readOnly = true)
+    public void logout(){
+        session.removeAttribute(EMAIL);
+        session.removeAttribute(LOGIN_STATUS);
+    }
+
+    public FindUserDTO findMyPageInfo(String email){
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자 입니다.")).toFindUserDto();
+    }
+
+
+
     @Transactional(readOnly = true)
     public void setLoginUserType(String email) {
 
@@ -60,9 +79,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public void existsByEmailAndPassword(LoginRequest userDto) {
-        userDto.passwordEncryption(encryptionService);
-        if(!userRepository.existsByEmailAndPassword(userDto.getEmail(), userDto.getPassword())){
+    public void existsByEmailAndPassword(LoginRequest loginRequest) {
+        loginRequest.passwordEncryption(encryptionService);
+        if(!userRepository.existsByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword())){
             throw new UserNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
     }
