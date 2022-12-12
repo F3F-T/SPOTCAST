@@ -1,5 +1,6 @@
 package f3f.domain.user.dto;
 
+import com.sun.istack.NotNull;
 import f3f.domain.model.LoginType;
 import f3f.domain.model.LoginUserType;
 import f3f.domain.model.UserType;
@@ -7,15 +8,22 @@ import f3f.domain.user.domain.User;
 import f3f.global.encrypt.EncryptionService;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+@Getter
+@Builder
 public class UserDTO {
 
     @Getter
+    @NoArgsConstructor
     public static class SaveRequest {
 
+
+
+        @NotBlank
         private String email;
 
         private String password;
@@ -96,6 +104,8 @@ public class UserDTO {
             this.information = information;
             this.phone = phone;
         }
+
+
     }
 
     @Getter
@@ -103,13 +113,17 @@ public class UserDTO {
 
         private String email;
         private String password;
-        private LoginType loginType;
+        private LoginUserType loginUserType;
 
         @Builder
-        public LoginRequest(String email, String password, LoginType loginType) {
+        public LoginRequest(String email, String password, LoginUserType loginUserType) {
             this.email = email;
             this.password = password;
-            this.loginType = loginType;
+            this.loginUserType = loginUserType;
+        }
+
+        public void passwordEncryption(EncryptionService encryptionService) {
+            this.password = encryptionService.encrypt(password);
         }
     }
 }
