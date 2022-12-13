@@ -54,6 +54,16 @@ public class UserService {
         return user.getId();
     }
 
+    public void deleteUser(String email, String password){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
+
+        if(!userRepository.existsByEmailAndPassword(email, encryptionService.encrypt(password))){
+            throw new IncorrectPasswordException("비밀번호가 일치하지 않습니다.");
+        }
+
+        userRepository.deleteByEmail(email);
+    }
     /**
      * 로그인
      * @param loginRequest
@@ -110,7 +120,7 @@ public class UserService {
     }
 
     /**
-     * 비밀번호 수정 - 로그인되지 않은 경우(본인 인증을 이후)
+     * 비밀번호 수정 - 로그인되지 않은 경우(본인 인증 이후)
      * @param request
      */
     public void updatePasswordByForgot(UpdatePasswordRequest request){
@@ -129,31 +139,42 @@ public class UserService {
 
     }
 
-    /**
-     * 이메일 찾기
-     * @param request
-     * @return
-     */
-
 
     /**
      * 닉네임 수정
      * @param saveRequest
      */
-    public void updateNickname(SaveRequest saveRequest){
+    public void updateNickname(UpdateNicknameRequest saveRequest){
 
         String email = saveRequest.getEmail();
-        String changeNickname = saveRequest.getNickname();
+        String nickname = saveRequest.getNickname();
+
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
+
+        if(nicknameDuplicateCheck(saveRequest.getNickname())){
+            throw new DuplicateNicknameException("중복된 닉네임은 사용할 수 없습니다.");
+        }
+
+        user.updateNickname(nickname);
+    }
+
+    /**
+     * information 변경
+     * @param saveRequest
+     */
+    public void updateInformation(UpdateInformationRequest saveRequest){
+
+        String email = saveRequest.getEmail();
+        String information = saveRequest.getInformation();
 
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException());
 
-        if(nicknameDuplicateCheck(saveRequest.getNickname())){
-            throw new DuplicateNicknameException();
-        }
 
-        user.updateNickname(changeNickname);
+        user.updateInformation(information);
     }
 
 

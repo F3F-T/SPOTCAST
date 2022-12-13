@@ -166,31 +166,39 @@ public class UserDTO {
         }
     }
 
-    @Getter
-    public static class FindEmailRequest{
 
-        private String name;
-        private String phone;
+    @Getter
+    public static class UpdateNicknameRequest{
+
+        private String email;
+
+        @NotBlank
+        @Length(min = 3, max = 20)
+        @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9-_]{3,20}$")
+        private String nickname;
 
         @Builder
-        public FindEmailRequest(String name, String phone) {
-            this.name = name;
-            this.phone = phone;
+
+        public UpdateNicknameRequest(String email, String nickname) {
+            this.email = email;
+            this.nickname = nickname;
         }
     }
 
+
     @Getter
-    @NoArgsConstructor
-    public static class EmailListResponse {
-        private Long id;
+    public static class UpdateInformationRequest {
+
         private String email;
-        private LoginType loginType;
+
+        @NotBlank
+        private String information;
 
         @Builder
-        public EmailListResponse(Long id, String email, LoginType loginType) {
-            this.id = id;
+
+        public UpdateInformationRequest(String email, String information) {
             this.email = email;
-            this.loginType = loginType;
+            this.information = information;
         }
     }
 
