@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum LoginUserType {
-    GENERAL_USER(1,"user"),ADMIN_USER(2,"admin"),COMPANY_USER(3,"company");
+    GENERAL_USER(1,"user"),ADMIN_USER(2,"admin"),COMPANY_USER(3,"company_user"),COMPANY(4,"company");
 
     private long id;
     private String name;
