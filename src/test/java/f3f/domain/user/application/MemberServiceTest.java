@@ -2,7 +2,7 @@ package f3f.domain.user.application;
 
 import f3f.domain.model.LoginType;
 import f3f.domain.model.LoginMemberType;
-import f3f.domain.model.MemberType;
+import f3f.domain.model.Authority;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO;
@@ -63,7 +63,7 @@ class MemberServiceTest {
                 .email(EMAIL)
                 .password(PASSWORD)
                 .phone(PHONE)
-                .memberType(MemberType.ROLE_USER)
+                .memberType(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information(INFORMATION)
@@ -77,7 +77,7 @@ class MemberServiceTest {
                 .email("test123@test.com")
                 .password("test1234")
                 .phone("01011112222")
-                .memberType(MemberType.ROLE_USER)
+                .memberType(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GOOGLE_LOGIN)
                 .information("test")
@@ -92,7 +92,7 @@ class MemberServiceTest {
                 .email("test123@test.com")
                 .password("te234")
                 .phone("01011112222")
-                .memberType(MemberType.ROLE_USER)
+                .memberType(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("test")
@@ -107,7 +107,7 @@ class MemberServiceTest {
                 .email("test123@test.com")
                 .password("test1234")
                 .phone("01012222")
-                .memberType(MemberType.ROLE_USER)
+                .memberType(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("test")
@@ -122,7 +122,7 @@ class MemberServiceTest {
                 .email("test123@test.com")
                 .password("test1234")
                 .phone("01011112222")
-                .memberType(MemberType.ROLE_USER)
+                .memberType(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("")
@@ -136,7 +136,7 @@ class MemberServiceTest {
                 .email("test123@test.com")
                 .password("test1234")
                 .phone("01011112222")
-                .memberType(MemberType.ROLE_USER)
+                .memberType(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("")
@@ -149,7 +149,7 @@ class MemberServiceTest {
                 .email("test123@test.com")
                 .password("test1234")
                 .phone("01011112222")
-                .memberType(MemberType.ROLE_USER)
+                .memberType(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("")
@@ -162,7 +162,7 @@ class MemberServiceTest {
                 .email("test123")
                 .password("test1234")
                 .phone("01011112222")
-                .memberType(MemberType.ROLE_USER)
+                .memberType(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("test")
@@ -287,26 +287,26 @@ class MemberServiceTest {
         //given
         Long userId = memberService.saveMember(createMemberDto());
         Optional<Member> byId = memberRepository.findById(userId);
-        String email = byId.get().getEmail();
+        Long memberId = byId.get().getId();
 
         //when
-        String findEmail = memberService.findMyPageInfo(email).getEmail();
+        String findEmail = memberService.findMyPageInfo(memberId).getEmail();
 
         //then
-        Assertions.assertThat(email).isEqualTo(findEmail);
+        Assertions.assertThat(memberId).isEqualTo(findEmail);
     }
 
     @Test
     @DisplayName("회원정보조회_실패")
     void fail_findMyPageInfo()throws Exception{
         //given
-        String email = "test@te.com";
+        Long memberId = 1L;
 
         //when
 
         //then
         assertThrows(MemberNotFoundException.class, ()->
-                memberService.findMyPageInfo(email));
+                memberService.findMyPageInfo(memberId));
     }
     @Test
     @DisplayName("비밀번호변경_성공 로그인 O - 이전 비밀번호가 같고 비밀번호 변경 후 유저의 비밀번호와 request 비밀번호가 같은 경우")

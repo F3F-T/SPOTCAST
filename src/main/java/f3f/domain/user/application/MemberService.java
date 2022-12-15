@@ -86,11 +86,11 @@ public class MemberService {
 
     /**
      * 회원 정보 조회
-     * @param email
+     * @param memberId
      * @return
      */
-    public MemberInfoDTO findMyPageInfo(String email){
-        return memberRepository.findByEmail(email)
+    public MemberInfoDTO findMyPageInfo(Long memberId){
+        return memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다.")).toFindMemberDto();
     }
 

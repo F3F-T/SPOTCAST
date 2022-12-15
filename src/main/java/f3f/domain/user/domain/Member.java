@@ -7,7 +7,7 @@ import f3f.domain.likes.domain.Likes;
 import f3f.domain.model.LoginType;
 import f3f.domain.model.LoginMemberType;
 import f3f.domain.model.MemberBase;
-import f3f.domain.model.MemberType;
+import f3f.domain.model.Authority;
 import f3f.domain.portfolio.domain.Portfolio;
 import f3f.domain.teamApply.domain.Apply;
 import f3f.domain.user.dto.MemberDTO.MemberInfoDTO;
@@ -54,8 +54,8 @@ public class Member extends MemberBase {
 
 
     @Builder
-    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, MemberType memberType, String information, String phone, String nickname, List<Board> boardList, List<Likes> likesList, List<Comment> commentList, List<Apply> volunteerList, List<Apply> recruiterList, List<Bookmark> bookmarkList, Portfolio portfolio) {
-        super(id, email, name, password, loginMemberType, loginType, memberType, information);
+    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information, String phone, String nickname, List<Board> boardList, List<Likes> likesList, List<Comment> commentList, List<Apply> volunteerList, List<Apply> recruiterList, List<Bookmark> bookmarkList, Portfolio portfolio) {
+        super(id, email, name, password, loginMemberType, loginType, authority, information);
         this.phone = phone;
         this.nickname = nickname;
 
@@ -68,7 +68,7 @@ public class Member extends MemberBase {
                 .nickname(this.getNickname())
                 .loginMemberType(this.getLoginMemberType())
                 .loginType(this.getLoginType())
-                .memberType(this.getMemberType())
+                .authority(this.getAuthority())
                 .information(this.getInformation())
                 .phone(this.getPhone())
                 .build();

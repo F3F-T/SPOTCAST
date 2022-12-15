@@ -16,7 +16,7 @@ import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
-public class MemberDetailService implements UserDetailsService {
+public class UserDetailService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
@@ -30,7 +30,7 @@ public class MemberDetailService implements UserDetailsService {
 
     // DB 에 User 값이 존재한다면 UserDetails 객체로 만들어서 리턴
     private UserDetails createUserDetails(Member member) {
-        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(member.getMemberType().toString());
+        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(member.getAuthority().toString());
 
         return new User(
                 String.valueOf(member.getId()),

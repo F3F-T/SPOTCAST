@@ -29,7 +29,7 @@ public class MemberBase extends BaseTimeEntity {
     private LoginType loginType;
 
     @Enumerated(value = EnumType.STRING)
-    private MemberType memberType;
+    private Authority authority;
 
 
     protected String information;

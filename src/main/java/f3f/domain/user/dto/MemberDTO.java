@@ -2,7 +2,7 @@ package f3f.domain.user.dto;
 
 import f3f.domain.model.LoginType;
 import f3f.domain.model.LoginMemberType;
-import f3f.domain.model.MemberType;
+import f3f.domain.model.Authority;
 import f3f.domain.user.domain.Member;
 import f3f.global.encrypt.EncryptionService;
 import lombok.Builder;
@@ -49,7 +49,7 @@ public class MemberDTO {
         private LoginType loginType;
 
         @Enumerated(value = EnumType.STRING)
-        private MemberType memberType;
+        private Authority authority;
 
         @NotBlank
         private String information;
@@ -65,14 +65,14 @@ public class MemberDTO {
 
         @Builder
         public SaveRequest(String email, String password, String name, String nickname,
-                           LoginMemberType loginMemberType, LoginType loginType, MemberType memberType, String information, String phone) {
+                           LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information, String phone) {
             this.email = email;
             this.password = password;
             this.name = name;
             this.nickname = nickname;
             this.loginMemberType = loginMemberType;
             this.loginType = loginType;
-            this.memberType = memberType;
+            this.authority = authority;
             this.information = information;
             this.phone = phone;
         }
@@ -85,7 +85,7 @@ public class MemberDTO {
                         .name(this.name)
                         .loginMemberType(this.loginMemberType)
                         .loginType(this.loginType)
-                        .memberType(this.memberType)
+                        .authority(this.authority)
                         .phone(this.phone)
                         .information(this.information)
                         .build();
@@ -107,7 +107,7 @@ public class MemberDTO {
         private LoginType loginType;
 
         @Enumerated(value = EnumType.STRING)
-        private MemberType memberType;
+        private Authority authority;
 
         private String information;
 
@@ -115,13 +115,13 @@ public class MemberDTO {
 
         @Builder
         public MemberInfoDTO(String email, String name, String nickname, LoginMemberType loginMemberType,
-                             LoginType loginType, MemberType memberType, String information, String phone) {
+                             LoginType loginType, Authority authority, String information, String phone) {
             this.email = email;
             this.name = name;
             this.nickname = nickname;
             this.loginMemberType = loginMemberType;
             this.loginType = loginType;
-            this.memberType = memberType;
+            this.authority = authority;
             this.information = information;
             this.phone = phone;
         }
