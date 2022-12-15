@@ -2,7 +2,7 @@ package f3f.domain.message.domain;
 
 
 import f3f.domain.model.BaseTimeEntity;
-import f3f.domain.user.domain.User;
+import f3f.domain.user.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -22,9 +22,9 @@ public class Message  extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
-    private User sender;
+    private Member sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_id")
-    private User recipient;
+    private Member recipient;
 }
