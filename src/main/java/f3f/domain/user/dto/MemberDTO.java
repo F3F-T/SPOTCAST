@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.EnumType;
@@ -141,6 +142,10 @@ public class MemberDTO {
 
         public void passwordEncryption(PasswordEncoder passwordEncoder) {
             this.password = passwordEncoder.encode(password);
+        }
+
+        public UsernamePasswordAuthenticationToken toAuthentication(){
+            return new UsernamePasswordAuthenticationToken(email,password);
         }
     }
 

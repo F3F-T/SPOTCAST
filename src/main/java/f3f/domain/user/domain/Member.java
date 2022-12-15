@@ -27,7 +27,7 @@ public class Member extends MemberBase {
 
     private String nickname;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "member")
     private List<Board> boardList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")

@@ -54,7 +54,7 @@ class MemberServiceTest {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
-    public Member createMember(MemberDTO.MemberSaveRequestDto memberSaveRequestDto){
+    public Member createMember(MemberDTO.MemberSaveRequestDto memberSaveRequestDto) {
         return memberSaveRequestDto.toEntity();
     }
 
@@ -72,6 +72,7 @@ class MemberServiceTest {
                 .build();
         return memberSaveRequestDto;
     }
+
     private MemberDTO.MemberSaveRequestDto createGoogleMemberDto() {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123@test.com")
@@ -131,6 +132,7 @@ class MemberServiceTest {
                 .build();
         return memberSaveRequestDto;
     }
+
     private MemberDTO.MemberSaveRequestDto createFailByNameMemberDto() {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123@test.com")
@@ -144,6 +146,7 @@ class MemberServiceTest {
                 .build();
         return memberSaveRequestDto;
     }
+
     private MemberDTO.MemberSaveRequestDto createFailByNicknameMemberDto() {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123@test.com")
@@ -157,6 +160,7 @@ class MemberServiceTest {
                 .build();
         return memberSaveRequestDto;
     }
+
     private MemberDTO.MemberSaveRequestDto createFailByEmailMemberDto() {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123")
@@ -174,7 +178,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원가입 성공")
-    void success_SaveMember()throws Exception{
+    void success_SaveMember() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         //when
@@ -187,7 +191,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("이메일 중복으로 회원가입 실패")
-    void fail_SaveMember()throws Exception{
+    void fail_SaveMember() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto1 = createMemberDto();
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto2 = createMemberDto();
@@ -195,13 +199,14 @@ class MemberServiceTest {
         memberService.saveMember(memberSaveRequestDto1);
 
         //then
-        assertThrows(DuplicateEmailException.class, ()->
+        assertThrows(DuplicateEmailException.class, () ->
                 memberService.saveMember(memberSaveRequestDto2));
 
     }
+
     @Test
     @DisplayName("이메일 오류로 회원가입 실패")
-    void fail_SaveMember_ByEmail()throws Exception{
+    void fail_SaveMember_ByEmail() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByEmailMemberDto();
 
@@ -216,7 +221,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("비밀번호 오류로 회원가입 실패")
-    void fail_SaveMember_ByPassword()throws Exception{
+    void fail_SaveMember_ByPassword() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByPasswordMemberDto();
 
@@ -230,7 +235,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("전화번호 오류로 회원가입 실패")
-    void fail_SaveMember_ByPhone()throws Exception{
+    void fail_SaveMember_ByPhone() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByPhoneMemberDto();
 
@@ -244,7 +249,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("이름 오류로 회원가입 실패")
-    void fail_SaveMember_ByName()throws Exception{
+    void fail_SaveMember_ByName() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByNameMemberDto();
 
@@ -257,7 +262,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("정보 오류로 회원가입 실패")
-    void fail_SaveMember_ByNickname()throws Exception{
+    void fail_SaveMember_ByNickname() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByNicknameMemberDto();
 
@@ -270,7 +275,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("정보 오류로 회원가입 실패")
-    void fail_SaveMember_ByInformation()throws Exception{
+    void fail_SaveMember_ByInformation() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByInformationMemberDto();
 
@@ -283,7 +288,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원정보조회_성공")
-    void success_findMyPageInfo()throws Exception{
+    void success_findMyPageInfo() throws Exception {
         //given
         Long userId = memberService.saveMember(createMemberDto());
         Optional<Member> byId = memberRepository.findById(userId);
@@ -298,19 +303,20 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원정보조회_실패")
-    void fail_findMyPageInfo()throws Exception{
+    void fail_findMyPageInfo() throws Exception {
         //given
         Long memberId = 1L;
 
         //when
 
         //then
-        assertThrows(MemberNotFoundException.class, ()->
+        assertThrows(MemberNotFoundException.class, () ->
                 memberService.findMyPageInfo(memberId));
     }
+
     @Test
     @DisplayName("비밀번호변경_성공 로그인 O - 이전 비밀번호가 같고 비밀번호 변경 후 유저의 비밀번호와 request 비밀번호가 같은 경우")
-    void success_UpdatePassword()throws Exception{
+    void success_UpdatePassword() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         Long userId = memberService.saveMember(memberSaveRequestDto);
@@ -333,7 +339,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("비밀번호변경_실패 로그인 O - 이전 비밀번호가 다른 경우 비밀번호 변경 실패")
-    void fail_UpdatePassword()throws Exception{
+    void fail_UpdatePassword() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         Long userId = memberService.saveMember(memberSaveRequestDto);
@@ -347,12 +353,12 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(UnauthenticatedMemberException.class,() -> memberService.updatePassword(passwordRequest));
+        assertThrows(UnauthenticatedMemberException.class, () -> memberService.updatePassword(passwordRequest));
     }
 
     @Test
     @DisplayName("비밀번호변경_실패 로그인 O - 일반 회원가입 유저가 아닌 경우")
-    void fail_UpdatePassword_NotGeneralType()throws Exception{
+    void fail_UpdatePassword_NotGeneralType() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createGoogleMemberDto();
         Long userId = memberService.saveMember(memberSaveRequestDto);
@@ -366,12 +372,12 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(NotGeneralLoginType.class,() -> memberService.updatePassword(passwordRequest));
+        assertThrows(NotGeneralLoginType.class, () -> memberService.updatePassword(passwordRequest));
     }
 
     @Test
     @DisplayName("비밀번호변경_성공 로그인 X - 이메일이 존재하는 경우 성공")
-    void success_UpdatePasswordByForgot()throws Exception{
+    void success_UpdatePasswordByForgot() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         Long userId = memberService.saveMember(memberSaveRequestDto);
@@ -393,7 +399,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("비밀번호변경_실패 로그인 X - 이메일이 존재하지 않는 경우 비밀번호 변경 실패")
-    void fail_UpdatePasswordByForgot()throws Exception{
+    void fail_UpdatePasswordByForgot() throws Exception {
         //given
 
         //when
@@ -403,11 +409,12 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(MemberNotFoundException.class,() -> memberService.updatePasswordByForgot(passwordRequest));
+        assertThrows(MemberNotFoundException.class, () -> memberService.updatePasswordByForgot(passwordRequest));
     }
+
     @Test
     @DisplayName("비밀번호변경_실패 로그인 X - 일반 회원가입 유저가 아닌 경우")
-    void fail_UpdatePasswordByForgot_NotGeneralType()throws Exception{
+    void fail_UpdatePasswordByForgot_NotGeneralType() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createGoogleMemberDto();
         Long userId = memberService.saveMember(memberSaveRequestDto);
@@ -421,12 +428,12 @@ class MemberServiceTest {
 
 
         //then
-        assertThrows(NotGeneralLoginType.class,() -> memberService.updatePasswordByForgot(passwordRequest));
+        assertThrows(NotGeneralLoginType.class, () -> memberService.updatePasswordByForgot(passwordRequest));
     }
 
     @Test
     @DisplayName("닉네임 변경 성공")
-    public void success_UpdateNickname() throws Exception{
+    public void success_UpdateNickname() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         Long userId = memberService.saveMember(memberSaveRequestDto);
@@ -448,7 +455,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("닉네임 변경 실패 - 유저 찾지 못한 경우")
-    public void fail_UpdateNickname_NotFoundMember() throws Exception{
+    public void fail_UpdateNickname_NotFoundMember() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         memberService.saveMember(memberSaveRequestDto);
@@ -462,12 +469,12 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(MemberNotFoundException.class,() -> memberService.updateNickname(nicknameRequest));
+        assertThrows(MemberNotFoundException.class, () -> memberService.updateNickname(nicknameRequest));
     }
 
     @Test
     @DisplayName("닉네임 변경 실패 - 중복된 닉네임")
-    public void fail_UpdateNickname_DuplicatedNickname() throws Exception{
+    public void fail_UpdateNickname_DuplicatedNickname() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         memberService.saveMember(memberSaveRequestDto);
@@ -481,13 +488,13 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(DuplicateNicknameException.class,() -> memberService.updateNickname(nicknameRequest));
+        assertThrows(DuplicateNicknameException.class, () -> memberService.updateNickname(nicknameRequest));
 
     }
 
     @Test
     @DisplayName("정보 변경 성공")
-    public void success_UpdateInformation() throws Exception{
+    public void success_UpdateInformation() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         Long userId = memberService.saveMember(memberSaveRequestDto);
@@ -509,7 +516,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("정보 변경 실패 - 유저 찾지 못한 경우")
-    public void fail_UpdateInformation_NotFoundMember() throws Exception{
+    public void fail_UpdateInformation_NotFoundMember() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         memberService.saveMember(memberSaveRequestDto);
@@ -524,12 +531,12 @@ class MemberServiceTest {
 
 
         //then
-        assertThrows(MemberNotFoundException.class,() -> memberService.updateInformation(informationRequest));
+        assertThrows(MemberNotFoundException.class, () -> memberService.updateInformation(informationRequest));
     }
 
     @Test
     @DisplayName("회원 삭제 성공")
-    public void success_DeleteMember() throws Exception{
+    public void success_DeleteMember() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         memberService.saveMember(memberSaveRequestDto);
@@ -537,7 +544,12 @@ class MemberServiceTest {
         //when
         String email = EMAIL;
         String password = PASSWORD;
-        memberService.deleteMember(email, password);
+
+        MemberDTO.MemberDeleteRequestDto deleteRequestDto = MemberDTO.MemberDeleteRequestDto.builder()
+                .email(email)
+                .password(password)
+                .build();
+        memberService.deleteMember(deleteRequestDto);
 
         //then
         assertThat(memberRepository.findByEmail(email)).isEqualTo(Optional.empty());
@@ -545,7 +557,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원 삭제 실패 - 유저가 존재하지 않는 경우")
-    public void fail_DeleteMember_NotFountMember() throws Exception{
+    public void fail_DeleteMember_NotFountMember() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         memberService.saveMember(memberSaveRequestDto);
@@ -553,16 +565,19 @@ class MemberServiceTest {
         //when
         String email = "EMAIL";
         String password = PASSWORD;
-
+        MemberDTO.MemberDeleteRequestDto deleteRequestDto = MemberDTO.MemberDeleteRequestDto.builder()
+                .email(email)
+                .password(password)
+                .build();
 
         //then
-        assertThrows(MemberNotFoundException.class,() -> memberService.deleteMember(email, password));
+        assertThrows(MemberNotFoundException.class, () -> memberService.deleteMember(deleteRequestDto));
 
     }
 
     @Test
     @DisplayName("회원 삭제 실패 - 비밀번호가 잘못된 경우")
-    public void fail_DeleteMember_IncorrectPassword() throws Exception{
+    public void fail_DeleteMember_IncorrectPassword() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         memberService.saveMember(memberSaveRequestDto);
@@ -571,7 +586,25 @@ class MemberServiceTest {
         String email = EMAIL;
         String password = "PASSWORD";
 
+        MemberDTO.MemberDeleteRequestDto deleteRequestDto = MemberDTO.MemberDeleteRequestDto.builder()
+                .email(email)
+                .password(password)
+                .build();
         //then
-        assertThrows(IncorrectPasswordException.class,() -> memberService.deleteMember(email, password));
+        assertThrows(IncorrectPasswordException.class, () -> memberService.deleteMember(deleteRequestDto));
     }
+
+    @Test
+    @DisplayName("회원 가입 성공")
+    public void success_saveMember() throws Exception {
+        //given
+        MemberDTO.MemberSaveRequestDto saveRequestDto = createMemberDto();
+
+        //when
+        Long memberId = memberService.saveMember(saveRequestDto);
+
+        //then
+        assertThat(memberId).isEqualTo(memberRepository.findById(memberId));
+    }
+
 }
