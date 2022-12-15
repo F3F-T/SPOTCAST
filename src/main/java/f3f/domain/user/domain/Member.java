@@ -4,6 +4,7 @@ import f3f.domain.board.domain.Board;
 import f3f.domain.bookmark.domain.Bookmark;
 import f3f.domain.comment.domain.Comment;
 import f3f.domain.likes.domain.Likes;
+import f3f.domain.message.domain.Message;
 import f3f.domain.model.LoginType;
 import f3f.domain.model.LoginMemberType;
 import f3f.domain.model.MemberBase;
@@ -51,6 +52,11 @@ public class Member extends MemberBase {
     @JoinColumn(name = "portfolio_id" )
     private Portfolio portfolio;
 
+    @OneToMany(mappedBy = "sender")
+    private List<Message> sendMessageList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "recipient")
+    private List<Message> receptionMessageList = new ArrayList<>();
 
 
     @Builder
