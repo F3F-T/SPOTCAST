@@ -174,10 +174,10 @@ public class MemberService {
     /**
      * 로그아웃
      */
-    @Transactional(readOnly = true)
-    public void logout(){
-        session.removeAttribute(REFRESH_TOKEN);
-    }
+//    @Transactional(readOnly = true)
+//    public void logout(){
+//        session.removeAttribute(REFRESH_TOKEN);
+//    }
 
     /**
      * 회원 정보 조회
