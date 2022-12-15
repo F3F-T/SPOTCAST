@@ -20,21 +20,21 @@ public class BoardController {
         return "OK";
     }
 
-    @PutMapping(value = "/board/{boardId]/{userId}")
-    public BoardDTO.BoardInfoDTO updateBoard(@PathVariable long boardId, @PathVariable long userId, @RequestBody BoardDTO.SaveRequest request){
-        Board board = boardService.updateBoard(boardId, userId,request);
+    @PutMapping(value = "/board/{boardId]/{memberId}")
+    public BoardDTO.BoardInfoDTO updateBoard(@PathVariable long boardId, @PathVariable long memberId, @RequestBody BoardDTO.SaveRequest request){
+        Board board = boardService.updateBoard(boardId, memberId,request);
         return board.toBoardInfoDTO();
     }
 
-    @DeleteMapping(value = "/board/{boardId}/{userId}")
-    public long deleteBoard(@PathVariable long boardId, @PathVariable long userId){
-        Board board = boardService.deleteBoard(boardId,userId);
+    @DeleteMapping(value = "/board/{boardId}/{memberId}")
+    public long deleteBoard(@PathVariable long boardId, @PathVariable long memberId){
+        Board board = boardService.deleteBoard(boardId,memberId);
 
         return board.getId();
     }
 
-    @GetMapping(value = "/board/{boardId}/{userId}")
-    public BoardDTO.BoardInfoDTO getBoardInfo(@PathVariable long boardId, @PathVariable long userId){
-        return boardService.getBoardInfo(boardId,userId);
+    @GetMapping(value = "/board/{boardId}/{memberId}")
+    public BoardDTO.BoardInfoDTO getBoardInfo(@PathVariable long boardId, @PathVariable long memberId){
+        return boardService.getBoardInfo(boardId,memberId);
     }
 }

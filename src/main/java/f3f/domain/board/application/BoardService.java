@@ -11,8 +11,8 @@ import f3f.domain.board.exception.NotFoundBoardUserException;
 import f3f.domain.category.dao.CategoryRepository;
 import f3f.domain.category.domain.Category;
 import f3f.domain.category.exception.NotFoundCategoryException;
-import f3f.domain.user.dao.UserRepository;
-import f3f.domain.user.domain.User;
+import f3f.domain.user.dao.MemberRepository;
+import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final CategoryRepository categoryRepository;
-    private final UserRepository  userRepository;
+    private final MemberRepository memberRepository;
     @Transactional
     public void saveBoard(BoardDTO.SaveRequest request) {
 
@@ -46,7 +46,7 @@ public class BoardService {
             throw new NotFoundBoardCategoryException("게시글에 카테고리 정보가 존재하지 않습니다.");
         }
 
-        if (request.getUser() == null){
+        if (request.getMember() == null){
             throw new NotFoundBoardUserException("게시글에 유저 정보가 존재하지 않습니다.");
         }
 
@@ -55,13 +55,13 @@ public class BoardService {
 
     @Transactional
     public Board updateBoard(long boardId, long userId, BoardDTO.SaveRequest request) {
-        User user = userRepository.findById(userId)
+        Member member = memberRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new NotFoundBoardException("존재하지 않는 게시글입니다."));
 
-        if (user.getId() != board.getUser().getId()){
+        if (member.getId() != board.getMember().getId()){
             throw new BoardMissMatchUserException();
         }
 
@@ -72,13 +72,13 @@ public class BoardService {
 
     @Transactional
     public Board deleteBoard(long boardId, long userId) {
-        User user = userRepository.findById(userId)
+        Member member = memberRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new NotFoundBoardException("존재하지 않는 게시글입니다."));
 
-        if (user.getId() != board.getUser().getId()){
+        if (member.getId() != board.getMember().getId()){
             throw new BoardMissMatchUserException();
         }
         boardRepository.deleteById(board.getId());
@@ -88,13 +88,13 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public BoardInfoDTO getBoardInfo(long boardId , long userId) {
-        User user = userRepository.findById(userId)
+        Member member = memberRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(NotFoundBoardException::new);
 
-        if (user.getId() != board.getUser().getId()){
+        if (member.getId() != board.getMember().getId()){
             throw new BoardMissMatchUserException();
         }
         return board.toBoardInfoDTO();
