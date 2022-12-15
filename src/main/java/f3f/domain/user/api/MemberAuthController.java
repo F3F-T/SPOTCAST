@@ -5,10 +5,11 @@ import f3f.domain.user.dto.MemberDTO;
 import f3f.domain.user.dto.TokenDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+
+import static f3f.global.constants.MemberConstants.REFRESH_TOKEN;
 
 @RestController
 @RequestMapping("/auth")
@@ -23,12 +24,12 @@ public class MemberAuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDTO.TokenResponseDTO> login(@RequestBody MemberDTO.MemberLoginRequestDto loginRequestDto) {
-        return ResponseEntity.ok(memberService.login(loginRequestDto));
+    public ResponseEntity<TokenDTO.TokenResponseDTO> login(@RequestBody MemberDTO.MemberLoginRequestDto loginRequestDto, HttpServletResponse response) {
+        return ResponseEntity.ok(memberService.login(loginRequestDto, response));
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<TokenDTO.TokenResponseDTO> reissue(@RequestBody TokenDTO.TokenRequestDTO tokenRequestDto) {
-        return ResponseEntity.ok(memberService.reissue(tokenRequestDto));
+    public ResponseEntity<TokenDTO.TokenResponseDTO> reissue(@RequestBody TokenDTO.TokenRequestDTO tokenRequestDto,HttpServletResponse response, @CookieValue(name = REFRESH_TOKEN) String refreshToken) {
+        return ResponseEntity.ok(memberService.reissue(tokenRequestDto,response, refreshToken));
     }
 }
