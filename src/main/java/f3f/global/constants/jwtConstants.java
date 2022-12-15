@@ -1,4 +1,4 @@
-package f3f.global.util;
+package f3f.global.constants;
 
 public class jwtConstants {
     public static final String AUTHORITIES_KEY = "auth";

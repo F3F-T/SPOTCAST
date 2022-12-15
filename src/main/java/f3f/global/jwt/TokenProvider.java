@@ -1,6 +1,5 @@
 package f3f.global.jwt;
 
-import f3f.domain.user.dto.TokenDTO;
 import f3f.domain.user.dto.TokenDTO.TokenResponseDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -21,7 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import static f3f.global.util.jwtConstants.*;
+import static f3f.global.constants.jwtConstants.*;
 
 @Component
 @Slf4j
@@ -90,15 +89,16 @@ public class TokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            throw e;
+            log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
-            throw e;
+            log.info("만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException e) {
-            throw e;
+            log.info("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
-            throw e;
+            log.info("JWT 토큰이 잘못되었습니다.");
         }
 
+        return false;
     }
 
     private Claims parseClaims(String accessToken) {

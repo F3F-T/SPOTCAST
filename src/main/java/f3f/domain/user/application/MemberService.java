@@ -4,7 +4,6 @@ import f3f.domain.model.LoginType;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO.MemberSaveRequestDto;
-import f3f.domain.user.dto.TokenDTO;
 import f3f.domain.user.dto.TokenDTO.TokenRequestDTO;
 import f3f.domain.user.dto.TokenDTO.TokenResponseDTO;
 import f3f.domain.user.exception.*;
@@ -21,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpSession;
 
 import static f3f.domain.user.dto.MemberDTO.*;
-import static f3f.global.util.MemberConstants.EMAIL;
-import static f3f.global.util.MemberConstants.LOGIN_STATUS;
+import static f3f.global.constants.MemberConstants.EMAIL;
+import static f3f.global.constants.MemberConstants.LOGIN_STATUS;
 
 @Service
 @RequiredArgsConstructor
