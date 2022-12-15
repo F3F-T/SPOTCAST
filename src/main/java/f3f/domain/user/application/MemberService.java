@@ -14,14 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpSession;
 
 import static f3f.domain.user.dto.MemberDTO.*;
-import static f3f.global.util.UserConstants.EMAIL;
-import static f3f.global.util.UserConstants.LOGIN_STATUS;
+import static f3f.global.util.MemberConstants.EMAIL;
+import static f3f.global.util.MemberConstants.LOGIN_STATUS;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class UserService {
+public class MemberService {
 
     //전화번호 인증 추가
 
@@ -37,7 +37,7 @@ public class UserService {
      * @param saveRequest
      * @return
      */
-    public Long saveUser(SaveRequest saveRequest){
+    public Long saveMember(SaveRequest saveRequest){
         if(emailDuplicateCheck(saveRequest.getEmail())){
             throw new DuplicateEmailException();
         }
@@ -53,9 +53,9 @@ public class UserService {
         return member.getId();
     }
 
-    public void deleteUser(String email, String password){
+    public void deleteMember(String email, String password){
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
         if(!memberRepository.existsByEmailAndPassword(email, encryptionService.encrypt(password))){
             throw new IncorrectPasswordException("비밀번호가 일치하지 않습니다.");
@@ -71,7 +71,7 @@ public class UserService {
     public void login(LoginRequest loginRequest){
         existsByEmailAndPassword(loginRequest);
         String email = loginRequest.getEmail();
-        setLoginUserType(email);
+        setLoginMemberType(email);
         session.setAttribute(EMAIL,email);
     }
 
@@ -91,7 +91,7 @@ public class UserService {
      */
     public MemberInfoDTO findMyPageInfo(String email){
         return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다.")).toFindUserDto();
+                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다.")).toFindMemberDto();
     }
 
     /**
@@ -105,14 +105,14 @@ public class UserService {
 
 
         Member member = memberRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
         if(!member.getLoginType().equals(LoginType.GENERAL_LOGIN)){
             throw new NotGeneralLoginType("비밀번호 변경이 불가능합니다.");
         }
 
         if(!memberRepository.existsByEmailAndPassword(request.getEmail(),beforePassword)){
-            throw new UnauthenticatedUserException("잘못된 정보입니다.");
+            throw new UnauthenticatedMemberException("잘못된 정보입니다.");
         }
 
         member.updatePassword(afterPassword);
@@ -128,7 +128,7 @@ public class UserService {
         String afterPassword = request.getAfterPassword();
 
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
         if(!member.getLoginType().equals(LoginType.GENERAL_LOGIN)){
             throw new NotGeneralLoginType(member.getLoginType().name()+" 로그인으로 회원가입 되어있습니다.");
@@ -150,7 +150,7 @@ public class UserService {
 
 
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
         if(nicknameDuplicateCheck(saveRequest.getNickname())){
             throw new DuplicateNicknameException("중복된 닉네임은 사용할 수 없습니다.");
@@ -170,7 +170,7 @@ public class UserService {
 
 
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(() -> new MemberNotFoundException());
 
 
         member.updateInformation(information);
@@ -178,10 +178,10 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    public void setLoginUserType(String email) {
+    public void setLoginMemberType(String email) {
 
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
         session.setAttribute(LOGIN_STATUS, member.getLoginMemberType());
     }
 
@@ -189,7 +189,7 @@ public class UserService {
     public void existsByEmailAndPassword(LoginRequest loginRequest) {
         loginRequest.passwordEncryption(encryptionService);
         if(!memberRepository.existsByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword())){
-            throw new UserNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
+            throw new MemberNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
     }
 

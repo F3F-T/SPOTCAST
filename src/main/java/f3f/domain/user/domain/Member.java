@@ -66,9 +66,9 @@ public class Member extends MemberBase {
                 .email(this.getEmail())
                 .name(this.getName())
                 .nickname(this.getNickname())
-                .loginUserType(this.getLoginMemberType())
+                .loginMemberType(this.getLoginMemberType())
                 .loginType(this.getLoginType())
-                .userType(this.getMemberType())
+                .memberType(this.getMemberType())
                 .information(this.getInformation())
                 .phone(this.getPhone())
                 .build();
