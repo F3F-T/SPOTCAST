@@ -26,6 +26,8 @@ import static f3f.global.util.UserConstants.LOGIN_STATUS;
 @Transactional
 public class UserService {
 
+    //전화번호 인증 추가
+
 
 
     private final UserRepository userRepository;
