@@ -127,6 +127,7 @@ public class MemberDTO {
     }
 
     @Getter
+    @NoArgsConstructor
     public static class MemberLoginRequestDto {
 
         private String email;

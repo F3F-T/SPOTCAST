@@ -604,7 +604,7 @@ class MemberServiceTest {
         Long memberId = memberService.saveMember(saveRequestDto);
 
         //then
-        assertThat(memberId).isEqualTo(memberRepository.findById(memberId));
+        assertThat(memberId).isEqualTo(memberRepository.findById(memberId).get().getId());
     }
 
 }
