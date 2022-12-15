@@ -14,7 +14,7 @@ import javax.persistence.*;
 public class MemberBase extends BaseTimeEntity {
 
     @Id@GeneratedValue
-    @Column(name = "user_id")
+    @Column(name = "member_id")
     private Long id;
 
     private String email;
