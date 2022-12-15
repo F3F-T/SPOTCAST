@@ -36,31 +36,31 @@ public class MemberService {
 
     /**
      * 회원가입
-     * @param memberSaveRequestDto
+     * @param saveRequest
      * @return
      */
-    public Long saveMember(MemberSaveRequestDto memberSaveRequestDto){
-        if(emailDuplicateCheck(memberSaveRequestDto.getEmail())){
+    public Long saveMember(MemberSaveRequestDto saveRequest){
+        if(emailDuplicateCheck(saveRequest.getEmail())){
             throw new DuplicateEmailException("이미 가입되어 있는 이메일입니다.");
         }
 
-        if(nicknameDuplicateCheck(memberSaveRequestDto.getNickname())){
+        if(nicknameDuplicateCheck(saveRequest.getNickname())){
             throw new DuplicateNicknameException("이미 가입되어 있는 닉네임입니다.");
         }
 
-        memberSaveRequestDto.passwordEncryption(passwordEncoder);
-        Member member = memberSaveRequestDto.toEntity();
+        saveRequest.passwordEncryption(passwordEncoder);
+        Member member = saveRequest.toEntity();
         memberRepository.save(member);
 
         return member.getId();
     }
 
-    public void deleteMember(MemberDeleteRequestDto memberDeleteRequestDto){
-        Member member = memberRepository.findByEmail(memberDeleteRequestDto.getEmail())
+    public void deleteMember(MemberDeleteRequestDto deleteRequest){
+        Member member = memberRepository.findByEmail(deleteRequest.getEmail())
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
-        String email = memberDeleteRequestDto.getEmail();
-        if(!memberRepository.existsByEmailAndPassword(email, memberDeleteRequestDto.passwordEncryption(passwordEncoder))){
+        String email = deleteRequest.getEmail();
+        if(!memberRepository.existsByEmailAndPassword(email, deleteRequest.passwordEncryption(passwordEncoder))){
             throw new IncorrectPasswordException("비밀번호가 일치하지 않습니다.");
         }
 
@@ -68,12 +68,12 @@ public class MemberService {
     }
     /**
      * 로그인
-     * @param memberLoginRequestDto
+     * @param loginRequest
      */
     @Transactional(readOnly = true)
-    public void login(MemberLoginRequestDto memberLoginRequestDto){
-        existsByEmailAndPassword(memberLoginRequestDto);
-        String email = memberLoginRequestDto.getEmail();
+    public void login(MemberLoginRequestDto loginRequest){
+        existsByEmailAndPassword(loginRequest);
+        String email = loginRequest.getEmail();
         setLoginMemberType(email);
         session.setAttribute(EMAIL,email);
     }
@@ -99,38 +99,40 @@ public class MemberService {
 
     /**
      * 비밀번호 수정 - 로그인된 상태인 경우
-     * @param request
+     * @param updatePasswordRequest
      */
-    public void updatePassword(MemberUpdatePasswordRequestDto request){
-        request.passwordEncryption(passwordEncoder);
+    public void updatePassword(MemberUpdatePasswordRequestDto updatePasswordRequest){
+        updatePasswordRequest.passwordEncryption(passwordEncoder);
 
-        String beforePassword = request.getBeforePassword();
-        String afterPassword = request.getAfterPassword();
+        String beforePassword = updatePasswordRequest.getBeforePassword();
+        String afterPassword = updatePasswordRequest.getAfterPassword();
 
 
-        Member member = memberRepository.findByEmail(request.getEmail())
+        Member member = memberRepository.findByEmail(updatePasswordRequest.getEmail())
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
+
+        if(!memberRepository.existsByEmailAndPassword(updatePasswordRequest.getEmail(),beforePassword)){
+            throw new UnauthenticatedMemberException("잘못된 정보입니다.");
+        }
 
         if(!member.getLoginType().equals(LoginType.GENERAL_LOGIN)){
             throw new NotGeneralLoginType("비밀번호 변경이 불가능합니다.");
         }
 
-        if(!memberRepository.existsByEmailAndPassword(request.getEmail(),beforePassword)){
-            throw new UnauthenticatedMemberException("잘못된 정보입니다.");
-        }
+
 
         member.updatePassword(afterPassword);
     }
 
     /**
      * 비밀번호 수정 - 로그인되지 않은 경우(본인 인증 이후)
-     * @param request
+     * @param updatePasswordRequest
      */
-    public void updatePasswordByForgot(MemberUpdatePasswordRequestDto request){
-        request.passwordEncryption(passwordEncoder);
+    public void updatePasswordByForgot(MemberUpdatePasswordRequestDto updatePasswordRequest){
+        updatePasswordRequest.passwordEncryption(passwordEncoder);
 
-        String email = request.getEmail();
-        String afterPassword = request.getAfterPassword();
+        String email = updatePasswordRequest.getEmail();
+        String afterPassword = updatePasswordRequest.getAfterPassword();
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
@@ -146,18 +148,18 @@ public class MemberService {
 
     /**
      * 닉네임 수정
-     * @param saveRequest
+     * @param updateNicknameRequest
      */
-    public void updateNickname(MemberUpdateNicknameRequestDto saveRequest){
+    public void updateNickname(MemberUpdateNicknameRequestDto updateNicknameRequest){
 
-        String email = saveRequest.getEmail();
-        String nickname = saveRequest.getNickname();
+        String email = updateNicknameRequest.getEmail();
+        String nickname = updateNicknameRequest.getNickname();
 
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
-        if(nicknameDuplicateCheck(saveRequest.getNickname())){
+        if(nicknameDuplicateCheck(updateNicknameRequest.getNickname())){
             throw new DuplicateNicknameException("중복된 닉네임은 사용할 수 없습니다.");
         }
 
@@ -166,19 +168,36 @@ public class MemberService {
 
     /**
      * information 변경
-     * @param saveRequest
+     * @param updateInformationRequest
      */
-    public void updateInformation(MemberUpdateInformationRequestDto saveRequest){
+    public void updateInformation(MemberUpdateInformationRequestDto updateInformationRequest){
 
-        Long memberId = saveRequest.getMemberId();
-        String information = saveRequest.getInformation();
+        String email = updateInformationRequest.getEmail();
+        String information = updateInformationRequest.getInformation();
 
 
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException());
 
 
         member.updateInformation(information);
+    }
+
+    /**
+     * nickname 변경
+     * @param updateNicknameRequest
+     */
+    public void updatePhone(MemberUpdateNicknameRequestDto updateNicknameRequest){
+
+        String email = updateNicknameRequest.getEmail();
+        String nickname = updateNicknameRequest.getNickname();
+
+
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotFoundException());
+
+
+        member.updateNickname(nickname);
     }
 
 
@@ -206,5 +225,10 @@ public class MemberService {
     @Transactional(readOnly = true)
     public boolean nicknameDuplicateCheck(String nickname) {
         return memberRepository.existsByNickname(nickname);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean phoneDuplicateCheck(String phone) {
+        return memberRepository.existsByPhone(phone);
     }
 }

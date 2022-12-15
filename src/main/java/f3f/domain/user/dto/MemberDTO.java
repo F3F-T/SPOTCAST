@@ -219,5 +219,21 @@ public class MemberDTO {
         }
     }
 
+    @Getter
+    public static class MemberUpdatePhoneRequestDto {
+
+        private String email;
+
+        @NotBlank
+        @Length(min = 10, max = 11)
+        private String phone;
+        @Builder
+
+        public MemberUpdatePhoneRequestDto(String email, String phone) {
+            this.email = email;
+            this.phone = phone;
+        }
+    }
+
 
 }
