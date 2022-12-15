@@ -3,7 +3,7 @@ package f3f.domain.comment.domain;
 
 import f3f.domain.board.domain.Board;
 import f3f.domain.model.BaseTimeEntity;
-import f3f.domain.user.domain.User;
+import f3f.domain.user.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -22,8 +22,8 @@ public class Comment extends BaseTimeEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User author;
+    @JoinColumn(name = "member_id")
+    private Member author;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")

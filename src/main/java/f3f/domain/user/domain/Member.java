@@ -61,7 +61,7 @@ public class Member extends MemberBase {
 
     }
 
-    public MemberInfoDTO toFindUserDto(){
+    public MemberInfoDTO toFindMemberDto(){
         return MemberInfoDTO.builder()
                 .email(this.getEmail())
                 .name(this.getName())
