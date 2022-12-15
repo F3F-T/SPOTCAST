@@ -50,7 +50,7 @@ public class BoardDTO {
     }
 
     @Getter
-    public class BoardInfoDTO {
+    public static class BoardInfoDTO {
 
         private String title;
 

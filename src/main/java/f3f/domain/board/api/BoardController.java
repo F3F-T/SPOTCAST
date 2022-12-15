@@ -20,7 +20,7 @@ public class BoardController {
         return "OK";
     }
 
-    @PutMapping(value = "/board/{boardId]/{memberId}")
+    @PutMapping(value = "/board/{boardId}/{memberId}")
     public BoardDTO.BoardInfoDTO updateBoard(@PathVariable long boardId, @PathVariable long memberId, @RequestBody BoardDTO.SaveRequest request){
         Board board = boardService.updateBoard(boardId, memberId,request);
         return board.toBoardInfoDTO();

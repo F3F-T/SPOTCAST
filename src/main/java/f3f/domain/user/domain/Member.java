@@ -30,7 +30,7 @@ public class Member extends MemberBase {
     @OneToMany(mappedBy = "member")
     private List<Board> boardList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "member")
     private List<Likes> likesList = new ArrayList<>();
 
     @OneToMany(mappedBy = "author")
@@ -44,10 +44,10 @@ public class Member extends MemberBase {
     @OneToMany(mappedBy = "recruiter")
     private List<Apply> recruiterList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "member")
     private List<Bookmark> bookmarkList = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY , mappedBy = "user")
+    @OneToOne(fetch = FetchType.LAZY , mappedBy = "member")
     @JoinColumn(name = "portfolio_id" )
     private Portfolio portfolio;
 

@@ -22,7 +22,7 @@ public class Scrap {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member user;
+    private Member member;
 
     @OneToMany(mappedBy = "scrap", fetch = FetchType.LAZY)
     private List<ScrapBoard> scrapBoardList = new ArrayList<>();

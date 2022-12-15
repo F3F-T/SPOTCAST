@@ -13,7 +13,7 @@ import f3f.domain.category.domain.Category;
 import f3f.domain.category.exception.NotFoundCategoryException;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
-import f3f.domain.user.exception.UserNotFoundException;
+import f3f.domain.user.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +56,7 @@ public class BoardService {
     @Transactional
     public Board updateBoard(long boardId, long userId, BoardDTO.SaveRequest request) {
         Member member = memberRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(MemberNotFoundException::new);
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new NotFoundBoardException("존재하지 않는 게시글입니다."));
@@ -73,7 +73,7 @@ public class BoardService {
     @Transactional
     public Board deleteBoard(long boardId, long userId) {
         Member member = memberRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(MemberNotFoundException::new);
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new NotFoundBoardException("존재하지 않는 게시글입니다."));
@@ -89,7 +89,7 @@ public class BoardService {
     @Transactional(readOnly = true)
     public BoardInfoDTO getBoardInfo(long boardId , long userId) {
         Member member = memberRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(MemberNotFoundException::new);
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(NotFoundBoardException::new);
@@ -116,7 +116,7 @@ public class BoardService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(NotFoundCategoryException::new);
 
-        List<BoardInfoDTO> boardInfoList = boardRepository.findByCatrgoryId(category.getId()).stream()
+        List<BoardInfoDTO> boardInfoList = category.getBoardList().stream()
                 .map(Board::toBoardInfoDTO).collect(Collectors.toList());
 
         return boardInfoList;

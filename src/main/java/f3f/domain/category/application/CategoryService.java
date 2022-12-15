@@ -23,14 +23,14 @@ public class CategoryService {
         Category requestCategory = null;
 
         if (category.getParentCategoryName() == null) {
-            if (categoryRepository.existsByCategoryName(category.getName())) {
+            if (categoryRepository.existsByName(category.getName())) {
                 throw new DuplicateCategoryNameException("카테고리 이름은 같을수 없다 이놈아.");
             }
             if (categoryRepository.existsByName(category.getName())) {
                 throw new ExistCategoryByCoreBranchAndName("categoryName 중복이다 이놈아");
             }
 
-            Category parentCategory = categoryRepository.findByCategoryName("ROOT")
+            Category parentCategory = categoryRepository.findByName("ROOT")
                     .orElseGet(() -> Category.builder()
                             .name("ROOT")
                             .depth(0)
@@ -49,7 +49,7 @@ public class CategoryService {
 
             String parentCategoryName = category.getParentCategoryName();
             //부모카테고리 찾기
-            Category parentCategory = categoryRepository.findByCategoryName(parentCategoryName)
+            Category parentCategory = categoryRepository.findByName(parentCategoryName)
                     .orElseThrow(() -> new IllegalArgumentException("부모 카테고리 없음 예외"));
 
             requestCategory = Category.builder()
@@ -74,7 +74,7 @@ public class CategoryService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundCategoryException("존재하지 않는 카테고리 입니다."));
 
-        Category parentCategory = categoryRepository.findByCategoryName(requestCategory.getParentCategoryName())
+        Category parentCategory = categoryRepository.findByName(requestCategory.getParentCategoryName())
                 .orElseThrow(() -> new NotFoundCategoryException("존재하지 않는 부모 카테고리 입니다."));
 
         if( category.getDepth() !=  requestCategory.getDepth()){
