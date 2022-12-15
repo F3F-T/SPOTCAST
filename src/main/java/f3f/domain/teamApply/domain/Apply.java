@@ -5,10 +5,12 @@ import f3f.domain.board.domain.Board;
 import f3f.domain.model.BaseTimeEntity;
 import f3f.domain.user.domain.Member;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Getter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
