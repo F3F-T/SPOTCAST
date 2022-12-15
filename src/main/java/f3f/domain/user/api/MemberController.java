@@ -1,14 +1,11 @@
 package f3f.domain.user.api;
 
 import f3f.domain.user.application.MemberService;
-import f3f.domain.user.dto.MemberDTO;
-import f3f.domain.user.dto.TokenDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static f3f.domain.user.dto.MemberDTO.*;
-import static f3f.domain.user.dto.TokenDTO.*;
 
 @RestController
 @RequestMapping("/member")
@@ -19,7 +16,7 @@ public class MemberController {
 
     @GetMapping("/{memberId}")
     public ResponseEntity<MemberInfoResponseDto> findMemberInfoById(@PathVariable Long memberId) {
-        return ResponseEntity.ok(memberService.findMyPageInfo(memberId));
+        return ResponseEntity.ok(memberService.findMemberInfoByMemberId(memberId));
     }
 
 }

@@ -295,7 +295,7 @@ class MemberServiceTest {
         Long memberId = byId.get().getId();
 
         //when
-        String findEmail = memberService.findMyPageInfo(memberId).getEmail();
+        String findEmail = memberService.findMemberInfoByMemberId(memberId).getEmail();
 
         //then
         Assertions.assertThat(memberId).isEqualTo(findEmail);
@@ -311,7 +311,7 @@ class MemberServiceTest {
 
         //then
         assertThrows(MemberNotFoundException.class, () ->
-                memberService.findMyPageInfo(memberId));
+                memberService.findMemberInfoByMemberId(memberId));
     }
 
     @Test
