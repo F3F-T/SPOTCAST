@@ -3,8 +3,6 @@ package f3f.domain.user.application;
 import f3f.domain.model.LoginType;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
-import f3f.domain.user.dto.MemberDTO.MemberSaveRequestDto;
-import f3f.domain.user.dto.TokenDTO;
 import f3f.domain.user.dto.TokenDTO.TokenRequestDTO;
 import f3f.domain.user.dto.TokenDTO.TokenResponseDTO;
 import f3f.domain.user.exception.*;
