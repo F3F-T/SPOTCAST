@@ -1,12 +1,12 @@
 package f3f.domain.admin.domain;
 
-import f3f.domain.model.UserBase;
+import f3f.domain.model.MemberBase;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 
 @Entity
 @NoArgsConstructor
-public class Admin  extends UserBase {
+public class Admin  extends MemberBase {
 
 }

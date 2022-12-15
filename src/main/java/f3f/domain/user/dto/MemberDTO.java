@@ -1,9 +1,9 @@
 package f3f.domain.user.dto;
 
 import f3f.domain.model.LoginType;
-import f3f.domain.model.LoginUserType;
-import f3f.domain.model.UserType;
-import f3f.domain.user.domain.User;
+import f3f.domain.model.LoginMemberType;
+import f3f.domain.model.MemberType;
+import f3f.domain.user.domain.Member;
 import f3f.global.encrypt.EncryptionService;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +18,7 @@ import javax.validation.constraints.Pattern;
 
 @Getter
 @Builder
-public class UserDTO {
+public class MemberDTO {
 
     @Getter
     @NoArgsConstructor
@@ -43,13 +43,13 @@ public class UserDTO {
         private String nickname;
 
         @Enumerated(value = EnumType.STRING)
-        private LoginUserType loginUserType;
+        private LoginMemberType loginMemberType;
 
         @Enumerated(value = EnumType.STRING)
         private LoginType loginType;
 
         @Enumerated(value = EnumType.STRING)
-        private UserType userType;
+        private MemberType memberType;
 
         @NotBlank
         private String information;
@@ -65,27 +65,27 @@ public class UserDTO {
 
         @Builder
         public SaveRequest(String email, String password, String name, String nickname,
-                           LoginUserType loginUserType, LoginType loginType, UserType userType, String information, String phone) {
+                           LoginMemberType loginMemberType, LoginType loginType, MemberType memberType, String information, String phone) {
             this.email = email;
             this.password = password;
             this.name = name;
             this.nickname = nickname;
-            this.loginUserType = loginUserType;
+            this.loginMemberType = loginMemberType;
             this.loginType = loginType;
-            this.userType = userType;
+            this.memberType = memberType;
             this.information = information;
             this.phone = phone;
         }
 
-        public User toEntity(){
-                return User.builder()
+        public Member toEntity(){
+                return Member.builder()
                         .email(this.email)
                         .password(this.password)
                         .nickname(this.nickname)
                         .name(this.name)
-                        .loginUserType(this.loginUserType)
+                        .loginMemberType(this.loginMemberType)
                         .loginType(this.loginType)
-                        .userType(this.userType)
+                        .memberType(this.memberType)
                         .phone(this.phone)
                         .information(this.information)
                         .build();
@@ -93,7 +93,7 @@ public class UserDTO {
     }
 
     @Getter
-    public static class UserInfoDTO {
+    public static class MemberInfoDTO {
 
         private String email;
 
@@ -101,27 +101,27 @@ public class UserDTO {
 
         private String nickname;
         @Enumerated(value = EnumType.STRING)
-        private LoginUserType loginUserType;
+        private LoginMemberType loginMemberType;
 
         @Enumerated(value = EnumType.STRING)
         private LoginType loginType;
 
         @Enumerated(value = EnumType.STRING)
-        private UserType userType;
+        private MemberType memberType;
 
         private String information;
 
         private String phone;
 
         @Builder
-        public UserInfoDTO(String email, String name, String nickname, LoginUserType loginUserType,
-                           LoginType loginType, UserType userType, String information, String phone) {
+        public MemberInfoDTO(String email, String name, String nickname, LoginMemberType loginMemberType,
+                             LoginType loginType, MemberType memberType, String information, String phone) {
             this.email = email;
             this.name = name;
             this.nickname = nickname;
-            this.loginUserType = loginUserType;
+            this.loginMemberType = loginMemberType;
             this.loginType = loginType;
-            this.userType = userType;
+            this.memberType = memberType;
             this.information = information;
             this.phone = phone;
         }
@@ -132,13 +132,13 @@ public class UserDTO {
 
         private String email;
         private String password;
-        private LoginUserType loginUserType;
+        private LoginMemberType loginMemberType;
 
         @Builder
-        public LoginRequest(String email, String password, LoginUserType loginUserType) {
+        public LoginRequest(String email, String password, LoginMemberType loginMemberType) {
             this.email = email;
             this.password = password;
-            this.loginUserType = loginUserType;
+            this.loginMemberType = loginMemberType;
         }
 
         public void passwordEncryption(EncryptionService encryptionService) {

@@ -11,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-public class UserBase extends BaseTimeEntity {
+public class MemberBase extends BaseTimeEntity {
 
     @Id@GeneratedValue
     @Column(name = "user_id")
@@ -23,13 +23,13 @@ public class UserBase extends BaseTimeEntity {
     protected String password;
 
     @Enumerated(value = EnumType.STRING)
-    private LoginUserType loginUserType;
+    private LoginMemberType loginMemberType;
 
     @Enumerated(value = EnumType.STRING)
     private LoginType loginType;
 
     @Enumerated(value = EnumType.STRING)
-    private UserType userType;
+    private MemberType memberType;
 
 
     protected String information;

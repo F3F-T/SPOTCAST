@@ -1,18 +1,15 @@
 package f3f.domain.user.dao;
 
-import f3f.domain.user.domain.User;
-import f3f.domain.user.dto.UserDTO;
+import f3f.domain.user.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    Optional<User>findByEmail(String email);
+    Optional<Member>findByEmail(String email);
     boolean existsByEmail(String email);
     boolean existsByNickname(String nickname);
 

@@ -5,13 +5,12 @@ import f3f.domain.bookmark.domain.Bookmark;
 import f3f.domain.comment.domain.Comment;
 import f3f.domain.likes.domain.Likes;
 import f3f.domain.model.LoginType;
-import f3f.domain.model.LoginUserType;
-import f3f.domain.model.UserBase;
-import f3f.domain.model.UserType;
+import f3f.domain.model.LoginMemberType;
+import f3f.domain.model.MemberBase;
+import f3f.domain.model.MemberType;
 import f3f.domain.portfolio.domain.Portfolio;
 import f3f.domain.teamApply.domain.Apply;
-import f3f.domain.user.dto.UserDTO;
-import f3f.domain.user.dto.UserDTO.UserInfoDTO;
+import f3f.domain.user.dto.MemberDTO.MemberInfoDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,7 +21,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class User extends UserBase {
+public class Member extends MemberBase {
 
     private String phone;
 
@@ -55,21 +54,21 @@ public class User extends UserBase {
 
 
     @Builder
-    public User(Long id, String email, String name, String password, LoginUserType loginUserType, LoginType loginType, UserType userType, String information, String phone, String nickname, List<Board> boardList, List<Likes> likesList, List<Comment> commentList, List<Apply> volunteerList, List<Apply> recruiterList, List<Bookmark> bookmarkList, Portfolio portfolio) {
-        super(id, email, name, password, loginUserType, loginType, userType, information);
+    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, MemberType memberType, String information, String phone, String nickname, List<Board> boardList, List<Likes> likesList, List<Comment> commentList, List<Apply> volunteerList, List<Apply> recruiterList, List<Bookmark> bookmarkList, Portfolio portfolio) {
+        super(id, email, name, password, loginMemberType, loginType, memberType, information);
         this.phone = phone;
         this.nickname = nickname;
 
     }
 
-    public UserInfoDTO toFindUserDto(){
-        return UserInfoDTO.builder()
+    public MemberInfoDTO toFindUserDto(){
+        return MemberInfoDTO.builder()
                 .email(this.getEmail())
                 .name(this.getName())
                 .nickname(this.getNickname())
-                .loginUserType(this.getLoginUserType())
+                .loginUserType(this.getLoginMemberType())
                 .loginType(this.getLoginType())
-                .userType(this.getUserType())
+                .userType(this.getMemberType())
                 .information(this.getInformation())
                 .phone(this.getPhone())
                 .build();
