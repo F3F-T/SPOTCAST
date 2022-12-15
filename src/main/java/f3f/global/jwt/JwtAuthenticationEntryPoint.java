@@ -24,7 +24,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         // 유효한 자격증명을 제공하지 않고 접근하려 할때 401
-        // 즉 토큰이 없거나 유효하지 않은 경우
+        // 즉 토큰이 없거나 유효하지 않은 경우  or 로그인이 필요한 페이지에 접근하려고할 때
         sendResponse(response, authException);
 
     }

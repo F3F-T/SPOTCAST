@@ -29,7 +29,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
         // 필요한 권한이 없이 접근하려 할때 403
-        // ADMIN 페이지에 USER 가 접근하려고 할 때 or 로그인이 필요한 페이지에 접근하려고할 때
+        // 즉 ADMIN 페이지에 USER 가 접근하려고 할 때
         sendResponse(response, accessDeniedException);
 
     }
