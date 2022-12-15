@@ -1,7 +1,7 @@
 package f3f.global.configuration;
 
 import f3f.global.interceptor.JwtFilter;
-import f3f.global.provider.TokenProvider;
+import f3f.global.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

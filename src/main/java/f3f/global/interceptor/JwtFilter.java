@@ -1,6 +1,6 @@
 package f3f.global.interceptor;
 
-import f3f.global.provider.TokenProvider;
+import f3f.global.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,7 +38,6 @@ public class JwtFilter extends OncePerRequestFilter {
             Authentication authentication = tokenProvider.getAuthentication(jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
         filterChain.doFilter(request, response);
     }
 

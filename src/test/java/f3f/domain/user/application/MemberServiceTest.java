@@ -54,131 +54,131 @@ class MemberServiceTest {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
-    public Member createMember(MemberDTO.SaveRequest saveRequest){
-        return saveRequest.toEntity();
+    public Member createMember(MemberDTO.MemberSaveRequestDto memberSaveRequestDto){
+        return memberSaveRequestDto.toEntity();
     }
 
-    private MemberDTO.SaveRequest createMemberDto() {
-        MemberDTO.SaveRequest saveRequest = MemberDTO.SaveRequest.builder()
+    private MemberDTO.MemberSaveRequestDto createMemberDto() {
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email(EMAIL)
                 .password(PASSWORD)
                 .phone(PHONE)
-                .memberType(Authority.ROLE_USER)
+                .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information(INFORMATION)
                 .name(NAME)
                 .nickname(NICKNAME)
                 .build();
-        return saveRequest;
+        return memberSaveRequestDto;
     }
-    private MemberDTO.SaveRequest createGoogleMemberDto() {
-        MemberDTO.SaveRequest saveRequest = MemberDTO.SaveRequest.builder()
+    private MemberDTO.MemberSaveRequestDto createGoogleMemberDto() {
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123@test.com")
                 .password("test1234")
                 .phone("01011112222")
-                .memberType(Authority.ROLE_USER)
+                .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GOOGLE_LOGIN)
                 .information("test")
                 .name("lim")
                 .nickname("dong")
                 .build();
-        return saveRequest;
+        return memberSaveRequestDto;
     }
 
-    private MemberDTO.SaveRequest createFailByPasswordMemberDto() {
-        MemberDTO.SaveRequest saveRequest = MemberDTO.SaveRequest.builder()
+    private MemberDTO.MemberSaveRequestDto createFailByPasswordMemberDto() {
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123@test.com")
                 .password("te234")
                 .phone("01011112222")
-                .memberType(Authority.ROLE_USER)
+                .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("test")
                 .name("lim")
                 .nickname("dong")
                 .build();
-        return saveRequest;
+        return memberSaveRequestDto;
     }
 
-    private MemberDTO.SaveRequest createFailByPhoneMemberDto() {
-        MemberDTO.SaveRequest saveRequest = MemberDTO.SaveRequest.builder()
+    private MemberDTO.MemberSaveRequestDto createFailByPhoneMemberDto() {
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123@test.com")
                 .password("test1234")
                 .phone("01012222")
-                .memberType(Authority.ROLE_USER)
+                .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("test")
                 .name("lim")
                 .nickname("dong")
                 .build();
-        return saveRequest;
+        return memberSaveRequestDto;
     }
 
-    private MemberDTO.SaveRequest createFailByInformationMemberDto() {
-        MemberDTO.SaveRequest saveRequest = MemberDTO.SaveRequest.builder()
+    private MemberDTO.MemberSaveRequestDto createFailByInformationMemberDto() {
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123@test.com")
                 .password("test1234")
                 .phone("01011112222")
-                .memberType(Authority.ROLE_USER)
+                .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("")
                 .name("lim")
                 .nickname("dong")
                 .build();
-        return saveRequest;
+        return memberSaveRequestDto;
     }
-    private MemberDTO.SaveRequest createFailByNameMemberDto() {
-        MemberDTO.SaveRequest saveRequest = MemberDTO.SaveRequest.builder()
+    private MemberDTO.MemberSaveRequestDto createFailByNameMemberDto() {
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123@test.com")
                 .password("test1234")
                 .phone("01011112222")
-                .memberType(Authority.ROLE_USER)
+                .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("")
                 .nickname("dong")
                 .build();
-        return saveRequest;
+        return memberSaveRequestDto;
     }
-    private MemberDTO.SaveRequest createFailByNicknameMemberDto() {
-        MemberDTO.SaveRequest saveRequest = MemberDTO.SaveRequest.builder()
+    private MemberDTO.MemberSaveRequestDto createFailByNicknameMemberDto() {
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123@test.com")
                 .password("test1234")
                 .phone("01011112222")
-                .memberType(Authority.ROLE_USER)
+                .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("")
                 .name("lim")
                 .build();
-        return saveRequest;
+        return memberSaveRequestDto;
     }
-    private MemberDTO.SaveRequest createFailByEmailMemberDto() {
-        MemberDTO.SaveRequest saveRequest = MemberDTO.SaveRequest.builder()
+    private MemberDTO.MemberSaveRequestDto createFailByEmailMemberDto() {
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123")
                 .password("test1234")
                 .phone("01011112222")
-                .memberType(Authority.ROLE_USER)
+                .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information("test")
                 .name("lim")
                 .nickname("dong")
                 .build();
-        return saveRequest;
+        return memberSaveRequestDto;
     }
 
     @Test
     @DisplayName("회원가입 성공")
     void success_SaveMember()throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createMemberDto();
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         //when
-        Long userId = memberService.saveMember(saveRequest);
+        Long userId = memberService.saveMember(memberSaveRequestDto);
         //then
         Optional<Member> byId = memberRepository.findById(userId);
         assertThat(byId.get().getId()).isEqualTo(userId);
@@ -189,24 +189,24 @@ class MemberServiceTest {
     @DisplayName("이메일 중복으로 회원가입 실패")
     void fail_SaveMember()throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest1 = createMemberDto();
-        MemberDTO.SaveRequest saveRequest2 = createMemberDto();
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto1 = createMemberDto();
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto2 = createMemberDto();
         //when
-        memberService.saveMember(saveRequest1);
+        memberService.saveMember(memberSaveRequestDto1);
 
         //then
         assertThrows(DuplicateEmailException.class, ()->
-                memberService.saveMember(saveRequest2));
+                memberService.saveMember(memberSaveRequestDto2));
 
     }
     @Test
     @DisplayName("이메일 오류로 회원가입 실패")
     void fail_SaveMember_ByEmail()throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createFailByEmailMemberDto();
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByEmailMemberDto();
 
         //when
-        Set<ConstraintViolation<MemberDTO.SaveRequest>> violations = validator.validate(saveRequest);
+        Set<ConstraintViolation<MemberDTO.MemberSaveRequestDto>> violations = validator.validate(memberSaveRequestDto);
 
 
         //then
@@ -218,10 +218,10 @@ class MemberServiceTest {
     @DisplayName("비밀번호 오류로 회원가입 실패")
     void fail_SaveMember_ByPassword()throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createFailByPasswordMemberDto();
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByPasswordMemberDto();
 
         //when
-        Set<ConstraintViolation<MemberDTO.SaveRequest>> violations = validator.validate(saveRequest);
+        Set<ConstraintViolation<MemberDTO.MemberSaveRequestDto>> violations = validator.validate(memberSaveRequestDto);
 
         //then
         assertThat(violations.size()).isGreaterThan(0);
@@ -232,10 +232,10 @@ class MemberServiceTest {
     @DisplayName("전화번호 오류로 회원가입 실패")
     void fail_SaveMember_ByPhone()throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createFailByPhoneMemberDto();
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByPhoneMemberDto();
 
         //when
-        Set<ConstraintViolation<MemberDTO.SaveRequest>> violations = validator.validate(saveRequest);
+        Set<ConstraintViolation<MemberDTO.MemberSaveRequestDto>> violations = validator.validate(memberSaveRequestDto);
 
         //then
         assertThat(violations.size()).isGreaterThan(0);
@@ -246,10 +246,10 @@ class MemberServiceTest {
     @DisplayName("이름 오류로 회원가입 실패")
     void fail_SaveMember_ByName()throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createFailByNameMemberDto();
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByNameMemberDto();
 
         //when
-        Set<ConstraintViolation<MemberDTO.SaveRequest>> violations = validator.validate(saveRequest);
+        Set<ConstraintViolation<MemberDTO.MemberSaveRequestDto>> violations = validator.validate(memberSaveRequestDto);
 
         //then
         assertThat(violations.size()).isGreaterThan(0);
@@ -259,10 +259,10 @@ class MemberServiceTest {
     @DisplayName("정보 오류로 회원가입 실패")
     void fail_SaveMember_ByNickname()throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createFailByNicknameMemberDto();
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByNicknameMemberDto();
 
         //when
-        Set<ConstraintViolation<MemberDTO.SaveRequest>> violations = validator.validate(saveRequest);
+        Set<ConstraintViolation<MemberDTO.MemberSaveRequestDto>> violations = validator.validate(memberSaveRequestDto);
 
         //then
         assertThat(violations.size()).isGreaterThan(0);
@@ -272,10 +272,10 @@ class MemberServiceTest {
     @DisplayName("정보 오류로 회원가입 실패")
     void fail_SaveMember_ByInformation()throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createFailByInformationMemberDto();
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByInformationMemberDto();
 
         //when
-        Set<ConstraintViolation<MemberDTO.SaveRequest>> violations = validator.validate(saveRequest);
+        Set<ConstraintViolation<MemberDTO.MemberSaveRequestDto>> violations = validator.validate(memberSaveRequestDto);
 
         //then
         assertThat(violations.size()).isGreaterThan(0);
@@ -312,12 +312,12 @@ class MemberServiceTest {
     @DisplayName("비밀번호변경_성공 로그인 O - 이전 비밀번호가 같고 비밀번호 변경 후 유저의 비밀번호와 request 비밀번호가 같은 경우")
     void success_UpdatePassword()throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createMemberDto();
-        Long userId = memberService.saveMember(saveRequest);
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        Long userId = memberService.saveMember(memberSaveRequestDto);
         Member member = memberRepository.findById(userId).get();
 
         //when
-        MemberDTO.UpdatePasswordRequest passwordRequest = MemberDTO.UpdatePasswordRequest.builder()
+        MemberDTO.MemberUpdatePasswordRequestDto passwordRequest = MemberDTO.MemberUpdatePasswordRequestDto.builder()
                 .email(member.getEmail())
                 .beforePassword("test1234")
                 .afterPassword("asdfqwer")
@@ -335,12 +335,12 @@ class MemberServiceTest {
     @DisplayName("비밀번호변경_실패 로그인 O - 이전 비밀번호가 다른 경우 비밀번호 변경 실패")
     void fail_UpdatePassword()throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createMemberDto();
-        Long userId = memberService.saveMember(saveRequest);
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        Long userId = memberService.saveMember(memberSaveRequestDto);
         Member member = memberRepository.findById(userId).get();
 
         //when
-        MemberDTO.UpdatePasswordRequest passwordRequest = MemberDTO.UpdatePasswordRequest.builder()
+        MemberDTO.MemberUpdatePasswordRequestDto passwordRequest = MemberDTO.MemberUpdatePasswordRequestDto.builder()
                 .email(member.getEmail())
                 .beforePassword("qwer1234")
                 .afterPassword("asdfqwer")
@@ -354,12 +354,12 @@ class MemberServiceTest {
     @DisplayName("비밀번호변경_실패 로그인 O - 일반 회원가입 유저가 아닌 경우")
     void fail_UpdatePassword_NotGeneralType()throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createGoogleMemberDto();
-        Long userId = memberService.saveMember(saveRequest);
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createGoogleMemberDto();
+        Long userId = memberService.saveMember(memberSaveRequestDto);
         Member member = memberRepository.findById(userId).get();
 
         //when
-        MemberDTO.UpdatePasswordRequest passwordRequest = MemberDTO.UpdatePasswordRequest.builder()
+        MemberDTO.MemberUpdatePasswordRequestDto passwordRequest = MemberDTO.MemberUpdatePasswordRequestDto.builder()
                 .email(member.getEmail())
                 .beforePassword("qwer1234")
                 .afterPassword("asdfqwer")
@@ -373,12 +373,12 @@ class MemberServiceTest {
     @DisplayName("비밀번호변경_성공 로그인 X - 이메일이 존재하는 경우 성공")
     void success_UpdatePasswordByForgot()throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createMemberDto();
-        Long userId = memberService.saveMember(saveRequest);
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        Long userId = memberService.saveMember(memberSaveRequestDto);
         Member member = memberRepository.findById(userId).get();
 
         //when
-        MemberDTO.UpdatePasswordRequest passwordRequest = MemberDTO.UpdatePasswordRequest.builder()
+        MemberDTO.MemberUpdatePasswordRequestDto passwordRequest = MemberDTO.MemberUpdatePasswordRequestDto.builder()
                 .email(member.getEmail())
                 .afterPassword("asdfqwer")
                 .build();
@@ -397,7 +397,7 @@ class MemberServiceTest {
         //given
 
         //when
-        MemberDTO.UpdatePasswordRequest passwordRequest = MemberDTO.UpdatePasswordRequest.builder()
+        MemberDTO.MemberUpdatePasswordRequestDto passwordRequest = MemberDTO.MemberUpdatePasswordRequestDto.builder()
                 .email("test")
                 .afterPassword("asdfqwer")
                 .build();
@@ -409,12 +409,12 @@ class MemberServiceTest {
     @DisplayName("비밀번호변경_실패 로그인 X - 일반 회원가입 유저가 아닌 경우")
     void fail_UpdatePasswordByForgot_NotGeneralType()throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createGoogleMemberDto();
-        Long userId = memberService.saveMember(saveRequest);
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createGoogleMemberDto();
+        Long userId = memberService.saveMember(memberSaveRequestDto);
         Member member = memberRepository.findById(userId).get();
 
         //when
-        MemberDTO.UpdatePasswordRequest passwordRequest = MemberDTO.UpdatePasswordRequest.builder()
+        MemberDTO.MemberUpdatePasswordRequestDto passwordRequest = MemberDTO.MemberUpdatePasswordRequestDto.builder()
                 .email(member.getEmail())
                 .afterPassword("asdfqwer")
                 .build();
@@ -428,13 +428,13 @@ class MemberServiceTest {
     @DisplayName("닉네임 변경 성공")
     public void success_UpdateNickname() throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createMemberDto();
-        Long userId = memberService.saveMember(saveRequest);
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        Long userId = memberService.saveMember(memberSaveRequestDto);
         Member member = memberRepository.findById(userId).get();
 
         String changeNickname = "test";
 
-        MemberDTO.UpdateNicknameRequest nicknameRequest = MemberDTO.UpdateNicknameRequest.builder()
+        MemberDTO.MemberUpdateNicknameRequestDto nicknameRequest = MemberDTO.MemberUpdateNicknameRequestDto.builder()
                 .nickname(changeNickname)
                 .email(EMAIL)
                 .build();
@@ -450,13 +450,13 @@ class MemberServiceTest {
     @DisplayName("닉네임 변경 실패 - 유저 찾지 못한 경우")
     public void fail_UpdateNickname_NotFoundMember() throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createMemberDto();
-        memberService.saveMember(saveRequest);
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        memberService.saveMember(memberSaveRequestDto);
 
         //when
         String changeNickname = "test";
 
-        MemberDTO.UpdateNicknameRequest nicknameRequest = MemberDTO.UpdateNicknameRequest.builder()
+        MemberDTO.MemberUpdateNicknameRequestDto nicknameRequest = MemberDTO.MemberUpdateNicknameRequestDto.builder()
                 .nickname(changeNickname)
                 .email("EMAIL")
                 .build();
@@ -469,13 +469,13 @@ class MemberServiceTest {
     @DisplayName("닉네임 변경 실패 - 중복된 닉네임")
     public void fail_UpdateNickname_DuplicatedNickname() throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createMemberDto();
-        memberService.saveMember(saveRequest);
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        memberService.saveMember(memberSaveRequestDto);
 
         //when
         String changeNickname = NICKNAME;
 
-        MemberDTO.UpdateNicknameRequest nicknameRequest = MemberDTO.UpdateNicknameRequest.builder()
+        MemberDTO.MemberUpdateNicknameRequestDto nicknameRequest = MemberDTO.MemberUpdateNicknameRequestDto.builder()
                 .nickname(changeNickname)
                 .email(EMAIL)
                 .build();
@@ -489,13 +489,13 @@ class MemberServiceTest {
     @DisplayName("정보 변경 성공")
     public void success_UpdateInformation() throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createMemberDto();
-        Long userId = memberService.saveMember(saveRequest);
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        Long userId = memberService.saveMember(memberSaveRequestDto);
         Member member = memberRepository.findById(userId).get();
 
         String changeInformation = "test";
 
-        MemberDTO.UpdateInformationRequest informationRequest = MemberDTO.UpdateInformationRequest.builder()
+        MemberDTO.MemberUpdateInformationRequestDto informationRequest = MemberDTO.MemberUpdateInformationRequestDto.builder()
                 .information(changeInformation)
                 .email(EMAIL)
                 .build();
@@ -511,13 +511,13 @@ class MemberServiceTest {
     @DisplayName("정보 변경 실패 - 유저 찾지 못한 경우")
     public void fail_UpdateInformation_NotFoundMember() throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createMemberDto();
-        memberService.saveMember(saveRequest);
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        memberService.saveMember(memberSaveRequestDto);
 
         //when
         String changeInformation = "test";
 
-        MemberDTO.UpdateInformationRequest informationRequest = MemberDTO.UpdateInformationRequest.builder()
+        MemberDTO.MemberUpdateInformationRequestDto informationRequest = MemberDTO.MemberUpdateInformationRequestDto.builder()
                 .information(changeInformation)
                 .email("EMAIL")
                 .build();
@@ -531,8 +531,8 @@ class MemberServiceTest {
     @DisplayName("회원 삭제 성공")
     public void success_DeleteMember() throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createMemberDto();
-        memberService.saveMember(saveRequest);
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        memberService.saveMember(memberSaveRequestDto);
 
         //when
         String email = EMAIL;
@@ -547,8 +547,8 @@ class MemberServiceTest {
     @DisplayName("회원 삭제 실패 - 유저가 존재하지 않는 경우")
     public void fail_DeleteMember_NotFountMember() throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createMemberDto();
-        memberService.saveMember(saveRequest);
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        memberService.saveMember(memberSaveRequestDto);
 
         //when
         String email = "EMAIL";
@@ -564,8 +564,8 @@ class MemberServiceTest {
     @DisplayName("회원 삭제 실패 - 비밀번호가 잘못된 경우")
     public void fail_DeleteMember_IncorrectPassword() throws Exception{
         //given
-        MemberDTO.SaveRequest saveRequest = createMemberDto();
-        memberService.saveMember(saveRequest);
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        memberService.saveMember(memberSaveRequestDto);
 
         //when
         String email = EMAIL;

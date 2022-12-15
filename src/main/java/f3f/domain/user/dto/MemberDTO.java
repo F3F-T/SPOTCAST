@@ -4,11 +4,11 @@ import f3f.domain.model.LoginType;
 import f3f.domain.model.LoginMemberType;
 import f3f.domain.model.Authority;
 import f3f.domain.user.domain.Member;
-import f3f.global.encrypt.EncryptionService;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -22,9 +22,7 @@ public class MemberDTO {
 
     @Getter
     @NoArgsConstructor
-    public static class SaveRequest {
-
-
+    public static class MemberSaveRequestDto {
 
         @Email
         @NotBlank
@@ -59,13 +57,13 @@ public class MemberDTO {
         private String phone;
 
 
-        public void passwordEncryption(EncryptionService encryptionService) {
-            this.password = encryptionService.encrypt(password);
+        public void passwordEncryption(PasswordEncoder passwordEncoder) {
+            this.password = passwordEncoder.encode(password);
         }
 
         @Builder
-        public SaveRequest(String email, String password, String name, String nickname,
-                           LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information, String phone) {
+        public MemberSaveRequestDto(String email, String password, String name, String nickname,
+                                    LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information, String phone) {
             this.email = email;
             this.password = password;
             this.name = name;
@@ -93,7 +91,7 @@ public class MemberDTO {
     }
 
     @Getter
-    public static class MemberInfoDTO {
+    public static class MemberInfoResponseDto {
 
         private String email;
 
@@ -114,8 +112,8 @@ public class MemberDTO {
         private String phone;
 
         @Builder
-        public MemberInfoDTO(String email, String name, String nickname, LoginMemberType loginMemberType,
-                             LoginType loginType, Authority authority, String information, String phone) {
+        public MemberInfoResponseDto(String email, String name, String nickname, LoginMemberType loginMemberType,
+                                     LoginType loginType, Authority authority, String information, String phone) {
             this.email = email;
             this.name = name;
             this.nickname = nickname;
@@ -128,47 +126,66 @@ public class MemberDTO {
     }
 
     @Getter
-    public static class LoginRequest{
+    public static class MemberLoginRequestDto {
 
         private String email;
         private String password;
         private LoginMemberType loginMemberType;
 
         @Builder
-        public LoginRequest(String email, String password, LoginMemberType loginMemberType) {
+        public MemberLoginRequestDto(String email, String password, LoginMemberType loginMemberType) {
             this.email = email;
             this.password = password;
             this.loginMemberType = loginMemberType;
         }
 
-        public void passwordEncryption(EncryptionService encryptionService) {
-            this.password = encryptionService.encrypt(password);
+        public void passwordEncryption(PasswordEncoder passwordEncoder) {
+            this.password = passwordEncoder.encode(password);
         }
     }
 
+
     @Getter
-    public static class UpdatePasswordRequest{
+    public static class MemberDeleteRequestDto {
+
+        private String email;
+        private String password;
+
+        @Builder
+        public MemberDeleteRequestDto(String email, String password) {
+            this.email = email;
+            this.password = password;
+        }
+
+        public String passwordEncryption(PasswordEncoder passwordEncoder) {
+            return passwordEncoder.encode(password);
+        }
+    }
+
+
+    @Getter
+    public static class MemberUpdatePasswordRequestDto {
 
         private String email;
         private String beforePassword;
         private String afterPassword;
 
         @Builder
-        public UpdatePasswordRequest(String email, String beforePassword, String afterPassword) {
+        public MemberUpdatePasswordRequestDto(String email, String beforePassword, String afterPassword) {
             this.email = email;
             this.beforePassword = beforePassword;
             this.afterPassword = afterPassword;
         }
 
-        public void passwordEncryption(EncryptionService encryptionService) {
-            this.beforePassword = encryptionService.encrypt(beforePassword);
-            this.afterPassword = encryptionService.encrypt(afterPassword);
+        public void passwordEncryption(PasswordEncoder passwordEncoder) {
+            this.beforePassword = passwordEncoder.encode(beforePassword);
+            this.afterPassword = passwordEncoder.encode(afterPassword);
         }
     }
 
 
     @Getter
-    public static class UpdateNicknameRequest{
+    public static class MemberUpdateNicknameRequestDto {
 
         private String email;
 
@@ -179,7 +196,7 @@ public class MemberDTO {
 
         @Builder
 
-        public UpdateNicknameRequest(String email, String nickname) {
+        public MemberUpdateNicknameRequestDto(String email, String nickname) {
             this.email = email;
             this.nickname = nickname;
         }
@@ -187,7 +204,7 @@ public class MemberDTO {
 
 
     @Getter
-    public static class UpdateInformationRequest {
+    public static class MemberUpdateInformationRequestDto {
 
         private String email;
 
@@ -196,10 +213,11 @@ public class MemberDTO {
 
         @Builder
 
-        public UpdateInformationRequest(String email, String information) {
+        public MemberUpdateInformationRequestDto(String email, String information) {
             this.email = email;
             this.information = information;
         }
     }
+
 
 }

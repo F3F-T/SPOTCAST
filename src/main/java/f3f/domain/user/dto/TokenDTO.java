@@ -1,4 +1,4 @@
-package f3f.domain.jwt.dto;
+package f3f.domain.user.dto;
 
 import lombok.Builder;
 import lombok.Getter;

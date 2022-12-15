@@ -1,6 +1,6 @@
-package f3f.global.provider;
+package f3f.global.jwt;
 
-import f3f.domain.jwt.dto.TokenDTO;
+import f3f.domain.user.dto.TokenDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

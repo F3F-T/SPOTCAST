@@ -10,7 +10,7 @@ import f3f.domain.model.MemberBase;
 import f3f.domain.model.Authority;
 import f3f.domain.portfolio.domain.Portfolio;
 import f3f.domain.teamApply.domain.Apply;
-import f3f.domain.user.dto.MemberDTO.MemberInfoDTO;
+import f3f.domain.user.dto.MemberDTO.MemberInfoResponseDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -61,8 +61,8 @@ public class Member extends MemberBase {
 
     }
 
-    public MemberInfoDTO toFindMemberDto(){
-        return MemberInfoDTO.builder()
+    public MemberInfoResponseDto toFindMemberDto(){
+        return MemberInfoResponseDto.builder()
                 .email(this.getEmail())
                 .name(this.getName())
                 .nickname(this.getNickname())
