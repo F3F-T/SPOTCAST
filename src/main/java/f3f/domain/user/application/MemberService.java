@@ -69,16 +69,16 @@ public class MemberService {
      */
 
     @Transactional
-    public void deleteMember(MemberDeleteRequestDto deleteRequest){
-        findMemberByEmail(deleteRequest.getEmail());
+    public void deleteMember(MemberDeleteRequestDto deleteRequest, Long memberId){
 
-        String email = deleteRequest.getEmail();
+        findMemberByEmail(deleteRequest.getEmail());
+        findMemberByMemberId(memberId);
+
         String password = deleteRequest.passwordEncryption(passwordEncoder);
 
-        existsByEmailAndPassword(email, password);
+        existsByIdAndPassword(memberId, password);
 
-
-        memberRepository.deleteByEmail(email);
+        memberRepository.deleteById(memberId);
     }
 
 
@@ -213,7 +213,7 @@ public class MemberService {
         String email = updatePasswordRequest.getEmail();
         existsByEmailAndPassword(email, beforePassword);
 
-        checkCurrentMember(member);
+        checkCurrentMember(member.getId());
 
         checkNotGeneralLoginUser(member);
 
@@ -248,18 +248,15 @@ public class MemberService {
      * @param updateNicknameRequest
      */
     @Transactional
-    public void updateNickname(MemberUpdateNicknameRequestDto updateNicknameRequest){
+    public void updateNickname(MemberUpdateNicknameRequestDto updateNicknameRequest, Long memberId){
 
-        String email = updateNicknameRequest.getEmail();
         String nickname = updateNicknameRequest.getNickname();
-
-        Member member = findMemberByEmail(email);
 
         if(nicknameDuplicateCheck(nickname)){
             throw new DuplicateNicknameException("중복된 닉네임은 사용할 수 없습니다.");
         }
 
-        checkCurrentMember(member);
+        Member member = findMemberByMemberId(memberId);
 
         member.updateNickname(nickname);
     }
@@ -269,15 +266,12 @@ public class MemberService {
      * @param updateInformationRequest
      */
     @Transactional
-    public void updateInformation(MemberUpdateInformationRequestDto updateInformationRequest){
+    public void updateInformation(MemberUpdateInformationRequestDto updateInformationRequest, Long memberId){
 
-        String email = updateInformationRequest.getEmail();
         String information = updateInformationRequest.getInformation();
 
 
-        Member member = findMemberByEmail(email);
-
-        checkCurrentMember(member);
+        Member member = findMemberByMemberId(memberId);
 
 
         member.updateInformation(information);
@@ -288,18 +282,16 @@ public class MemberService {
      * @param updatePhoneRequest
      */
     @Transactional
-    public void updatePhone(MemberUpdatePhoneRequestDto updatePhoneRequest){
+    public void updatePhone(MemberUpdatePhoneRequestDto updatePhoneRequest, Long memberId){
 
-        String email = updatePhoneRequest.getEmail();
         String phone = updatePhoneRequest.getPhone();
-
-
-        Member member = findMemberByEmail(email);
 
         if(phoneDuplicateCheck(phone)){
             throw new DuplicatePhoneException("중복된 닉네임은 사용할 수 없습니다.");
         }
-        checkCurrentMember(member);
+
+        Member member = findMemberByMemberId(memberId);
+
 
         member.updateNickname(phone);
     }
@@ -340,17 +332,6 @@ public class MemberService {
         }
     }
 
-    /**
-     * 현재 로그인된 멤버와 같은 멤버인지 검증
-     * @param member
-     */
-    private void checkCurrentMember(Member member) {
-        Member findMember = findMemberByMemberId(SecurityUtil.getCurrentMemberId());
-
-        if(member != findMember){
-            throw new UnauthenticatedMemberException("유저 정보가 일치하지 않습니다.");
-        }
-    }
 
     /**
      * memberId로 멤버 찾기
@@ -385,6 +366,13 @@ public class MemberService {
     @Transactional(readOnly = true)
     public void existsByEmailAndPassword(String email,String password) {
         if(!memberRepository.existsByEmailAndPassword(email, password)){
+            throw new MemberNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public void existsByIdAndPassword(Long memberId,String password) {
+        if(!memberRepository.existsByIdAndPassword(memberId, password)){
             throw new MemberNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
     }
