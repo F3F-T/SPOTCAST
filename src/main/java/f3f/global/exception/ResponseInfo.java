@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Builder
-public class ResponseInfo {
+public class ExceptionResponse {
     private final LocalDateTime timestamp = LocalDateTime.now();
     private final int status;
     private final String error;
@@ -17,10 +17,10 @@ public class ResponseInfo {
     private final String message;
 
 
-    public static ResponseEntity<ResponseInfo> toResponseEntity(ErrorCode errorCode) {
+    public static ResponseEntity<ExceptionResponse> toResponseEntity(ErrorCode errorCode) {
         return ResponseEntity
                 .status(errorCode.getHttpStatus())
-                .body(ResponseInfo.builder()
+                .body(ExceptionResponse.builder()
                         .status(errorCode.getHttpStatus().value())
                         .error(errorCode.getHttpStatus().name())
                         .code(errorCode.name())
