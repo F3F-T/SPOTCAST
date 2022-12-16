@@ -92,6 +92,7 @@ public class MemberDTO {
     }
 
     @Getter
+    @NoArgsConstructor
     public static class MemberInfoResponseDto {
 
         private String email;
@@ -152,6 +153,7 @@ public class MemberDTO {
 
 
     @Getter
+    @NoArgsConstructor
     public static class MemberDeleteRequestDto {
 
         private String email;
@@ -170,6 +172,7 @@ public class MemberDTO {
 
 
     @Getter
+    @NoArgsConstructor
     public static class MemberUpdatePasswordRequestDto {
 
         private String email;
@@ -191,6 +194,7 @@ public class MemberDTO {
 
 
     @Getter
+    @NoArgsConstructor
     public static class MemberUpdateNicknameRequestDto {
 
         private String email;
@@ -210,6 +214,7 @@ public class MemberDTO {
 
 
     @Getter
+    @NoArgsConstructor
     public static class MemberUpdateInformationRequestDto {
 
         private String email;
@@ -226,6 +231,7 @@ public class MemberDTO {
     }
 
     @Getter
+    @NoArgsConstructor
     public static class MemberUpdatePhoneRequestDto {
 
         private String email;

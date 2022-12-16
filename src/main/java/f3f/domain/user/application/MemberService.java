@@ -24,14 +24,12 @@ import javax.servlet.http.HttpSession;
 
 import static f3f.domain.user.dto.MemberDTO.*;
 import static f3f.global.constants.MemberConstants.*;
+import static f3f.global.constants.jwtConstants.REFRESH_TOKEN_COOKIE_EXPIRE_TIME;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class MemberService {
-
-
-    //전화번호 인증 추가
 
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -76,6 +74,7 @@ public class MemberService {
 
         String email = deleteRequest.getEmail();
         String password = deleteRequest.passwordEncryption(passwordEncoder);
+
         existsByEmailAndPassword(email, password);
 
 
@@ -105,10 +104,10 @@ public class MemberService {
         TokenResponseDTO tokenResponseDTO = tokenSaveDTO.toEntity();
 
         //쿠키 저장 http only
-
         String refreshToken = tokenSaveDTO.getRefreshToken();
         saveRefreshTokenInStorage(refreshToken); // 추후 DB 나 어딘가 저장 예정
         setRefreshTokenInCookie(response, refreshToken); // 리프레시 토큰 쿠키에 저장
+
         return tokenResponseDTO;
 
     }
@@ -127,7 +126,7 @@ public class MemberService {
 
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(cookieRefreshToken)) {
-            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
+            throw new InvalidRefreshTokenException("Refresh Token 이 유효하지 않습니다.");
         }
 
         // 2. Access Token 에서 Member ID 가져오기
@@ -143,13 +142,13 @@ public class MemberService {
 //                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
         String refreshToken = (String)session.getAttribute(REFRESH_TOKEN); // 추후에 디비에서 가져올 예정
         if(refreshToken == null){
-            throw new RuntimeException("로그아웃 된 사용자입니다.");
+            throw new UnauthenticatedMemberException("로그아웃 된 사용자입니다.");
         }
 
 
         // 4. Refresh Token 일치하는지 검사
         if (!refreshToken.equals(cookieRefreshToken)) {
-            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
+            throw new UnauthenticatedMemberException("토큰의 유저 정보가 일치하지 않습니다.");
         }
 
         // 5. 새로운 토큰 생성
@@ -312,7 +311,7 @@ public class MemberService {
      */
     private void setRefreshTokenInCookie(HttpServletResponse response, String refreshToken) {
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN, refreshToken)
-                .maxAge(7 * 24 * 60 * 60) //7일
+                .maxAge(REFRESH_TOKEN_COOKIE_EXPIRE_TIME) //7일
                 .path("/")
                 .secure(true)
                 .sameSite("None")
@@ -349,7 +348,7 @@ public class MemberService {
         Member findMember = findMemberByMemberId(SecurityUtil.getCurrentMemberId());
 
         if(member != findMember){
-            throw new UnauthenticatedMemberException("검증되지 않는 정보입니다.");
+            throw new UnauthenticatedMemberException("유저 정보가 일치하지 않습니다.");
         }
     }
 
