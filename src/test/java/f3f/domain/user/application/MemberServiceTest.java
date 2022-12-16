@@ -75,8 +75,8 @@ class MemberServiceTest {
 
     private MemberDTO.MemberSaveRequestDto createGoogleMemberDto() {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
-                .email("test123@test.com")
-                .password("test1234")
+                .email(EMAIL)
+                .password(PASSWORD)
                 .phone("01011112222")
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
@@ -182,10 +182,10 @@ class MemberServiceTest {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         //when
-        Long userId = memberService.saveMember(memberSaveRequestDto);
+        Long memberId = memberService.saveMember(memberSaveRequestDto);
         //then
-        Optional<Member> byId = memberRepository.findById(userId);
-        assertThat(byId.get().getId()).isEqualTo(userId);
+        Optional<Member> byId = memberRepository.findById(memberId);
+        assertThat(byId.get().getId()).isEqualTo(memberId);
 
     }
 
@@ -290,22 +290,21 @@ class MemberServiceTest {
     @DisplayName("회원정보조회_성공")
     void success_findMyPageInfo() throws Exception {
         //given
-        Long userId = memberService.saveMember(createMemberDto());
-        Optional<Member> byId = memberRepository.findById(userId);
-        Long memberId = byId.get().getId();
-
+        Long memberId = memberService.saveMember(createMemberDto());
+        Member member = memberService.findMemberByMemberId(memberId);
+        MemberDTO.MemberInfoResponseDto memberDTO = member.toFindMemberDto();
         //when
-        String findEmail = memberService.findMemberInfoByMemberId(memberId).getEmail();
+        MemberDTO.MemberInfoResponseDto findMemberDTO = memberService.findMemberInfoByMemberId(memberId);
 
         //then
-        Assertions.assertThat(memberId).isEqualTo(findEmail);
+        assertThat(memberDTO).isEqualToComparingFieldByField(findMemberDTO);
     }
 
     @Test
     @DisplayName("회원정보조회_실패")
     void fail_findMyPageInfo() throws Exception {
         //given
-        Long memberId = 1L;
+        Long memberId = 112343L;
 
         //when
 
@@ -319,18 +318,19 @@ class MemberServiceTest {
     void success_UpdatePassword() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
-        Long userId = memberService.saveMember(memberSaveRequestDto);
-        Member member = memberRepository.findById(userId).get();
+        Long memberId = memberService.saveMember(memberSaveRequestDto);
+        Optional<Member> byId = memberRepository.findById(memberId);
+        Member member = byId.get();
 
         //when
-        MemberDTO.MemberUpdatePasswordRequestDto passwordRequest = MemberDTO.MemberUpdatePasswordRequestDto.builder()
-                .email(member.getEmail())
-                .beforePassword("test1234")
-                .afterPassword("asdfqwer")
+        MemberDTO.MemberUpdateLoginPasswordRequestDto passwordRequest = MemberDTO.MemberUpdateLoginPasswordRequestDto.builder()
+                .email(EMAIL)
+                .beforePassword(PASSWORD)
+                .afterPassword("as1234wer")
                 .build();
 
 
-        memberService.updatePassword(passwordRequest);
+        memberService.updatePassword(passwordRequest, memberId);
         String afterPassword = passwordRequest.getAfterPassword();
 
         //then
@@ -342,18 +342,19 @@ class MemberServiceTest {
     void fail_UpdatePassword() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
-        Long userId = memberService.saveMember(memberSaveRequestDto);
-        Member member = memberRepository.findById(userId).get();
+        Long memberId = memberService.saveMember(memberSaveRequestDto);
+
+        Member member = memberRepository.findById(memberId).get();
 
         //when
-        MemberDTO.MemberUpdatePasswordRequestDto passwordRequest = MemberDTO.MemberUpdatePasswordRequestDto.builder()
+        MemberDTO.MemberUpdateLoginPasswordRequestDto passwordRequest = MemberDTO.MemberUpdateLoginPasswordRequestDto.builder()
                 .email(member.getEmail())
                 .beforePassword("qwer1234")
                 .afterPassword("asdfqwer")
                 .build();
 
         //then
-        assertThrows(UnauthenticatedMemberException.class, () -> memberService.updatePassword(passwordRequest));
+        assertThrows(UnauthenticatedMemberException.class, () -> memberService.updatePassword(passwordRequest, memberId));
     }
 
     @Test
@@ -361,18 +362,20 @@ class MemberServiceTest {
     void fail_UpdatePassword_NotGeneralType() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createGoogleMemberDto();
-        Long userId = memberService.saveMember(memberSaveRequestDto);
-        Member member = memberRepository.findById(userId).get();
+
+        Long memberId = memberService.saveMember(memberSaveRequestDto);
+        Optional<Member> byId = memberRepository.findById(memberId);
+        Member member = byId.get();
 
         //when
-        MemberDTO.MemberUpdatePasswordRequestDto passwordRequest = MemberDTO.MemberUpdatePasswordRequestDto.builder()
-                .email(member.getEmail())
-                .beforePassword("qwer1234")
+        MemberDTO.MemberUpdateLoginPasswordRequestDto passwordRequest = MemberDTO.MemberUpdateLoginPasswordRequestDto.builder()
+                .email(EMAIL)
+                .beforePassword(PASSWORD)
                 .afterPassword("asdfqwer")
                 .build();
 
         //then
-        assertThrows(NotGeneralLoginType.class, () -> memberService.updatePassword(passwordRequest));
+        assertThrows(NotGeneralLoginType.class, () -> memberService.updatePassword(passwordRequest, memberId));
     }
 
     @Test
@@ -380,11 +383,12 @@ class MemberServiceTest {
     void success_UpdatePasswordByForgot() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
-        Long userId = memberService.saveMember(memberSaveRequestDto);
-        Member member = memberRepository.findById(userId).get();
+        Long memberId = memberService.saveMember(memberSaveRequestDto);
+        Optional<Member> byId = memberRepository.findById(memberId);
+        Member member = byId.get();
 
         //when
-        MemberDTO.MemberUpdatePasswordRequestDto passwordRequest = MemberDTO.MemberUpdatePasswordRequestDto.builder()
+        MemberDTO.MemberUpdateForgotPasswordRequestDto passwordRequest = MemberDTO.MemberUpdateForgotPasswordRequestDto.builder()
                 .email(member.getEmail())
                 .afterPassword("asdfqwer")
                 .build();
@@ -403,7 +407,7 @@ class MemberServiceTest {
         //given
 
         //when
-        MemberDTO.MemberUpdatePasswordRequestDto passwordRequest = MemberDTO.MemberUpdatePasswordRequestDto.builder()
+        MemberDTO.MemberUpdateForgotPasswordRequestDto passwordRequest = MemberDTO.MemberUpdateForgotPasswordRequestDto.builder()
                 .email("test")
                 .afterPassword("asdfqwer")
                 .build();
@@ -417,15 +421,14 @@ class MemberServiceTest {
     void fail_UpdatePasswordByForgot_NotGeneralType() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createGoogleMemberDto();
-        Long userId = memberService.saveMember(memberSaveRequestDto);
-        Member member = memberRepository.findById(userId).get();
+        Long memberId = memberService.saveMember(memberSaveRequestDto);
+        Member member = memberRepository.findById(memberId).get();
 
         //when
-        MemberDTO.MemberUpdatePasswordRequestDto passwordRequest = MemberDTO.MemberUpdatePasswordRequestDto.builder()
+        MemberDTO.MemberUpdateForgotPasswordRequestDto passwordRequest = MemberDTO.MemberUpdateForgotPasswordRequestDto.builder()
                 .email(member.getEmail())
                 .afterPassword("asdfqwer")
                 .build();
-
 
         //then
         assertThrows(NotGeneralLoginType.class, () -> memberService.updatePasswordByForgot(passwordRequest));
@@ -436,18 +439,17 @@ class MemberServiceTest {
     public void success_UpdateNickname() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
-        Long userId = memberService.saveMember(memberSaveRequestDto);
-        Member member = memberRepository.findById(userId).get();
+        Long memberId = memberService.saveMember(memberSaveRequestDto);
+        Member member = memberRepository.findById(memberId).get();
 
-        String changeNickname = "test";
+        String changeNickname = "test1234";
 
         MemberDTO.MemberUpdateNicknameRequestDto nicknameRequest = MemberDTO.MemberUpdateNicknameRequestDto.builder()
                 .nickname(changeNickname)
-                .email(EMAIL)
                 .build();
 
         //when
-        memberService.updateNickname(nicknameRequest);
+        memberService.updateNickname(nicknameRequest, memberId);
 
         //then
         Assertions.assertThat(member.getNickname()).isEqualTo(changeNickname);
@@ -458,18 +460,18 @@ class MemberServiceTest {
     public void fail_UpdateNickname_NotFoundMember() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        Long memberId = 1213123L;
         memberService.saveMember(memberSaveRequestDto);
 
         //when
-        String changeNickname = "test";
+        String changeNickname = "tes123t";
 
         MemberDTO.MemberUpdateNicknameRequestDto nicknameRequest = MemberDTO.MemberUpdateNicknameRequestDto.builder()
                 .nickname(changeNickname)
-                .email("EMAIL")
                 .build();
 
         //then
-        assertThrows(MemberNotFoundException.class, () -> memberService.updateNickname(nicknameRequest));
+        assertThrows(MemberNotFoundException.class, () -> memberService.updateNickname(nicknameRequest, memberId));
     }
 
     @Test
@@ -477,18 +479,17 @@ class MemberServiceTest {
     public void fail_UpdateNickname_DuplicatedNickname() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
-        memberService.saveMember(memberSaveRequestDto);
+        Long memberId = memberService.saveMember(memberSaveRequestDto);
 
         //when
         String changeNickname = NICKNAME;
 
         MemberDTO.MemberUpdateNicknameRequestDto nicknameRequest = MemberDTO.MemberUpdateNicknameRequestDto.builder()
                 .nickname(changeNickname)
-                .email(EMAIL)
                 .build();
 
         //then
-        assertThrows(DuplicateNicknameException.class, () -> memberService.updateNickname(nicknameRequest));
+        assertThrows(DuplicateNicknameException.class, () -> memberService.updateNickname(nicknameRequest, memberId));
 
     }
 
@@ -497,18 +498,17 @@ class MemberServiceTest {
     public void success_UpdateInformation() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
-        Long userId = memberService.saveMember(memberSaveRequestDto);
-        Member member = memberRepository.findById(userId).get();
+        Long memberId = memberService.saveMember(memberSaveRequestDto);
+        Member member = memberRepository.findById(memberId).get();
 
         String changeInformation = "test";
 
         MemberDTO.MemberUpdateInformationRequestDto informationRequest = MemberDTO.MemberUpdateInformationRequestDto.builder()
                 .information(changeInformation)
-                .email(EMAIL)
                 .build();
 
         //when
-        memberService.updateInformation(informationRequest);
+        memberService.updateInformation(informationRequest, memberId);
 
         //then
         Assertions.assertThat(member.getInformation()).isEqualTo(changeInformation);
@@ -519,6 +519,7 @@ class MemberServiceTest {
     public void fail_UpdateInformation_NotFoundMember() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        Long memberId = 1213123L;
         memberService.saveMember(memberSaveRequestDto);
 
         //when
@@ -526,12 +527,11 @@ class MemberServiceTest {
 
         MemberDTO.MemberUpdateInformationRequestDto informationRequest = MemberDTO.MemberUpdateInformationRequestDto.builder()
                 .information(changeInformation)
-                .email("EMAIL")
                 .build();
 
 
         //then
-        assertThrows(MemberNotFoundException.class, () -> memberService.updateInformation(informationRequest));
+        assertThrows(MemberNotFoundException.class, () -> memberService.updateInformation(informationRequest, memberId));
     }
 
     @Test
@@ -539,7 +539,7 @@ class MemberServiceTest {
     public void success_DeleteMember() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
-        memberService.saveMember(memberSaveRequestDto);
+        Long memberId = memberService.saveMember(memberSaveRequestDto);
 
         //when
         String email = EMAIL;
@@ -549,7 +549,7 @@ class MemberServiceTest {
                 .email(email)
                 .password(password)
                 .build();
-        memberService.deleteMember(deleteRequestDto);
+        memberService.deleteMember(deleteRequestDto, memberId);
 
         //then
         assertThat(memberRepository.findByEmail(email)).isEqualTo(Optional.empty());
@@ -560,6 +560,7 @@ class MemberServiceTest {
     public void fail_DeleteMember_NotFountMember() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        Long memberId = 1213123L;
         memberService.saveMember(memberSaveRequestDto);
 
         //when
@@ -571,7 +572,7 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(MemberNotFoundException.class, () -> memberService.deleteMember(deleteRequestDto));
+        assertThrows(MemberNotFoundException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
 
     }
 
@@ -580,7 +581,7 @@ class MemberServiceTest {
     public void fail_DeleteMember_IncorrectPassword() throws Exception {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
-        memberService.saveMember(memberSaveRequestDto);
+        Long memberId = memberService.saveMember(memberSaveRequestDto);
 
         //when
         String email = EMAIL;
@@ -591,7 +592,7 @@ class MemberServiceTest {
                 .password(password)
                 .build();
         //then
-        assertThrows(IncorrectPasswordException.class, () -> memberService.deleteMember(deleteRequestDto));
+        assertThrows(UnauthenticatedMemberException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
     }
 
     @Test
