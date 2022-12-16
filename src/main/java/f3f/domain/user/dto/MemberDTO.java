@@ -140,9 +140,6 @@ public class MemberDTO {
             this.password = password;
         }
 
-        public void passwordEncryption(PasswordEncoder passwordEncoder) {
-            this.password = passwordEncoder.encode(password);
-        }
 
         public UsernamePasswordAuthenticationToken toAuthentication(){
             return new UsernamePasswordAuthenticationToken(email,password);
@@ -163,9 +160,6 @@ public class MemberDTO {
             this.password = password;
         }
 
-        public String passwordEncryption(PasswordEncoder passwordEncoder) {
-            return passwordEncoder.encode(password);
-        }
     }
 
 
@@ -184,10 +178,6 @@ public class MemberDTO {
             this.afterPassword = afterPassword;
         }
 
-        public void passwordEncryption(PasswordEncoder passwordEncoder) {
-            this.beforePassword = passwordEncoder.encode(beforePassword);
-            this.afterPassword = passwordEncoder.encode(afterPassword);
-        }
     }
 
     @Getter

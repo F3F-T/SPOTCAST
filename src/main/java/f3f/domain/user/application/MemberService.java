@@ -76,11 +76,14 @@ public class MemberService {
     public void deleteMember(MemberDeleteRequestDto deleteRequest, Long memberId){
 
         findMemberByEmail(deleteRequest.getEmail());
-        findMemberByMemberId(memberId);
+        Member findMember = findMemberByMemberId(memberId);
 
-        String password = deleteRequest.passwordEncryption(passwordEncoder);
-
-        existsByIdAndPassword(memberId, password);
+        String password = deleteRequest.getPassword();
+        if(!passwordEncoder.matches(password, findMember.getPassword()))
+        {
+            throw new UnauthenticatedMemberException("아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+        existsByIdAndPassword(memberId, findMember.getPassword());
 
         memberRepository.deleteById(memberId);
     }
@@ -226,18 +229,21 @@ public class MemberService {
     @Transactional
     public void updatePassword(MemberUpdateLoginPasswordRequestDto updatePasswordRequest, Long memberId){
 
-        updatePasswordRequest.passwordEncryption(passwordEncoder);
         String beforePassword = updatePasswordRequest.getBeforePassword();
         String afterPassword = updatePasswordRequest.getAfterPassword();
 
+        Member findMember = findMemberByMemberId(memberId);
 
-        Member member = findMemberByMemberId(memberId);
+        if(!passwordEncoder.matches(beforePassword, findMember.getPassword()))
+        {
+            throw new UnauthenticatedMemberException("아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
 
-        existsByIdAndPassword(memberId,beforePassword);
+        existsByIdAndPassword(memberId,findMember.getPassword());
 
-        checkNotGeneralLoginUser(member);
+        checkNotGeneralLoginUser(findMember);
 
-        member.updatePassword(afterPassword);
+        findMember.updatePassword(afterPassword);
     }
 
 

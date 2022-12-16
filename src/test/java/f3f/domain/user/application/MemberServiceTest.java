@@ -328,6 +328,8 @@ class MemberServiceTest {
                 .beforePassword(PASSWORD)
                 .afterPassword("as1234wer")
                 .build();
+        System.out.println("memberId = " + memberId);
+        System.out.println("member.getPassword() = " + member.getPassword());
 
 
         memberService.updatePassword(passwordRequest, memberId);
@@ -364,8 +366,6 @@ class MemberServiceTest {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createGoogleMemberDto();
 
         Long memberId = memberService.saveMember(memberSaveRequestDto);
-        Optional<Member> byId = memberRepository.findById(memberId);
-        Member member = byId.get();
 
         //when
         MemberDTO.MemberUpdateLoginPasswordRequestDto passwordRequest = MemberDTO.MemberUpdateLoginPasswordRequestDto.builder()
@@ -540,7 +540,8 @@ class MemberServiceTest {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         Long memberId = memberService.saveMember(memberSaveRequestDto);
-
+        Optional<Member> byId = memberRepository.findById(memberId);
+        Member member = byId.get();
         //when
         String email = EMAIL;
         String password = PASSWORD;
@@ -549,6 +550,10 @@ class MemberServiceTest {
                 .email(email)
                 .password(password)
                 .build();
+
+        System.out.println("memberId = " + memberId);
+        System.out.println("member.getPassword() = " + member.getPassword());
+
         memberService.deleteMember(deleteRequestDto, memberId);
 
         //then
