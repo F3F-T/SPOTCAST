@@ -57,12 +57,30 @@ public class MemberController {
     }
 
     /**
-     * 비밀번호 변경  - 로그인 O
+     * 비밀번호 변경 - 로그인 X
      * @param updatePasswordRequest
      * @param memberId
      * @return
      */
     @PostMapping("/{memberId}/find/password")
+    public ResponseEntity<Void> changePasswordLoginByForgot(@RequestBody MemberUpdatePasswordRequestDto updatePasswordRequest,
+                                                            @PathVariable Long memberId) {
+
+        //memberId 검증
+        CheckCurrentUser(memberId);
+
+        memberService.updatePasswordByForgot(updatePasswordRequest);
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 비밀번호 변경  - 로그인 O
+     * @param updatePasswordRequest
+     * @param memberId
+     * @return
+     */
+    @PostMapping("/{memberId}/change/password")
     public ResponseEntity<Void> changePasswordLogin(@RequestBody MemberUpdatePasswordRequestDto updatePasswordRequest,
             @PathVariable Long memberId) {
 
@@ -75,23 +93,11 @@ public class MemberController {
     }
 
     /**
-     * 비밀번호 변경 - 로그인 X
-     * @param updatePasswordRequest
+     * 닉네임 변경
+     * @param updateNicknameRequest
      * @param memberId
      * @return
      */
-    @PostMapping("/{memberId}/change/password")
-    public ResponseEntity<Void> changePasswordLoginByForgot(@RequestBody MemberUpdatePasswordRequestDto updatePasswordRequest,
-                                                    @PathVariable Long memberId) {
-
-        //memberId 검증
-        CheckCurrentUser(memberId);
-
-        memberService.updatePasswordByForgot(updatePasswordRequest);
-
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/{memberId}/change/nickname")
     public ResponseEntity<Void> updateNickname(@RequestBody MemberUpdateNicknameRequestDto updateNicknameRequest,
                                                             @PathVariable Long memberId) {
@@ -104,7 +110,41 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * infromation 변경
+     * @param updateInformationRequest
+     * @param memberId
+     * @return
+     */
+    @PostMapping("/{memberId}/change/information")
+    public ResponseEntity<Void> updateInformation(@RequestBody MemberUpdateInformationRequestDto updateInformationRequest,
+                                               @PathVariable Long memberId) {
 
+        //memberId 검증
+        CheckCurrentUser(memberId);
+
+        memberService.updateInformation(updateInformationRequest,memberId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 휴대전화 번호 변경
+     * @param updatePhoneRequest
+     * @param memberId
+     * @return
+     */
+    @PostMapping("/{memberId}/change/phone")
+    public ResponseEntity<Void> updatePhone(@RequestBody MemberUpdatePhoneRequestDto updatePhoneRequest,
+                                                  @PathVariable Long memberId) {
+
+        //memberId 검증
+        CheckCurrentUser(memberId);
+
+        memberService.updatePhone(updatePhoneRequest,memberId);
+
+        return ResponseEntity.ok().build();
+    }
 
     /**
      * 이메일 중복 검사
@@ -129,7 +169,7 @@ public class MemberController {
     }
 
     /**
-     * 휴대전화번호 중복 검사
+     * 휴대전화 번호 중복 검사
      * @param phone
      * @return
      */

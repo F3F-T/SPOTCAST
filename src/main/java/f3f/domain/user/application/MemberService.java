@@ -213,8 +213,6 @@ public class MemberService {
         String email = updatePasswordRequest.getEmail();
         existsByEmailAndPassword(email, beforePassword);
 
-        checkCurrentMember(member.getId());
-
         checkNotGeneralLoginUser(member);
 
         member.updatePassword(afterPassword);
