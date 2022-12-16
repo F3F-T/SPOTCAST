@@ -56,9 +56,13 @@ public class MessageService {
     }
 
     @Transactional
-    public Message updateMessage(long messageId, Message message){
+    public Message updateMessage(long messageId,long memberId ,Message message){
         Message targetMessage = messageRepository.findById(messageId)
                 .orElseThrow();
+
+        if(targetMessage.getSender().getId() == messageId){
+            throw new SenderMissMatchException();
+        }
 
         targetMessage.updateMessage(message);
 
@@ -66,8 +70,14 @@ public class MessageService {
     }
 
     @Transactional(readOnly = true)
-    public Message getMessageInfo(long messageId){
-        return messageRepository.findById(messageId).orElseThrow();
+    public Message getMessageInfo(long messageId, Long memberId){
+        Message message = messageRepository.findById(messageId).orElseThrow();
+
+        if(message.getSender().getId() == messageId){
+            throw new SenderMissMatchException();
+        }
+
+        return message;
     }
 
     @Transactional(readOnly = true)
