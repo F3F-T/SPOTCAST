@@ -83,19 +83,6 @@ public class SecurityConfig {
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
 
-        //로그아웃 기능
-        http
-                .logout()
-                .logoutUrl("/logout") //logout url 설정
-                .logoutSuccessUrl("/login") //logout 시 이동할 url 설정 - 추후 홈화면 설정 예정
-                .deleteCookies(JSESSIONID, REMEMBER_ME,REFRESH_TOKEN)
-                .addLogoutHandler((HttpServletRequest request, HttpServletResponse response, Authentication authentication) ->{
-                        request.getSession().invalidate();
-                    }
-                )
-                .logoutSuccessHandler((HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
-                        response.sendRedirect("/login"); //로그아웃 시 로그인 할 수 있는 페이지로 이동하도록 처리한다.
-                    });
 
         return http.build();
     }

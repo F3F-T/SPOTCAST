@@ -8,7 +8,6 @@ import f3f.domain.user.dto.TokenDTO;
 import f3f.domain.user.dto.TokenDTO.TokenResponseDTO;
 import f3f.domain.user.exception.*;
 import f3f.global.jwt.TokenProvider;
-import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
@@ -19,11 +18,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.io.IOException;
+
 import static f3f.domain.user.dto.MemberDTO.*;
 import static f3f.global.constants.MemberConstants.*;
+import static f3f.global.constants.SecurityConstants.JSESSIONID;
+import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 import static f3f.global.constants.jwtConstants.REFRESH_TOKEN_COOKIE_EXPIRE_TIME;
 
 @Service
@@ -164,15 +169,34 @@ public class MemberService {
     }
 
 
-
     /**
      * 로그아웃
+     * @param request
+     * @param response
+     * @throws IOException
      */
-//    @Transactional(readOnly = true)
-//    public void logout(){
-//        session.removeAttribute(REFRESH_TOKEN);
-//    }
+    @Transactional
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+        request.getSession().invalidate();
+
+        deleteCookie(response,JSESSIONID);
+        deleteCookie(response,REMEMBER_ME);
+        deleteCookie(response,REFRESH_TOKEN);
+
+//        response.sendRedirect("/login"); //로그아웃 시 로그인 할 수 있는 페이지로 이동하도록 처리한다.
+    }
+
+    /**
+     * 쿠키 제거
+     * @param response
+     * @param cookieName
+     */
+    private void deleteCookie(HttpServletResponse response,String cookieName) {
+        Cookie cookie = new Cookie(cookieName, null); // choiceCookieName(쿠키 이름)에 대한 값을 null로 지정
+        cookie.setMaxAge(0); // 유효시간을 0으로 설정
+        response.addCookie(cookie);
+    }
     /**
      * 회원 정보 조회
      * @param memberId
