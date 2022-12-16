@@ -133,13 +133,11 @@ public class MemberDTO {
 
         private String email;
         private String password;
-        private LoginMemberType loginMemberType;
 
         @Builder
-        public MemberLoginRequestDto(String email, String password, LoginMemberType loginMemberType) {
+        public MemberLoginRequestDto(String email, String password) {
             this.email = email;
             this.password = password;
-            this.loginMemberType = loginMemberType;
         }
 
         public void passwordEncryption(PasswordEncoder passwordEncoder) {
@@ -220,7 +218,6 @@ public class MemberDTO {
         private String nickname;
 
         @Builder
-
         public MemberUpdateNicknameRequestDto(String nickname) {
             this.nickname = nickname;
         }

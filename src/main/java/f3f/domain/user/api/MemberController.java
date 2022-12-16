@@ -146,7 +146,7 @@ public class MemberController {
      * @param email
      * @return
      */
-    @GetMapping("/user-emails/{email}/exists")
+    @GetMapping("/member-emails/{email}/exists")
     public ResponseEntity<Boolean> duplicateCheckEmail(@PathVariable String email) {
 
         return ResponseEntity.ok(memberService.emailDuplicateCheck(email));
@@ -157,7 +157,7 @@ public class MemberController {
      * @param nickname
      * @return
      */
-    @GetMapping("/user-nicknames/{nickname}/exists")
+    @GetMapping("/member-nicknames/{nickname}/exists")
     public ResponseEntity<Boolean> duplicateCheckNickname(@PathVariable String nickname) {
 
         return ResponseEntity.ok(memberService.nicknameDuplicateCheck(nickname));
@@ -168,7 +168,7 @@ public class MemberController {
      * @param phone
      * @return
      */
-    @GetMapping("/user-phones/{phone}/exists")
+    @GetMapping("/member-phones/{phone}/exists")
     public ResponseEntity<Boolean> duplicateCheckPhone(@PathVariable String phone) {
 
         return ResponseEntity.ok(memberService.phoneDuplicateCheck(phone));
