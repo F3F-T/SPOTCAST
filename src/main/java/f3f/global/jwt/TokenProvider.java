@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import static f3f.global.util.jwtConstants.*;
+import static f3f.global.constants.jwtConstants.*;
 
 @Component
 @Slf4j
@@ -33,7 +33,7 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenResponseDTO generateTokenDto(Authentication authentication) {
+    public TokenDTO.TokenSaveDTO generateTokenDto(Authentication authentication) {
         // 권한들 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -56,7 +56,7 @@ public class TokenProvider {
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
-        return TokenResponseDTO.builder()
+        return TokenDTO.TokenSaveDTO.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
@@ -98,6 +98,7 @@ public class TokenProvider {
         } catch (IllegalArgumentException e) {
             log.info("JWT 토큰이 잘못되었습니다.");
         }
+
         return false;
     }
 
