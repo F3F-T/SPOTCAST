@@ -173,14 +173,14 @@ public class MemberDTO {
 
     @Getter
     @NoArgsConstructor
-    public static class MemberUpdatePasswordRequestDto {
+    public static class MemberUpdateLoginPasswordRequestDto {
 
         private String email;
         private String beforePassword;
         private String afterPassword;
 
         @Builder
-        public MemberUpdatePasswordRequestDto(String email, String beforePassword, String afterPassword) {
+        public MemberUpdateLoginPasswordRequestDto(String email, String beforePassword, String afterPassword) {
             this.email = email;
             this.beforePassword = beforePassword;
             this.afterPassword = afterPassword;
@@ -192,12 +192,27 @@ public class MemberDTO {
         }
     }
 
+    @Getter
+    @NoArgsConstructor
+    public static class MemberUpdateForgotPasswordRequestDto {
+
+        private String email;
+        private String afterPassword;
+
+        @Builder
+        public MemberUpdateForgotPasswordRequestDto(String email, String afterPassword) {
+            this.email = email;
+            this.afterPassword = afterPassword;
+        }
+
+        public void passwordEncryption(PasswordEncoder passwordEncoder) {
+            this.afterPassword = passwordEncoder.encode(afterPassword);
+        }
+    }
 
     @Getter
     @NoArgsConstructor
     public static class MemberUpdateNicknameRequestDto {
-
-        private String email;
 
         @NotBlank
         @Length(min = 3, max = 20)
@@ -206,8 +221,7 @@ public class MemberDTO {
 
         @Builder
 
-        public MemberUpdateNicknameRequestDto(String email, String nickname) {
-            this.email = email;
+        public MemberUpdateNicknameRequestDto(String nickname) {
             this.nickname = nickname;
         }
     }
@@ -217,15 +231,11 @@ public class MemberDTO {
     @NoArgsConstructor
     public static class MemberUpdateInformationRequestDto {
 
-        private String email;
-
         @NotBlank
         private String information;
 
         @Builder
-
-        public MemberUpdateInformationRequestDto(String email, String information) {
-            this.email = email;
+        public MemberUpdateInformationRequestDto(String information) {
             this.information = information;
         }
     }
@@ -234,15 +244,12 @@ public class MemberDTO {
     @NoArgsConstructor
     public static class MemberUpdatePhoneRequestDto {
 
-        private String email;
-
         @NotBlank
         @Length(min = 10, max = 11)
         private String phone;
         @Builder
 
-        public MemberUpdatePhoneRequestDto(String email, String phone) {
-            this.email = email;
+        public MemberUpdatePhoneRequestDto(String phone) {
             this.phone = phone;
         }
     }

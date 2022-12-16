@@ -44,7 +44,6 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final HttpSession session;
 
-
     /**
      * 회원가입
      * @param saveRequest
@@ -225,17 +224,16 @@ public class MemberService {
      * @param updatePasswordRequest
      */
     @Transactional
-    public void updatePassword(MemberUpdatePasswordRequestDto updatePasswordRequest){
+    public void updatePassword(MemberUpdateLoginPasswordRequestDto updatePasswordRequest, Long memberId){
 
         updatePasswordRequest.passwordEncryption(passwordEncoder);
         String beforePassword = updatePasswordRequest.getBeforePassword();
         String afterPassword = updatePasswordRequest.getAfterPassword();
 
 
-        Member member = findMemberByEmail(updatePasswordRequest.getEmail());
+        Member member = findMemberByMemberId(memberId);
 
-        String email = updatePasswordRequest.getEmail();
-        existsByEmailAndPassword(email, beforePassword);
+        existsByIdAndPassword(memberId,beforePassword);
 
         checkNotGeneralLoginUser(member);
 
@@ -249,7 +247,7 @@ public class MemberService {
      * @param updatePasswordRequest
      */
     @Transactional
-    public void updatePasswordByForgot(MemberUpdatePasswordRequestDto updatePasswordRequest){
+    public void updatePasswordByForgot(MemberUpdateForgotPasswordRequestDto updatePasswordRequest){
 
         updatePasswordRequest.passwordEncryption(passwordEncoder);
 
@@ -274,11 +272,12 @@ public class MemberService {
 
         String nickname = updateNicknameRequest.getNickname();
 
+        Member member = findMemberByMemberId(memberId);
+
         if(nicknameDuplicateCheck(nickname)){
             throw new DuplicateNicknameException("중복된 닉네임은 사용할 수 없습니다.");
         }
 
-        Member member = findMemberByMemberId(memberId);
 
         member.updateNickname(nickname);
     }
@@ -292,9 +291,7 @@ public class MemberService {
 
         String information = updateInformationRequest.getInformation();
 
-
         Member member = findMemberByMemberId(memberId);
-
 
         member.updateInformation(information);
     }
@@ -388,14 +385,14 @@ public class MemberService {
     @Transactional(readOnly = true)
     public void existsByEmailAndPassword(String email,String password) {
         if(!memberRepository.existsByEmailAndPassword(email, password)){
-            throw new MemberNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
+            throw new UnauthenticatedMemberException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
     }
 
     @Transactional(readOnly = true)
     public void existsByIdAndPassword(Long memberId,String password) {
         if(!memberRepository.existsByIdAndPassword(memberId, password)){
-            throw new MemberNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
+            throw new UnauthenticatedMemberException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
     }
 

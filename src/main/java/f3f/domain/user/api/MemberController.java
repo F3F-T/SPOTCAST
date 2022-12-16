@@ -59,15 +59,10 @@ public class MemberController {
     /**
      * 비밀번호 변경 - 로그인 X
      * @param updatePasswordRequest
-     * @param memberId
      * @return
      */
-    @PostMapping("/{memberId}/find/password")
-    public ResponseEntity<Void> changePasswordLoginByForgot(@RequestBody MemberUpdatePasswordRequestDto updatePasswordRequest,
-                                                            @PathVariable Long memberId) {
-
-        //memberId 검증
-        CheckCurrentUser(memberId);
+    @PostMapping("/find/password/{email}")
+    public ResponseEntity<Void> changePasswordByForgot(@RequestBody MemberUpdateForgotPasswordRequestDto updatePasswordRequest) {
 
         memberService.updatePasswordByForgot(updatePasswordRequest);
 
@@ -81,13 +76,13 @@ public class MemberController {
      * @return
      */
     @PostMapping("/{memberId}/change/password")
-    public ResponseEntity<Void> changePasswordLogin(@RequestBody MemberUpdatePasswordRequestDto updatePasswordRequest,
+    public ResponseEntity<Void> changePasswordByLogin(@RequestBody MemberUpdateLoginPasswordRequestDto updatePasswordRequest,
             @PathVariable Long memberId) {
 
         //memberId 검증
         CheckCurrentUser(memberId);
 
-        memberService.updatePassword(updatePasswordRequest);
+        memberService.updatePassword(updatePasswordRequest,memberId);
 
         return ResponseEntity.ok().build();
     }
