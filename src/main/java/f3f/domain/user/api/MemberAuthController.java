@@ -39,7 +39,7 @@ public class MemberAuthController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity<TokenDTO.TokenResponseDTO> login(@RequestBody MemberDTO.MemberLoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<MemberDTO.MemberLoginResponseDto> login(@RequestBody MemberDTO.MemberLoginRequestDto loginRequestDto, HttpServletResponse response) {
         return ResponseEntity.ok(memberService.login(loginRequestDto, response));
     }
 

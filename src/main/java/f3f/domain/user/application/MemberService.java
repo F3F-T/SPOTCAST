@@ -75,14 +75,18 @@ public class MemberService {
     @Transactional
     public void deleteMember(MemberDeleteRequestDto deleteRequest, Long memberId){
 
-        findMemberByEmail(deleteRequest.getEmail());
         Member findMember = findMemberByMemberId(memberId);
+
+        if(findMember.getEmail() != deleteRequest.getEmail()){
+            throw new InvalidEmailException("이메일이 일치하지 않습니다.");
+        }
 
         String password = deleteRequest.getPassword();
         if(!passwordEncoder.matches(password, findMember.getPassword()))
         {
-            throw new UnauthenticatedMemberException("아이디 또는 비밀번호가 일치하지 않습니다.");
+            throw new NotMatchPasswordException("비밀번호가 일치하지 않습니다.");
         }
+
         existsByIdAndPassword(memberId, findMember.getPassword());
 
         memberRepository.deleteById(memberId);
@@ -96,7 +100,7 @@ public class MemberService {
      * @return
      */
     @Transactional(readOnly = true)
-    public TokenResponseDTO login(MemberLoginRequestDto loginRequest,  HttpServletResponse response){
+    public MemberLoginResponseDto login(MemberLoginRequestDto loginRequest,  HttpServletResponse response){
 
         // 로그인 정보로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
@@ -106,16 +110,21 @@ public class MemberService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         //jwt 토큰 생성
-        TokenDTO.TokenSaveDTO tokenSaveDTO = tokenProvider.generateTokenDto(authentication);
+        TokenDTO tokenDto = tokenProvider.generateTokenDto(authentication);
 
-        TokenResponseDTO tokenResponseDTO = tokenSaveDTO.toEntity();
+        //response 에 유저 정보를 담기 위한 findById
+        Member findMember = memberRepository.findById(Long.valueOf(authentication.getName()))
+                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
+
+        //유저 정보 + 토큰 값
+        MemberLoginResponseDto memberLoginResponse = tokenDto.toLoginEntity(findMember);
 
         //쿠키 저장 http only
-        String refreshToken = tokenSaveDTO.getRefreshToken();
+        String refreshToken = tokenDto.getRefreshToken();
         saveRefreshTokenInStorage(refreshToken); // 추후 DB 나 어딘가 저장 예정
         setRefreshTokenInCookie(response, refreshToken); // 리프레시 토큰 쿠키에 저장
 
-        return tokenResponseDTO;
+        return memberLoginResponse;
 
     }
 
@@ -141,12 +150,13 @@ public class MemberService {
 
         // 3. 저장소에서 Member ID 를 기반으로 유저 확인
 
-        memberRepository.findById(Long.valueOf(authentication.getName()))
-                .orElseThrow(() -> new MemberNotFoundException("로그아웃 된 사용자입니다."));
-
+        if(!memberRepository.existsById(Long.valueOf(authentication.getName()))){
+            throw new MemberNotFoundException("로그아웃 된 사용자입니다.");
+        }
 
 //        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
 //                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
+
         String refreshToken = (String)session.getAttribute(REFRESH_TOKEN); // 추후에 디비에서 가져올 예정
         if(refreshToken == null){
             throw new UnauthenticatedMemberException("로그아웃 된 사용자입니다.");
@@ -159,7 +169,7 @@ public class MemberService {
         }
 
         // 5. 새로운 토큰 생성
-        TokenDTO.TokenSaveDTO tokenSaveDTO = tokenProvider.generateTokenDto(authentication);
+        TokenDTO tokenSaveDTO = tokenProvider.generateTokenDto(authentication);
         TokenResponseDTO tokenDto = tokenSaveDTO.toEntity();
 
         // 6. 저장소 정보 업데이트

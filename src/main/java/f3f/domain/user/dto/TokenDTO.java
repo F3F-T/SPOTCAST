@@ -9,32 +9,39 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TokenDTO {
 
+    private String grantType;
+    private String accessToken;
 
-    @Getter
-    @NoArgsConstructor
-    public static class TokenSaveDTO {
-        private String grantType;
-        private String accessToken;
+    private String refreshToken;
 
-        private String refreshToken;
+    private Long accessTokenExpiresIn;
 
-        private Long accessTokenExpiresIn;
+    @Builder
+    public TokenDTO(String grantType, String accessToken, String refreshToken, Long accessTokenExpiresIn) {
+        this.grantType = grantType;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.accessTokenExpiresIn = accessTokenExpiresIn;
+    }
 
-        @Builder
-        public TokenSaveDTO(String grantType, String accessToken, String refreshToken, Long accessTokenExpiresIn) {
-            this.grantType = grantType;
-            this.accessToken = accessToken;
-            this.refreshToken = refreshToken;
-            this.accessTokenExpiresIn = accessTokenExpiresIn;
-        }
-
-        public TokenResponseDTO toEntity(){
-            return TokenResponseDTO.builder()
-                    .grantType(this.grantType)
-                    .accessToken(this.accessToken)
-                    .accessTokenExpiresIn(this.accessTokenExpiresIn)
-                    .build();
-        }
+    public MemberDTO.MemberLoginResponseDto toLoginEntity(Member member){
+        return MemberDTO.MemberLoginResponseDto.builder()
+                .email(member.getEmail())
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .loginMemberType(member.getLoginMemberType())
+                .authority(member.getAuthority())
+                .grantType(this.grantType)
+                .accessToken(this.accessToken)
+                .accessTokenExpiresIn(this.accessTokenExpiresIn)
+                .build();
+    }
+    public TokenResponseDTO toEntity(){
+        return TokenResponseDTO.builder()
+                .grantType(this.grantType)
+                .accessToken(this.accessToken)
+                .accessTokenExpiresIn(this.accessTokenExpiresIn)
+                .build();
     }
 
     @Getter
