@@ -1,0 +1,43 @@
+{{
+  "method": "post",
+  "signup": "http://localhost:8080/auth/signup",
+  "body": {
+    "email": "test@test2.net",
+    "password": "1q2w3e4r",
+    "name": "test",
+    "nickname": "test",
+    "loginMemberType": "user",
+    // general_user, admin_user, company_user, company
+    "loginType": "0",
+    // 일반, 구글, 카카오, 네이버
+    "authority": "0",
+    //ROLE_USER , ROLE_ADMIN
+    "information": "test",
+    "phone": "01011212222"
+  }
+}
+,
+{
+"method": "post",
+"login": "http://localhost:8080/auth/login",
+"body": {
+"email": "test@test2.net",
+"password": "1q2w3e4r"
+}
+},
+{
+"method": "post",
+"login": "http://localhost:8080/auth/login",
+"body": {
+"email": "test@test2.net",
+"password": "1q2w3e4r"
+}
+},
+{
+"method": "get",
+"login": "http://localhost:8080/member/{member_id}",
+"header": {
+"Authorization": "access_token"
+}
+}
+}

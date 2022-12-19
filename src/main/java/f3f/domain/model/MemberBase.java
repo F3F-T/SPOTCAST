@@ -11,21 +11,27 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-public class UserBase extends BaseTimeEntity {
+public class MemberBase extends BaseTimeEntity {
 
     @Id@GeneratedValue
-    @Column(name = "user_id")
+    @Column(name = "member_id")
     private Long id;
 
     private String email;
 
-    private String password;
-
-    private  LoginType loginType;
+    private String name;
+    protected String password;
 
     @Enumerated(value = EnumType.STRING)
-    private UserType userType;
+    private LoginMemberType loginMemberType;
 
-    private String information;
+    @Enumerated(value = EnumType.STRING)
+    private LoginType loginType;
+
+    @Enumerated(value = EnumType.STRING)
+    private Authority authority;
+
+
+    protected String information;
 
 }

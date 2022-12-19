@@ -3,7 +3,12 @@ package f3f.domain.category.dao;
 import f3f.domain.category.domain.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CategoryRepository extends JpaRepository<Category,Long> {
+import java.util.Optional;
 
-    boolean existsByCategoryName(String categoryName);
+public interface CategoryRepository extends JpaRepository<Category, Long> {
+
+    Optional<Category> findByName(String categoryName);
+
+
+    Boolean existsByName(String name);
 }

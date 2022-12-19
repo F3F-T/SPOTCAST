@@ -1,13 +1,17 @@
 package f3f.domain.model;
 
+import lombok.Getter;
+
+@Getter
 public enum LoginType {
-    GENERAL_USER(1,"user"),ADMIN_USER(2,"admin"),COMPANY_USER(3,"company");
+    //
+    GENERAL_LOGIN(1,"일반"),GOOGLE_LOGIN(2,"구글"),KAKAO_LOGIN(3,"카카오"),NAVER_LOGIN(4,"네이버");
 
     private long id;
-    private String name;
+    private String type;
 
-    LoginType(long id, String name) {
+    LoginType(long id, String type) {
         this.id = id;
-        this.name = name;
+        this.type = type;
     }
 }

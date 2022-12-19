@@ -16,7 +16,7 @@ public class CategoryController {
         return null;
     }
 
-    @PutMapping(value = "/category/{categoryId]")
+    @PutMapping(value = "/category/{categoryId}")
     public Category updateCategory(@PathVariable long categoryId, @RequestBody Category request){
         return null;
     }
@@ -26,7 +26,7 @@ public class CategoryController {
         return 0;
     }
 
-    @GetMapping(value = "/category/{categoryId}}")
+    @GetMapping(value = "/category/{categoryId}")
     public  Category getCategoryInfo(@PathVariable long categoryId){
     return null;
     }

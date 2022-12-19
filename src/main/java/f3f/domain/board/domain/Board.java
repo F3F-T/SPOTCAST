@@ -7,7 +7,7 @@ import f3f.domain.likes.domain.Likes;
 import f3f.domain.model.BaseTimeEntity;
 import f3f.domain.model.BoardType;
 import f3f.domain.scrap.domain.ScrapBoard;
-import f3f.domain.user.domain.User;
+import f3f.domain.user.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,8 +40,8 @@ public class Board extends BaseTimeEntity {
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     private List<ScrapBoard> scrapBoardList = new ArrayList<>();
@@ -54,14 +54,14 @@ public class Board extends BaseTimeEntity {
 
     @Builder
     public Board(Long id, String title, String content, long viewCount, BoardType boardType, Category category,
-                 User user) {
+                 Member member) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.viewCount = viewCount;
         this.boardType = boardType;
         this.category = category;
-        this.user = user;
+        this.member = member;
     }
 
 
@@ -72,7 +72,7 @@ public class Board extends BaseTimeEntity {
                 .viewCount(this.viewCount)
                 .boardType(this.boardType)
                 .category(this.category)
-                .user(this.user)
+                .member(this.member)
                 .build();
     }
 
