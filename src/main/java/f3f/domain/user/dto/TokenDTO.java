@@ -24,8 +24,8 @@ public class TokenDTO {
         this.accessTokenExpiresIn = accessTokenExpiresIn;
     }
 
-    public MemberDTO.MemberLoginResponseDto toLoginEntity(Member member){
-        return MemberDTO.MemberLoginResponseDto.builder()
+    public MemberDTO.MemberLoginServiceResponseDto toLoginEntity(Member member){
+        return MemberDTO.MemberLoginServiceResponseDto.builder()
                 .email(member.getEmail())
                 .name(member.getName())
                 .nickname(member.getNickname())
@@ -33,6 +33,7 @@ public class TokenDTO {
                 .authority(member.getAuthority())
                 .grantType(this.grantType)
                 .accessToken(this.accessToken)
+                .refreshToken(this.refreshToken)
                 .accessTokenExpiresIn(this.accessTokenExpiresIn)
                 .build();
     }

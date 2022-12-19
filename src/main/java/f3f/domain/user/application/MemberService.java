@@ -1,5 +1,6 @@
 package f3f.domain.user.application;
 
+import antlr.Token;
 import f3f.domain.model.LoginType;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
@@ -10,7 +11,6 @@ import f3f.domain.user.exception.*;
 import f3f.global.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -18,8 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -29,7 +27,6 @@ import static f3f.domain.user.dto.MemberDTO.*;
 import static f3f.global.constants.MemberConstants.*;
 import static f3f.global.constants.SecurityConstants.JSESSIONID;
 import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
-import static f3f.global.constants.jwtConstants.REFRESH_TOKEN_COOKIE_EXPIRE_TIME;
 
 @Service
 @RequiredArgsConstructor
@@ -96,11 +93,10 @@ public class MemberService {
     /**
      * 로그인
      * @param loginRequest
-     * @param response
      * @return
      */
     @Transactional(readOnly = true)
-    public MemberLoginResponseDto login(MemberLoginRequestDto loginRequest,  HttpServletResponse response){
+    public MemberLoginServiceResponseDto login(MemberLoginRequestDto loginRequest){
 
         // 로그인 정보로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
@@ -117,12 +113,11 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
         //유저 정보 + 토큰 값
-        MemberLoginResponseDto memberLoginResponse = tokenDto.toLoginEntity(findMember);
+        MemberLoginServiceResponseDto memberLoginResponse = tokenDto.toLoginEntity(findMember);
 
-        //쿠키 저장 http only
         String refreshToken = tokenDto.getRefreshToken();
         saveRefreshTokenInStorage(refreshToken); // 추후 DB 나 어딘가 저장 예정
-        setRefreshTokenInCookie(response, refreshToken); // 리프레시 토큰 쿠키에 저장
+
 
         return memberLoginResponse;
 
@@ -132,12 +127,11 @@ public class MemberService {
     /**
      * 토큰 재발급
      * @param tokenRequestDto
-     * @param response
      * @param cookieRefreshToken
      * @return
      */
     @Transactional
-    public TokenResponseDTO reissue(TokenDTO.TokenRequestDTO tokenRequestDto, HttpServletResponse response, String cookieRefreshToken) {
+    public TokenDTO reissue(TokenDTO.TokenRequestDTO tokenRequestDto, String cookieRefreshToken) {
 
 
         // 1. Refresh Token 검증
@@ -169,46 +163,29 @@ public class MemberService {
         }
 
         // 5. 새로운 토큰 생성
-        TokenDTO tokenSaveDTO = tokenProvider.generateTokenDto(authentication);
-        TokenResponseDTO tokenDto = tokenSaveDTO.toEntity();
+        TokenDTO tokenDTO = tokenProvider.generateTokenDto(authentication);
 
         // 6. 저장소 정보 업데이트
-        saveRefreshTokenInStorage(tokenSaveDTO.getRefreshToken());// 추후 디비에 저장
-        setRefreshTokenInCookie(response,refreshToken); // 쿠키에 refresh 토큰 저장
+        saveRefreshTokenInStorage(tokenDTO.getRefreshToken());// 추후 디비에 저장
 
         // 토큰 발급
-        return tokenDto;
+        return tokenDTO;
     }
 
 
     /**
      * 로그아웃
-     * @param request
-     * @param response
      * @throws IOException
      */
     @Transactional
-    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void logout() throws IOException {
 
-        request.getSession().invalidate();
-
-        deleteCookie(response,JSESSIONID);
-        deleteCookie(response,REMEMBER_ME);
-        deleteCookie(response,REFRESH_TOKEN);
 
 //        response.sendRedirect("/login"); //로그아웃 시 로그인 할 수 있는 페이지로 이동하도록 처리한다.
     }
 
     /**
-     * 쿠키 제거
-     * @param response
-     * @param cookieName
-     */
-    private void deleteCookie(HttpServletResponse response,String cookieName) {
-        Cookie cookie = new Cookie(cookieName, null); // choiceCookieName(쿠키 이름)에 대한 값을 null로 지정
-        cookie.setMaxAge(0); // 유효시간을 0으로 설정
-        response.addCookie(cookie);
-    }
+
     /**
      * 회원 정보 조회
      * @param memberId
@@ -331,21 +308,7 @@ public class MemberService {
         member.updatePhone(phone);
     }
 
-    /**
-     * 쿠키에 refresh 토큰 저장
-     * @param response
-     * @param refreshToken
-     */
-    private void setRefreshTokenInCookie(HttpServletResponse response, String refreshToken) {
-        ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN, refreshToken)
-                .maxAge(REFRESH_TOKEN_COOKIE_EXPIRE_TIME) //7일
-                .path("/")
-                .secure(true)
-                .sameSite("None")
-                .httpOnly(true)
-                .build();
-        response.setHeader(SET_COOKIE, cookie.toString());
-    }
+
 
     /**
      * 저장소에 토큰 저장 추후에 DB 나 캐시 고려
