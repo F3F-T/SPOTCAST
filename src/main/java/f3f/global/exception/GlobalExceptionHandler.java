@@ -1,7 +1,9 @@
 package f3f.global.exception;
 
 import f3f.domain.user.exception.DuplicateEmailException;
+import f3f.domain.user.exception.MemberNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,6 +27,14 @@ public class GlobalExceptionHandler {
             DuplicateEmailException ex, WebRequest request) {
         log.debug("Duplicate email :: {}, detection time = {}",request.getDescription(false));
         return DUPLICATION_EMAIL;
+    }
+
+    @ExceptionHandler(MemberNotFoundException.class)
+    protected final ResponseEntity<String> handleMemberNotFoundException(
+            MemberNotFoundException ex, WebRequest request) {
+        log.debug("member not found :: {}, detection time = {}",ex.getMessage());
+        return new ResponseEntity<>(
+                ex.getMessage(), HttpStatus.CONFLICT);
     }
 
 
