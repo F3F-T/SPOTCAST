@@ -1,11 +1,13 @@
 package f3f.domain.user.application;
 
+import com.sun.xml.bind.v2.TODO;
 import f3f.domain.model.LoginType;
 import f3f.domain.model.LoginMemberType;
 import f3f.domain.model.Authority;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO;
+import f3f.domain.user.dto.TokenDTO;
 import f3f.domain.user.exception.*;
 import f3f.global.encrypt.EncryptionService;
 import org.assertj.core.api.Assertions;
@@ -15,9 +17,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -45,6 +51,9 @@ class MemberServiceTest {
 
     @Autowired
     MemberService memberService;
+
+    @Autowired
+    HttpSession httpSession;
 
     private Validator validator = null;
 
@@ -692,4 +701,177 @@ class MemberServiceTest {
 
     }
 
+
+    @Test
+    @DisplayName("로그인 성공")
+    public void success_Login() throws Exception {
+        //given
+        Long memberId = memberService.saveMember(createMemberDto());
+        Member findMember = memberService.findMemberByMemberId(memberId);
+
+        //when
+        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
+
+        //then
+        assertThat(loginServiceResponseDto.getEmail()).isEqualTo(findMember.getEmail());
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 이메일이 잘못된 경우")
+    public void fail_Login_WrongEmail() throws Exception {
+        //given
+        Long memberId = memberService.saveMember(createMemberDto());
+
+        //when
+        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
+                .email("EMAIL")
+                .password(PASSWORD)
+                .build();
+
+
+        //then
+        assertThrows(InternalAuthenticationServiceException.class, () -> memberService.login(memberLoginRequest));
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 비밀번호가 일치하지 않는 경우")
+    public void fail_Login_WrongPassword() throws Exception {
+        //given
+        Long memberId = memberService.saveMember(createMemberDto());
+
+        //when
+        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
+                .email(EMAIL)
+                .password("PASSWORD")
+                .build();
+
+
+        //then
+        assertThrows(BadCredentialsException.class, () -> memberService.login(memberLoginRequest));
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 데이터가 안넘어온경우")
+    public void fail_Login_NoData() throws Exception {
+        //given
+        Long memberId = memberService.saveMember(createMemberDto());
+
+        //when
+        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
+                .email(null)
+                .password(null)
+                .build();
+
+
+        //then
+        assertThrows(InternalAuthenticationServiceException.class, () -> memberService.login(memberLoginRequest));
+    }
+
+    // TODO reissue , duplicate check
+
+    @Test
+    @DisplayName("토큰 재발급 성공")
+    public void success_Reissue() throws Exception {
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
+        String refreshToken = loginServiceResponseDto.getRefreshToken();
+        TokenDTO.TokenRequestDTO tokenRequestDTO = TokenDTO.TokenRequestDTO.builder()
+                .accessToken(loginServiceResponseDto.getAccessToken())
+                .build();
+
+        
+        //when
+        TokenDTO tokenDTO = memberService.reissue(tokenRequestDTO, refreshToken);
+        System.out.println("tokenDTO.getAccessTokenExpiresIn() = " + tokenDTO.getAccessTokenExpiresIn());
+        //then
+        assertThat(tokenRequestDTO.getAccessToken()).isNotEqualTo(tokenDTO.getAccessToken());
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 실패 - 유효하지 않은 refresh token")
+    public void fail_Reissue_InvalidRefreshToken() throws Exception {
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
+        String refreshToken = "loginServiceResponseDto.getRefreshToken()";
+
+
+        //when
+        TokenDTO.TokenRequestDTO tokenRequestDTO = TokenDTO.TokenRequestDTO.builder()
+                .accessToken(loginServiceResponseDto.getAccessToken())
+                .build();
+
+        //then
+        assertThrows(InvalidRefreshTokenException.class, () -> memberService.reissue(tokenRequestDTO, refreshToken));
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 실패 - 유효하지 않은 access token")
+    public void fail_Reissue_InvalidAccessToken() throws Exception {
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
+        String refreshToken = loginServiceResponseDto.getRefreshToken();
+
+
+        //when
+        TokenDTO.TokenRequestDTO tokenRequestDTO = TokenDTO.TokenRequestDTO.builder()
+                .accessToken("")
+                .build();
+
+        //then
+        assertThrows(RuntimeException.class, () -> memberService.reissue(tokenRequestDTO, refreshToken));//MalformedJwtException 라는 exception 이 발생하는데 테스트코드에서 확인 불가능..
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 실패 - 로그아웃한 사용자(DB 에 refresh token 이 없음)")
+    public void fail_Reissue_Logout() throws Exception {
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
+        String refreshToken = loginServiceResponseDto.getRefreshToken();
+
+
+        //when
+        TokenDTO.TokenRequestDTO tokenRequestDTO = TokenDTO.TokenRequestDTO.builder()
+                .accessToken(loginServiceResponseDto.getAccessToken())
+                .build();
+        httpSession.removeAttribute("refreshToken");
+
+        //then
+        assertThrows(UnauthenticatedMemberException.class, () -> memberService.reissue(tokenRequestDTO, refreshToken));
+    }
 }
