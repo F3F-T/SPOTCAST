@@ -322,13 +322,13 @@ public class MemberService {
         String phone = updatePhoneRequest.getPhone();
 
         if(phoneDuplicateCheck(phone)){
-            throw new DuplicatePhoneException("중복된 닉네임은 사용할 수 없습니다.");
+            throw new DuplicatePhoneException("중복된 휴대폰 번호는 사용할 수 없습니다.");
         }
 
         Member member = findMemberByMemberId(memberId);
 
 
-        member.updateNickname(phone);
+        member.updatePhone(phone);
     }
 
     /**
