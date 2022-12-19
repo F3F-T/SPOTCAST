@@ -8,8 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceTest {
 
@@ -41,6 +39,16 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("카테고리 저장_실패_관리자X")
+    void saveCategory_fail_not_admin()throws Exception{
+        //given
+
+        //when
+
+        //then
+    }
+
+    @Test
     @DisplayName("카테고리 수정_성공")
     void updateCategory_success()throws Exception{
         //given
@@ -59,7 +67,15 @@ class CategoryServiceTest {
 
         //then
     }
+    @Test
+    @DisplayName("카테고리 수정_실패_관리자X")
+    void updateCategory_fail_not_admin()throws Exception{
+        //given
 
+        //when
+
+        //then
+    }
 
     @Test
     @DisplayName("카테고리 삭제_성공")
@@ -81,6 +97,25 @@ class CategoryServiceTest {
         //then
     }
 
+    @Test
+    @DisplayName("카테고리 삭제_실패_관리자X")
+    void deleteCategory_fail_not_admin()throws Exception{
+        //given
+
+        //when
+
+        //then
+    }
+
+    @Test
+    @DisplayName("카테고리 삭제_실패_자식카테고리 존재")
+    void deleteCategory_fail_not_delete_childCategory()throws Exception{
+        //given
+
+        //when
+
+        //then
+    }
     @Test
     @DisplayName("카테고리 정보 조회_성공")
     void getCategoryInfo_success()throws Exception{
