@@ -2,7 +2,7 @@ package f3f.domain.comment.dto;
 
 import f3f.domain.board.domain.Board;
 import f3f.domain.comment.domain.Comment;
-import f3f.domain.user.domain.User;
+import f3f.domain.user.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class CommentDTO {
         @NotNull
         private String content;
         @NotNull
-        private User author;
+        private Member author;
         @NotNull
         private Board board;
 

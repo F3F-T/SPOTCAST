@@ -2,7 +2,7 @@ package f3f.domain.likes.domain;
 
 
 import f3f.domain.board.domain.Board;
-import f3f.domain.user.domain.User;
+import f3f.domain.user.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -19,8 +19,8 @@ public class Likes {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name = "board_id")
