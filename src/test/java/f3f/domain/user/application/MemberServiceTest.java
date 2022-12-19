@@ -771,8 +771,6 @@ class MemberServiceTest {
         assertThrows(InternalAuthenticationServiceException.class, () -> memberService.login(memberLoginRequest));
     }
 
-    // TODO reissue , duplicate check
-
     @Test
     @DisplayName("토큰 재발급 성공")
     public void success_Reissue() throws Exception {
@@ -873,5 +871,83 @@ class MemberServiceTest {
 
         //then
         assertThrows(UnauthenticatedMemberException.class, () -> memberService.reissue(tokenRequestDTO, refreshToken));
+    }
+
+    @Test
+    @DisplayName("이메일 중복 체크 성공")
+    public void success_CheckDuplicateEmail_TRUE() throws Exception{
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        boolean duplicateCheck = memberService.emailDuplicateCheck(EMAIL);
+
+        //then
+        assertThat(duplicateCheck).isTrue();
+    }
+
+    @Test
+    @DisplayName("이메일 중복 체크 성공")
+    public void success_CheckDuplicateEmail_FALSE() throws Exception{
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        boolean duplicateCheck = memberService.emailDuplicateCheck("test@test.net");
+
+        //then
+        assertThat(duplicateCheck).isFalse();
+    }
+
+    @Test
+    @DisplayName("닉네임 중복 체크 성공")
+    public void success_CheckDuplicateNickname_TRUE() throws Exception{
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        boolean duplicateCheck = memberService.nicknameDuplicateCheck(NICKNAME);
+
+        //then
+        assertThat(duplicateCheck).isTrue();
+    }
+
+    @Test
+    @DisplayName("닉네임 중복 체크 성공")
+    public void success_CheckDuplicateNickname_FALSE() throws Exception{
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        boolean duplicateCheck = memberService.nicknameDuplicateCheck("test222");
+
+        //then
+        assertThat(duplicateCheck).isFalse();
+    }
+
+    @Test
+    @DisplayName("휴대폰번호 중복 체크 성공")
+    public void success_CheckDuplicatePhone_TRUE() throws Exception{
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        boolean duplicateCheck = memberService.phoneDuplicateCheck(PHONE);
+
+        //then
+        assertThat(duplicateCheck).isTrue();
+    }
+
+    @Test
+    @DisplayName("휴대폰번호 중복 체크 성공")
+    public void success_CheckDuplicatePhone_FALSE() throws Exception{
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        boolean duplicateCheck = memberService.phoneDuplicateCheck("01010102222");
+
+        //then
+        assertThat(duplicateCheck).isFalse();
     }
 }
