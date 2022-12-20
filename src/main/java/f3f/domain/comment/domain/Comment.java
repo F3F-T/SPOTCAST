@@ -27,6 +27,9 @@ public class Comment extends BaseTimeEntity {
 
     private String comment;
 
+    //임시) 표시여부 필드
+    private Boolean view;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member author;
@@ -45,6 +48,8 @@ public class Comment extends BaseTimeEntity {
 
     private Long depth;
 
+
+
     public void setDepth(Long depth){
         this.depth = depth;
     }
@@ -52,6 +57,9 @@ public class Comment extends BaseTimeEntity {
     //== update ==//
     public void updateComment(String comment) {
         this.comment = comment;
+    }
+    public void updateView(Boolean view) {
+        this.view = view;
     }
 
 //    public void update(CommentRequestDto commentRequestDto) {
