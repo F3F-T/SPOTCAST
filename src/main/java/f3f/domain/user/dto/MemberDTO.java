@@ -92,6 +92,7 @@ public class MemberDTO {
     }
 
     @Getter
+    @NoArgsConstructor
     public static class MemberInfoResponseDto {
 
         private String email;
@@ -132,26 +133,107 @@ public class MemberDTO {
 
         private String email;
         private String password;
-        private LoginMemberType loginMemberType;
 
         @Builder
-        public MemberLoginRequestDto(String email, String password, LoginMemberType loginMemberType) {
+        public MemberLoginRequestDto(String email, String password) {
             this.email = email;
             this.password = password;
-            this.loginMemberType = loginMemberType;
         }
 
-        public void passwordEncryption(PasswordEncoder passwordEncoder) {
-            this.password = passwordEncoder.encode(password);
-        }
 
         public UsernamePasswordAuthenticationToken toAuthentication(){
             return new UsernamePasswordAuthenticationToken(email,password);
         }
     }
 
+    @Getter
+    @NoArgsConstructor
+    public static class MemberLoginServiceResponseDto {
+
+        private String email;
+
+        private Authority authority;
+
+        private String name;
+
+        private String nickname;
+
+        private LoginMemberType loginMemberType;
+
+        private String grantType;
+
+        private String accessToken;
+
+        private String refreshToken;
+
+        private Long accessTokenExpiresIn;
+
+        @Builder
+        public MemberLoginServiceResponseDto(String email, Authority authority, String name, String nickname, LoginMemberType loginMemberType, String grantType, String accessToken, String refreshToken, Long accessTokenExpiresIn) {
+            this.email = email;
+            this.authority = authority;
+            this.name = name;
+            this.nickname = nickname;
+            this.loginMemberType = loginMemberType;
+            this.grantType = grantType;
+            this.accessToken = accessToken;
+            this.refreshToken = refreshToken;
+            this.accessTokenExpiresIn = accessTokenExpiresIn;
+        }
+
+        public MemberLoginResponseDto toEntity(){
+            return MemberLoginResponseDto.builder()
+                    .email(this.email)
+                    .authority(this.authority)
+                    .nickname(this.nickname)
+                    .name(this.name)
+                    .loginMemberType(this.loginMemberType)
+                    .grantType(this.grantType)
+                    .accessToken(this.accessToken)
+                    .accessTokenExpiresIn(this.accessTokenExpiresIn)
+                    .build();
+        }
+
+
+    }
+
+
 
     @Getter
+    @NoArgsConstructor
+    public static class MemberLoginResponseDto {
+
+        private String Email;
+
+        private Authority authority;
+
+        private String name;
+
+        private String nickname;
+
+        private LoginMemberType loginMemberType;
+
+        private String grantType;
+
+        private String accessToken;
+
+        private Long accessTokenExpiresIn;
+
+        @Builder
+
+        public MemberLoginResponseDto(String email, Authority authority, String name, String nickname, LoginMemberType loginMemberType, String grantType, String accessToken, Long accessTokenExpiresIn) {
+            Email = email;
+            this.authority = authority;
+            this.name = name;
+            this.nickname = nickname;
+            this.loginMemberType = loginMemberType;
+            this.grantType = grantType;
+            this.accessToken = accessToken;
+            this.accessTokenExpiresIn = accessTokenExpiresIn;
+        }
+    }
+    @Getter
+    @NoArgsConstructor
     public static class MemberDeleteRequestDto {
 
         private String email;
@@ -163,37 +245,47 @@ public class MemberDTO {
             this.password = password;
         }
 
-        public String passwordEncryption(PasswordEncoder passwordEncoder) {
-            return passwordEncoder.encode(password);
-        }
     }
 
 
     @Getter
-    public static class MemberUpdatePasswordRequestDto {
+    @NoArgsConstructor
+    public static class MemberUpdateLoginPasswordRequestDto {
 
         private String email;
         private String beforePassword;
         private String afterPassword;
 
         @Builder
-        public MemberUpdatePasswordRequestDto(String email, String beforePassword, String afterPassword) {
+        public MemberUpdateLoginPasswordRequestDto(String email, String beforePassword, String afterPassword) {
             this.email = email;
             this.beforePassword = beforePassword;
             this.afterPassword = afterPassword;
         }
 
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class MemberUpdateForgotPasswordRequestDto {
+
+        private String email;
+        private String afterPassword;
+
+        @Builder
+        public MemberUpdateForgotPasswordRequestDto(String email, String afterPassword) {
+            this.email = email;
+            this.afterPassword = afterPassword;
+        }
+
         public void passwordEncryption(PasswordEncoder passwordEncoder) {
-            this.beforePassword = passwordEncoder.encode(beforePassword);
             this.afterPassword = passwordEncoder.encode(afterPassword);
         }
     }
 
-
     @Getter
+    @NoArgsConstructor
     public static class MemberUpdateNicknameRequestDto {
-
-        private String email;
 
         @NotBlank
         @Length(min = 3, max = 20)
@@ -201,42 +293,35 @@ public class MemberDTO {
         private String nickname;
 
         @Builder
-
-        public MemberUpdateNicknameRequestDto(String email, String nickname) {
-            this.email = email;
+        public MemberUpdateNicknameRequestDto(String nickname) {
             this.nickname = nickname;
         }
     }
 
 
     @Getter
+    @NoArgsConstructor
     public static class MemberUpdateInformationRequestDto {
-
-        private String email;
 
         @NotBlank
         private String information;
 
         @Builder
-
-        public MemberUpdateInformationRequestDto(String email, String information) {
-            this.email = email;
+        public MemberUpdateInformationRequestDto(String information) {
             this.information = information;
         }
     }
 
     @Getter
+    @NoArgsConstructor
     public static class MemberUpdatePhoneRequestDto {
-
-        private String email;
 
         @NotBlank
         @Length(min = 10, max = 11)
         private String phone;
         @Builder
 
-        public MemberUpdatePhoneRequestDto(String email, String phone) {
-            this.email = email;
+        public MemberUpdatePhoneRequestDto(String phone) {
             this.phone = phone;
         }
     }

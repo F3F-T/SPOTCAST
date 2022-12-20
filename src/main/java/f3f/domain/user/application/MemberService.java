@@ -1,5 +1,6 @@
 package f3f.domain.user.application;
 
+import antlr.Token;
 import f3f.domain.model.LoginType;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
@@ -7,16 +8,12 @@ import f3f.domain.user.dto.MemberDTO.MemberSaveRequestDto;
 import f3f.domain.user.dto.TokenDTO;
 import f3f.domain.user.dto.TokenDTO.TokenResponseDTO;
 import f3f.domain.user.exception.*;
-import f3f.global.constants.MemberConstants;
 import f3f.global.jwt.TokenProvider;
-import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,17 +21,17 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.io.IOException;
+
 import static f3f.domain.user.dto.MemberDTO.*;
 import static f3f.global.constants.MemberConstants.*;
+import static f3f.global.constants.SecurityConstants.JSESSIONID;
+import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
 public class MemberService {
-
-
-    //전화번호 인증 추가
 
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -44,12 +41,13 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final HttpSession session;
 
-
     /**
      * 회원가입
      * @param saveRequest
      * @return
      */
+
+    @Transactional
     public Long saveMember(MemberSaveRequestDto saveRequest){
         if(emailDuplicateCheck(saveRequest.getEmail())){
             throw new DuplicateEmailException("이미 가입되어 있는 이메일입니다.");
@@ -66,23 +64,39 @@ public class MemberService {
         return member.getId();
     }
 
-    public void deleteMember(MemberDeleteRequestDto deleteRequest){
-        Member member = memberRepository.findByEmail(deleteRequest.getEmail())
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
+    /**
+     * 회원 탈퇴
+     * @param deleteRequest
+     */
 
-        String email = deleteRequest.getEmail();
-        if(!memberRepository.existsByEmailAndPassword(email, deleteRequest.passwordEncryption(passwordEncoder))){
-            throw new IncorrectPasswordException("비밀번호가 일치하지 않습니다.");
+    @Transactional
+    public void deleteMember(MemberDeleteRequestDto deleteRequest, Long memberId){
+
+        Member findMember = findMemberByMemberId(memberId);
+
+        if(findMember.getEmail() != deleteRequest.getEmail()){
+            throw new InvalidEmailException("이메일이 일치하지 않습니다.");
         }
 
-        memberRepository.deleteByEmail(email);
+        String password = deleteRequest.getPassword();
+        if(!passwordEncoder.matches(password, findMember.getPassword()))
+        {
+            throw new NotMatchPasswordException("비밀번호가 일치하지 않습니다.");
+        }
+
+        existsByIdAndPassword(memberId, findMember.getPassword());
+
+        memberRepository.deleteById(memberId);
     }
+
+
     /**
      * 로그인
      * @param loginRequest
+     * @return
      */
     @Transactional(readOnly = true)
-    public TokenResponseDTO login(MemberLoginRequestDto loginRequest,  HttpServletResponse response){
+    public MemberLoginServiceResponseDto login(MemberLoginRequestDto loginRequest){
 
         // 로그인 정보로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
@@ -92,146 +106,150 @@ public class MemberService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         //jwt 토큰 생성
-        TokenDTO.TokenSaveDTO tokenSaveDTO = tokenProvider.generateTokenDto(authentication);
+        TokenDTO tokenDto = tokenProvider.generateTokenDto(authentication);
 
-        TokenResponseDTO tokenResponseDTO = tokenSaveDTO.toEntity();
+        //response 에 유저 정보를 담기 위한 findById
+        Member findMember = memberRepository.findById(Long.valueOf(authentication.getName()))
+                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
-        //쿠키 저장 http only
+        //유저 정보 + 토큰 값
+        MemberLoginServiceResponseDto memberLoginResponse = tokenDto.toLoginEntity(findMember);
 
-        String refreshToken = tokenSaveDTO.getRefreshToken();
+        String refreshToken = tokenDto.getRefreshToken();
         saveRefreshTokenInStorage(refreshToken); // 추후 DB 나 어딘가 저장 예정
-        setRefreshTokenInCookie(response, refreshToken); // 리프레시 토큰 쿠키에 저장
-        return tokenResponseDTO;
+
+
+        return memberLoginResponse;
 
     }
 
 
+    /**
+     * 토큰 재발급
+     * @param tokenRequestDto
+     * @param cookieRefreshToken
+     * @return
+     */
     @Transactional
-    public TokenResponseDTO reissue(TokenDTO.TokenRequestDTO tokenRequestDto, HttpServletResponse response, String cookieRefreshToken) {
+    public TokenDTO reissue(TokenDTO.TokenRequestDTO tokenRequestDto, String cookieRefreshToken) {
 
 
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(cookieRefreshToken)) {
-            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
+            throw new InvalidRefreshTokenException("Refresh Token 이 유효하지 않습니다.");
         }
 
         // 2. Access Token 에서 Member ID 가져오기
         Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
 
         // 3. 저장소에서 Member ID 를 기반으로 유저 확인
+
+        if(!memberRepository.existsById(Long.valueOf(authentication.getName()))){
+            throw new MemberNotFoundException("로그아웃 된 사용자입니다.");
+        }
+
 //        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
 //                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
-        memberRepository.findById(Long.valueOf(authentication.getName()))
-                .orElseThrow(() -> new MemberNotFoundException("로그아웃 된 사용자입니다."));
 
-        String refreshToken = (String)session.getAttribute(REFRESH_TOKEN); // 추후에 디비에서 가져옴
+        String refreshToken = (String)session.getAttribute(REFRESH_TOKEN); // 추후에 디비에서 가져올 예정
         if(refreshToken == null){
-            throw new RuntimeException("로그아웃 된 사용자입니다.");
+            throw new UnauthenticatedMemberException("로그아웃 된 사용자입니다.");
         }
 
 
         // 4. Refresh Token 일치하는지 검사
         if (!refreshToken.equals(cookieRefreshToken)) {
-            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
+            throw new UnauthenticatedMemberException("토큰의 유저 정보가 일치하지 않습니다.");
         }
 
         // 5. 새로운 토큰 생성
-        TokenDTO.TokenSaveDTO tokenSaveDTO = tokenProvider.generateTokenDto(authentication);
-        TokenResponseDTO tokenDto = tokenSaveDTO.toEntity();
+        TokenDTO tokenDTO = tokenProvider.generateTokenDto(authentication);
 
         // 6. 저장소 정보 업데이트
-        saveRefreshTokenInStorage(tokenSaveDTO.getRefreshToken());// 추후 디비에 저장
-        setRefreshTokenInCookie(response,refreshToken); // 쿠키에 refresh 토큰 저장
+        saveRefreshTokenInStorage(tokenDTO.getRefreshToken());// 추후 디비에 저장
 
         // 토큰 발급
-        return tokenDto;
+        return tokenDTO;
     }
 
-    /**
-     * 쿠키에 refresh 토큰 저장
-     * @param response
-     * @param refreshToken
-     */
-    private static void setRefreshTokenInCookie(HttpServletResponse response, String refreshToken) {
-        ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN, refreshToken)
-                .maxAge(7 * 24 * 60 * 60) //7일
-                .path("/")
-                .secure(true)
-                .sameSite("None")
-                .httpOnly(true)
-                .build();
-        response.setHeader(SET_COOKIE, cookie.toString());
-    }
-
-    /**
-     * 저장소에 토큰 저장 추후에 DB 나 캐시 고려
-     * @param tokenSaveDTO
-     */
-    private void saveRefreshTokenInStorage(String tokenSaveDTO) {
-        session.setAttribute(REFRESH_TOKEN, tokenSaveDTO);
-    }
 
     /**
      * 로그아웃
+     * @throws IOException
      */
-    @Transactional(readOnly = true)
-    public void logout(){
-        session.removeAttribute(REFRESH_TOKEN);
+    @Transactional
+    public void logout() throws IOException {
+
+
+//        response.sendRedirect("/login"); //로그아웃 시 로그인 할 수 있는 페이지로 이동하도록 처리한다.
     }
+
+    /**
 
     /**
      * 회원 정보 조회
      * @param memberId
      * @return
      */
-    public MemberInfoResponseDto findMyPageInfo(Long memberId){
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다.")).toFindMemberDto();
+
+    @Transactional(readOnly = true)
+    public MemberInfoResponseDto findMemberInfoByMemberId(Long memberId){
+        return findMemberByMemberId(memberId)
+                .toFindMemberDto();
+    }
+
+    /**
+     * 내 정보 조회
+     * @return
+     */
+
+    @Transactional(readOnly = true)
+    public MemberInfoResponseDto findMyInfo(Long memberId){
+        return findMemberByMemberId(memberId)
+                .toFindMemberDto();
     }
 
     /**
      * 비밀번호 수정 - 로그인된 상태인 경우
      * @param updatePasswordRequest
      */
-    public void updatePassword(MemberUpdatePasswordRequestDto updatePasswordRequest){
-        updatePasswordRequest.passwordEncryption(passwordEncoder);
+    @Transactional
+    public void updatePassword(MemberUpdateLoginPasswordRequestDto updatePasswordRequest, Long memberId){
 
         String beforePassword = updatePasswordRequest.getBeforePassword();
         String afterPassword = updatePasswordRequest.getAfterPassword();
 
+        Member findMember = findMemberByMemberId(memberId);
 
-        Member member = memberRepository.findByEmail(updatePasswordRequest.getEmail())
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
-
-        if(!memberRepository.existsByEmailAndPassword(updatePasswordRequest.getEmail(),beforePassword)){
-            throw new UnauthenticatedMemberException("잘못된 정보입니다.");
+        if(!passwordEncoder.matches(beforePassword, findMember.getPassword()))
+        {
+            throw new UnauthenticatedMemberException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
-        if(!member.getLoginType().equals(LoginType.GENERAL_LOGIN)){
-            throw new NotGeneralLoginType("비밀번호 변경이 불가능합니다.");
-        }
+        existsByIdAndPassword(memberId,findMember.getPassword());
 
+        checkNotGeneralLoginUser(findMember);
 
-
-        member.updatePassword(afterPassword);
+        findMember.updatePassword(afterPassword);
     }
+
+
 
     /**
      * 비밀번호 수정 - 로그인되지 않은 경우(본인 인증 이후)
      * @param updatePasswordRequest
      */
-    public void updatePasswordByForgot(MemberUpdatePasswordRequestDto updatePasswordRequest){
+    @Transactional
+    public void updatePasswordByForgot(MemberUpdateForgotPasswordRequestDto updatePasswordRequest){
+
         updatePasswordRequest.passwordEncryption(passwordEncoder);
 
         String email = updatePasswordRequest.getEmail();
         String afterPassword = updatePasswordRequest.getAfterPassword();
 
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
+        Member member = findMemberByEmail(email);
 
-        if(!member.getLoginType().equals(LoginType.GENERAL_LOGIN)){
-            throw new NotGeneralLoginType(member.getLoginType().name()+" 로그인으로 회원가입 되어있습니다.");
-        }
+        checkNotGeneralLoginUser(member);
 
         member.updatePassword(afterPassword);
 
@@ -242,18 +260,17 @@ public class MemberService {
      * 닉네임 수정
      * @param updateNicknameRequest
      */
-    public void updateNickname(MemberUpdateNicknameRequestDto updateNicknameRequest){
+    @Transactional
+    public void updateNickname(MemberUpdateNicknameRequestDto updateNicknameRequest, Long memberId){
 
-        String email = updateNicknameRequest.getEmail();
         String nickname = updateNicknameRequest.getNickname();
 
+        Member member = findMemberByMemberId(memberId);
 
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
-
-        if(nicknameDuplicateCheck(updateNicknameRequest.getNickname())){
+        if(nicknameDuplicateCheck(nickname)){
             throw new DuplicateNicknameException("중복된 닉네임은 사용할 수 없습니다.");
         }
+
 
         member.updateNickname(nickname);
     }
@@ -262,63 +279,128 @@ public class MemberService {
      * information 변경
      * @param updateInformationRequest
      */
-    public void updateInformation(MemberUpdateInformationRequestDto updateInformationRequest){
+    @Transactional
+    public void updateInformation(MemberUpdateInformationRequestDto updateInformationRequest, Long memberId){
 
-        String email = updateInformationRequest.getEmail();
         String information = updateInformationRequest.getInformation();
 
-
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberNotFoundException());
-
+        Member member = findMemberByMemberId(memberId);
 
         member.updateInformation(information);
     }
 
     /**
-     * nickname 변가
-     * @param updateNicknameRequest
+     * phone 변경
+     * @param updatePhoneRequest
      */
-    public void updatePhone(MemberUpdateNicknameRequestDto updateNicknameRequest){
+    @Transactional
+    public void updatePhone(MemberUpdatePhoneRequestDto updatePhoneRequest, Long memberId){
 
-        String email = updateNicknameRequest.getEmail();
-        String nickname = updateNicknameRequest.getNickname();
+        String phone = updatePhoneRequest.getPhone();
+
+        if(phoneDuplicateCheck(phone)){
+            throw new DuplicatePhoneException("중복된 휴대폰 번호는 사용할 수 없습니다.");
+        }
+
+        Member member = findMemberByMemberId(memberId);
 
 
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberNotFoundException());
-
-
-        member.updateNickname(nickname);
+        member.updatePhone(phone);
     }
 
 
-    public void setLoginMemberType(String email) {
 
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
-        session.setAttribute(LOGIN_STATUS, member.getLoginMemberType());
+    /**
+     * 저장소에 토큰 저장 추후에 DB 나 캐시 고려
+     * @param tokenSaveDTO
+     */
+    private void saveRefreshTokenInStorage(String tokenSaveDTO) {
+
+        session.setAttribute(REFRESH_TOKEN, tokenSaveDTO);
     }
 
-    @Transactional(readOnly = true)
-    public void existsByEmailAndPassword(MemberLoginRequestDto memberLoginRequestDto) {
-        memberLoginRequestDto.passwordEncryption(passwordEncoder);
-        if(!memberRepository.existsByEmailAndPassword(memberLoginRequestDto.getEmail(), memberLoginRequestDto.getPassword())){
-            throw new MemberNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
+
+    /**
+     * 일반 로그인 유저인지 확인
+     * @param member
+     */
+    private void checkNotGeneralLoginUser(Member member) {
+        if(!member.getLoginType().equals(LoginType.GENERAL_LOGIN)){
+            throw new NotGeneralLoginType(member.getLoginType().name()+" 로그인으로 회원가입 되어있습니다.");
         }
     }
 
 
+    /**
+     * memberId로 멤버 찾기
+     * @param memberId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public Member findMemberByMemberId(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
+    }
+
+
+
+    /**
+     * email 로 member 찾기
+     * @param email
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public Member findMemberByEmail(String email) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
+    }
+
+
+    /**
+     * email 과 password 로 member 찾기
+     * @param email
+     * @param password
+     */
+    @Transactional(readOnly = true)
+    public void existsByEmailAndPassword(String email,String password) {
+        if(!memberRepository.existsByEmailAndPassword(email, password)){
+            throw new UnauthenticatedMemberException("아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public void existsByIdAndPassword(Long memberId,String password) {
+        if(!memberRepository.existsByIdAndPassword(memberId, password)){
+            throw new UnauthenticatedMemberException("아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+
+    /**
+     * email 중복 검사
+     * @param email
+     * @return
+     */
     @Transactional(readOnly = true)
     public boolean emailDuplicateCheck(String email) {
         return memberRepository.existsByEmail(email);
     }
 
+    /**
+     * 닉네임 중복 검사
+     * @param nickname
+     * @return
+     */
     @Transactional(readOnly = true)
     public boolean nicknameDuplicateCheck(String nickname) {
         return memberRepository.existsByNickname(nickname);
     }
 
+    /**
+     * 휴대폰번호 중복 검사
+     * @param phone
+     * @return
+     */
     @Transactional(readOnly = true)
     public boolean phoneDuplicateCheck(String phone) {
         return memberRepository.existsByPhone(phone);
