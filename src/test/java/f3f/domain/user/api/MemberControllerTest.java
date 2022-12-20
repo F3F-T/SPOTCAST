@@ -22,7 +22,6 @@ import static org.springframework.test.web.servlet.setup.SharedHttpSessionConfig
 @WebMvcTest({MemberController.class, MemberAuthController.class})
 @MockBean(JpaMetamodelMappingContext.class)
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-티
 public class MemberControllerTest {
     @MockBean
     private MemberService memberService;
