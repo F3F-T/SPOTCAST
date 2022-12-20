@@ -33,6 +33,7 @@ public class BoardController {
         return board.getId();
     }
 
+
     @GetMapping(value = "/board/{boardId}/{memberId}")
     public BoardDTO.BoardInfoDTO getBoardInfo(@PathVariable long boardId, @PathVariable long memberId){
         return boardService.getBoardInfo(boardId,memberId);

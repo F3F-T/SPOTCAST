@@ -25,6 +25,7 @@ public class CommentDTO {
         @NotNull
         private Board board;
 
+        private long parentId;
         private Comment parentComment;
         private List<Comment> childComment;
         private Long depth;
@@ -42,6 +43,8 @@ public class CommentDTO {
 
         }
     }
+
+    //TODO 얘네도 toEntity작성
 
     @Getter
     @NoArgsConstructor
