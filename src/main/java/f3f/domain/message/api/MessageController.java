@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController(value = "/message")
 @Slf4j
@@ -28,26 +30,26 @@ public class MessageController {
     }
 
     @PutMapping(value = "/{messageId}/update")
-    public void updateMessage(@PathVariable long messageId, @RequestBody Message message){
+    public Message updateMessage(@PathVariable long messageId, @RequestBody Message message){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        messageService.updateMessage(messageId,memberId,message);
+        return messageService.updateMessage(messageId,memberId,message);
     }
 
     @GetMapping(value = "/{messageId}")
-    public void getMessageInfo(@PathVariable long messageId){
+    public Message getMessageInfo(@PathVariable long messageId){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        messageService.getMessageInfo(messageId , memberId);
+        return messageService.getMessageInfo(messageId , memberId);
     }
 
     @GetMapping(value = "/sender")
-    public void getSendMessageListByUserId(){
+    public List<Message> getSendMessageListByUserId(){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        messageService.getSendMessageListByUserId(memberId);
+        return messageService.getSendMessageListByUserId(memberId);
     }
 
     @GetMapping(value = "/recipient")
-    public void getRecipientMessageListByUserId(){
+    public List<Message> getRecipientMessageListByUserId(){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        messageService.getRecipientMessageListByUserId(memberId);
+        return messageService.getRecipientMessageListByUserId(memberId);
     }
 }
