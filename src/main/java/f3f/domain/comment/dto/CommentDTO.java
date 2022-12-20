@@ -19,7 +19,7 @@ public class CommentDTO {
     public static class SaveRequest{
 
         @NotNull
-        private String content;
+        private String comment;
         @NotNull
         private Member author;
         @NotNull
@@ -33,7 +33,7 @@ public class CommentDTO {
         /*Dto -> Entity*/
         public Comment toEntity(){
             return Comment.builder()
-                    .content(this.content)
+                    .comment(this.comment)
                     .board(this.board)
                     .author(this.author)
                     .parentComment(this.parentComment)
@@ -44,26 +44,6 @@ public class CommentDTO {
         }
     }
 
-    //TODO 얘네도 toEntity작성
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class DeleteCommentRequest {
-        private Long Id;
-    }
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class UpdateCommentRequest {
-        private Long postId;
-        private Long commentId;
-        private String beforeContent;
-        private String afterContent;
-    }
 
 
 }

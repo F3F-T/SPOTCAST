@@ -2,7 +2,6 @@ package f3f.domain.comment.domain;
 
 
 import f3f.domain.board.domain.Board;
-import f3f.domain.comment.dto.CommentDTO;
 import f3f.domain.model.BaseTimeEntity;
 import f3f.domain.user.domain.Member;
 import lombok.AllArgsConstructor;
@@ -25,7 +24,7 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "comment_id")
     private Long id;
 
-    private String content;
+    private String comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -44,24 +43,25 @@ public class Comment extends BaseTimeEntity {
 
     private Long depth;
 
-//    public void setDepth(Long depth){
-//        this.depth = depth;
+    public void setDepth(Long depth){
+        this.depth = depth;
+    }
+
+    public void updateComment(String comment) {
+        this.comment = comment;
+    }
+
+//    public void update(CommentRequestDto commentRequestDto) {
+//        this.comment = commentRequestDto.getComment();
 //    }
-
-    public void updateContent(String content) {
-        this.content = content;
-    }
-
-    public void update(CommentDTO.SaveRequest commentRequestDto) {
-        this.content = commentRequestDto.getContent();
-    }
     public void updateParent(Comment parent){
         this.parentComment = parent;
     }
 
     @Builder
-    public Comment(String content, Member author, Board board, Comment parentComment, List<Comment> childComment, Long depth) {
-        this.content = content;
+    public Comment(Long id, String comment, Member author, Board board, Comment parentComment, List<Comment> childComment, Long depth) {
+        this.id = id;
+        this.comment = comment;
         this.author = author;
         this.board = board;
         this.parentComment = parentComment;
