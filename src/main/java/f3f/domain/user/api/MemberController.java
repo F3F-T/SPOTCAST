@@ -141,38 +141,7 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    /**
-     * 이메일 중복 검사
-     * @param email
-     * @return
-     */
-    @GetMapping("/member-emails/{email}/exists")
-    public ResponseEntity<Boolean> duplicateCheckEmail(@PathVariable String email) {
 
-        return ResponseEntity.ok(memberService.emailDuplicateCheck(email));
-    }
-
-    /**
-     * 닉네임 중복 검사
-     * @param nickname
-     * @return
-     */
-    @GetMapping("/member-nicknames/{nickname}/exists")
-    public ResponseEntity<Boolean> duplicateCheckNickname(@PathVariable String nickname) {
-
-        return ResponseEntity.ok(memberService.nicknameDuplicateCheck(nickname));
-    }
-
-    /**
-     * 휴대전화 번호 중복 검사
-     * @param phone
-     * @return
-     */
-    @GetMapping("/member-phones/{phone}/exists")
-    public ResponseEntity<Boolean> duplicateCheckPhone(@PathVariable String phone) {
-
-        return ResponseEntity.ok(memberService.phoneDuplicateCheck(phone));
-    }
 
 
     /**

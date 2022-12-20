@@ -93,4 +93,8 @@ public class Member extends MemberBase {
         this.information = information;
     }
 
+    public void updatePhone(String phone){
+        this.phone = phone;
+    }
+
 }

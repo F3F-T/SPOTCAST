@@ -27,7 +27,6 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
 class MemberServiceTest {
@@ -328,6 +327,8 @@ class MemberServiceTest {
                 .beforePassword(PASSWORD)
                 .afterPassword("as1234wer")
                 .build();
+        System.out.println("memberId = " + memberId);
+        System.out.println("member.getPassword() = " + member.getPassword());
 
 
         memberService.updatePassword(passwordRequest, memberId);
@@ -364,8 +365,6 @@ class MemberServiceTest {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createGoogleMemberDto();
 
         Long memberId = memberService.saveMember(memberSaveRequestDto);
-        Optional<Member> byId = memberRepository.findById(memberId);
-        Member member = byId.get();
 
         //when
         MemberDTO.MemberUpdateLoginPasswordRequestDto passwordRequest = MemberDTO.MemberUpdateLoginPasswordRequestDto.builder()
@@ -540,7 +539,8 @@ class MemberServiceTest {
         //given
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
         Long memberId = memberService.saveMember(memberSaveRequestDto);
-
+        Optional<Member> byId = memberRepository.findById(memberId);
+        Member member = byId.get();
         //when
         String email = EMAIL;
         String password = PASSWORD;
@@ -549,6 +549,10 @@ class MemberServiceTest {
                 .email(email)
                 .password(password)
                 .build();
+
+        System.out.println("memberId = " + memberId);
+        System.out.println("member.getPassword() = " + member.getPassword());
+
         memberService.deleteMember(deleteRequestDto, memberId);
 
         //then
@@ -577,6 +581,26 @@ class MemberServiceTest {
     }
 
     @Test
+    @DisplayName("회원 삭제 실패 - 삭제 요청 이메일이 일치하지 않는 경우")
+    public void fail_DeleteMember_InvalidEmail() throws Exception {
+        //given
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        Long memberId = memberService.saveMember(memberSaveRequestDto);
+
+        //when
+        String email = "EMAIL";
+        String password = PASSWORD;
+        MemberDTO.MemberDeleteRequestDto deleteRequestDto = MemberDTO.MemberDeleteRequestDto.builder()
+                .email(email)
+                .password(password)
+                .build();
+
+        //then
+        assertThrows(InvalidEmailException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
+
+    }
+
+    @Test
     @DisplayName("회원 삭제 실패 - 비밀번호가 잘못된 경우")
     public void fail_DeleteMember_IncorrectPassword() throws Exception {
         //given
@@ -592,7 +616,7 @@ class MemberServiceTest {
                 .password(password)
                 .build();
         //then
-        assertThrows(UnauthenticatedMemberException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
+        assertThrows(NotMatchPasswordException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
     }
 
     @Test
@@ -606,6 +630,66 @@ class MemberServiceTest {
 
         //then
         assertThat(memberId).isEqualTo(memberRepository.findById(memberId).get().getId());
+    }
+
+
+    @Test
+    @DisplayName("휴대폰 번호 변경 성공")
+    public void success_UpdatePhone() throws Exception {
+        //given
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        Long memberId = memberService.saveMember(memberSaveRequestDto);
+        Member member = memberRepository.findById(memberId).get();
+
+        String changePhone = "01012341234";
+
+        MemberDTO.MemberUpdatePhoneRequestDto phoneRequest = MemberDTO.MemberUpdatePhoneRequestDto.builder()
+                .phone(changePhone)
+                .build();
+
+        //when
+        memberService.updatePhone(phoneRequest, memberId);
+
+        //then
+        Assertions.assertThat(member.getPhone()).isEqualTo(changePhone);
+    }
+
+    @Test
+    @DisplayName("휴대폰 번호 변경 실패 - 유저 찾지 못한 경우")
+    public void fail_UpdatePhone_NotFoundMember() throws Exception {
+        //given
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        Long memberId = 1213123L;
+        memberService.saveMember(memberSaveRequestDto);
+
+        //when
+        String changePhone = "01012341234";
+
+        MemberDTO.MemberUpdatePhoneRequestDto phoneRequest = MemberDTO.MemberUpdatePhoneRequestDto.builder()
+                .phone(changePhone)
+                .build();
+
+        //then
+        assertThrows(MemberNotFoundException.class, () -> memberService.updatePhone(phoneRequest, memberId));
+    }
+
+    @Test
+    @DisplayName("휴대폰 번호 변경 실패 - 중복된 휴대폰 번호")
+    public void fail_UpdatePhone_DuplicatedPhone() throws Exception {
+        //given
+        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
+        Long memberId = memberService.saveMember(memberSaveRequestDto);
+
+        //when
+        String changePhone = PHONE;
+
+        MemberDTO.MemberUpdatePhoneRequestDto phoneRequest = MemberDTO.MemberUpdatePhoneRequestDto.builder()
+                .phone(changePhone)
+                .build();
+
+        //then
+        assertThrows(DuplicatePhoneException.class, () -> memberService.updatePhone(phoneRequest, memberId));
+
     }
 
 }
