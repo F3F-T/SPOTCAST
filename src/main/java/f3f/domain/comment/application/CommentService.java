@@ -25,6 +25,7 @@ import org.apache.catalina.security.SecurityUtil;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -34,6 +35,7 @@ public class CommentService {
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
 
+    /*CREATE*/
     @Transactional
     public Long commentSave(CommentDTO.SaveRequest saveRequest) { //TODO 파라미터에 ( HttpServletRequest request ) 동혁이뭐시기
 
@@ -71,6 +73,15 @@ public class CommentService {
         return comment.getId();
 
     }
+    /*READ*/
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public List<Comment> findCommentsByPost(Board board){
+
+        if (boardRepository.existsById(board.getId())) {
+            return board.getComments();
+        }
+        throw new NotFoundBoardByIdException();
+    }
 
     /* UPDATE */
     @Transactional
@@ -86,6 +97,27 @@ public class CommentService {
     public void commentDelete(Long id) {
         Comment comment = commentRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("해당 댓글이 존재하지 않습니다. id=" + id));
+
+        /*부모 댓글 지울 경우
+        1. 대댓글이 남아있는 경우 : 댓글은 내용이 지워지나, DB에와 화면에서는 지워지지 않고, "삭제된 댓글입니다"라고 표시
+        2. 대댓글이 아예 존재하지 않는 경우 : 곧바로 DB에서 삭제
+        3. 대댓글이 존재하나 모두 삭제된 대댓글인 경우 : 댓글과, 달려있는 대댓글 모두 DB에서 일괄 삭제, 화면상에도 표시되지 않음
+        */
+
+
+        /*자식 댓글 지울 경우
+        1. 대댓글의 부모댓글이 남아있는 경우 : 대댓글만 삭제, 그러나 DB에서 완전히 지워지지는 않고, 화면상에는 "삭제된 댓글입니다" 라고만 표시
+        2. 대댓글의 부모댓글이 삭제된 댓글인 경우
+            2-1.현재 지운 대댓글로 인해, 부모에 달려있는 대댓글이 모두 삭제된 경우 -> 부모를 포함한 모든 대댓글을 DB에서 일괄 삭제, 화면상에서도 지움
+            2-2. 다른 대댓글이 아직 삭제되지 않고 남아있는 경우 -> 해당 대댓글만 삭제, 그러나 DB에서 삭제되지는 않고, 화면상에는 "삭제된 댓글입니다"라고 표시
+
+
+        */
+
+        comment.remove();
+        List<Comment> removableCommentList = comment.findRemovableList();
+        removableCommentList.forEach(removableComment -> commentRepository.delete(removableComment));
+        // 로직 -> Comment에
 
         commentRepository.delete(comment);
     }
