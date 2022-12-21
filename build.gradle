@@ -58,6 +58,8 @@ dependencies {
 
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'mysql:mysql-connector-java'
+
+
 }
 test {
     outputs.dir snippetsDir

@@ -3,7 +3,6 @@ package f3f.domain.likes.domain;
 
 import f3f.domain.board.domain.Board;
 import f3f.domain.user.domain.Member;
-
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
