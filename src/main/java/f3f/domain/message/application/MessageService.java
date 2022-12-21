@@ -56,11 +56,21 @@ public class MessageService {
     }
 
     @Transactional
+    public Message updateSenderDisplayStatus(long messageId, long userId,Boolean displayStatus){
+        return null;
+    }
+
+    @Transactional
+    public Message updateRecipientDisplayStatus(long messageId, long userId,Boolean displayStatus){
+        return null;
+    }
+
+    @Transactional
     public Message updateMessage(long messageId,long memberId ,Message message){
         Message targetMessage = messageRepository.findById(messageId)
                 .orElseThrow();
 
-        if(targetMessage.getSender().getId() == messageId){
+        if(targetMessage.getSender().getId() != messageId){
             throw new SenderMissMatchException();
         }
 

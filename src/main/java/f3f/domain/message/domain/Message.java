@@ -25,9 +25,13 @@ public class Message  extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member sender;
 
+    private Boolean senderDisplayStatus;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member recipient;
+
+    private Boolean recipientDisplayStatus;
 
     @Builder
     public Message(Long id, String content, Member sender, Member recipient) {
@@ -38,6 +42,13 @@ public class Message  extends BaseTimeEntity {
     }
 
     public void updateMessage(Message message){
-        this.content  = message.getContent();
+        this.content = message.getContent();
+    }
+    public void updateSenderDisplayStatus(Boolean senderDisplayStatus){
+        this.senderDisplayStatus = senderDisplayStatus;
+    }
+
+    public void updateRecipientDisplayStatus(Boolean recipientDisplayStatus){
+        this.recipientDisplayStatus  = recipientDisplayStatus;
     }
 }
