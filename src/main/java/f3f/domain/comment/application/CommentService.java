@@ -63,7 +63,7 @@ public class CommentService {
             }
 
             comment.updateParent(parent); //부모 update
-            parent.getChildComment().add(comment); //TODO 해줘야되나 ?
+            parent.getChildComment().add(comment); //TODO 해줘야되나 ? ->
             comment.setDepth(parent.getDepth()+1);
         }
 
