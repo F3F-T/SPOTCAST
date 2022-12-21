@@ -119,27 +119,27 @@ public class CommentService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다. id=" + id));
 
         comment.updateView(false);
-        if(comment.getChildComment().size() == 0 || comment.getChildComment() == null){
-            //OR 표시안함
-            //표시여부를 바꾸거나 삭제하거나
-
-            //CASE 1 : 댓글을 삭제할 경우( 자식 없어야함)
-            commentRepository.deleteById(comment.getId());
-
-            // CASE 2 : 표시여부를 바꾸는 경우
-            comment.updateView(false);
-
-        }else{
-            //자식이  있어서 삭제를 할 수 없다.
-
-            //자식 삭제
-            for (Comment childComment : comment.getChildComment()) {
-                commentRepository.deleteById(childComment.getId());
-            }
-
-            //자식이 다 삭제되면 부모 삭제
-            commentRepository.deleteById(comment.getId());
-        }
+//        if(comment.getChildComment().size() == 0 || comment.getChildComment() == null){
+//            //OR 표시안함
+//            //표시여부를 바꾸거나 삭제하거나
+//
+//            //CASE 1 : 댓글을 삭제할 경우( 자식 없어야함)
+//            commentRepository.deleteById(comment.getId());
+//
+//            // CASE 2 : 표시여부를 바꾸는 경우
+//            comment.updateView(false);
+//
+//        }else{
+//            //자식이  있어서 삭제를 할 수 없다.
+//
+//            //자식 삭제
+//            for (Comment childComment : comment.getChildComment()) {
+//                commentRepository.deleteById(childComment.getId());
+//            }
+//
+//            //자식이 다 삭제되면 부모 삭제
+//            commentRepository.deleteById(comment.getId());
+//        }
 
 //        comment.remove();
 //        List<Comment> removableCommentList = comment.findRemovableList();
