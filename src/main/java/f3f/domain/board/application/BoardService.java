@@ -104,8 +104,13 @@ public class BoardService {
      * 유저 식별자로 게시글 조회
      */
     @Transactional(readOnly = true)
-    public List<BoardInfoDTO> getBoardListByUserId(long userId){
-        return null;
+    public List<BoardInfoDTO> getBoardListByMemberId(long memberId){
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberNotFoundException());
+
+        List<BoardInfoDTO> userBoardList = member.getBoardList().stream().map((Board::toBoardInfoDTO)).collect(Collectors.toList());
+        return userBoardList;
     }
 
     /*

@@ -5,10 +5,17 @@ import f3f.domain.board.domain.Board;
 import f3f.domain.model.BoardType;
 import f3f.domain.teamApply.dao.ApplyRepository;
 import f3f.domain.teamApply.domain.Apply;
+import f3f.domain.teamApply.exception.NotfoundException;
+import f3f.domain.teamApply.exception.UnauthorizedMemberException;
 import f3f.domain.user.dao.MemberRepository;
+import f3f.domain.user.domain.Member;
+import f3f.domain.user.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +26,7 @@ public class ApplyService {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public void sendApply(Apply apply){
         Board board = boardRepository.findById(apply.getBoard().getId()).orElseThrow();
         if (!board.getBoardType().equals(BoardType.RECRUIT)){
@@ -31,17 +39,51 @@ public class ApplyService {
         applyRepository.save(apply);
     }
 
-    public void cancelApply(){
+    //지원한 사람만 취소가 가능함
+    @Transactional
+    public Apply cancelApply(long applyId, long memberId){
 
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberNotFoundException());
+        Apply apply = applyRepository.findById(applyId)
+                .orElseThrow(() -> new NotfoundException());
+
+        if (member.getId() != apply.getVolunteer().getId()){
+            throw new UnauthorizedMemberException();
+        }
+
+        applyRepository.deleteById(apply.getId());
+        return apply;
     }
-    public void getApply(){
 
+    @Transactional(readOnly = true)
+    public Apply getApply(long applyId , long memberId){
+        Apply apply = applyRepository.findById(applyId)
+                .orElseThrow(() -> new NotfoundException("존재하지 않는 지원"));
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotfoundException("존재하지 않는 유저"));
+
+        if(apply.getVolunteer().getId() == member.getId() || apply.getRecruiter().getId() == member.getId()){
+            return apply;
+        }else{
+            throw new UnauthorizedMemberException();
+        }
     }
-    public void getRecruiterApplyList(){
 
+    @Transactional(readOnly = true)
+    public List<Apply> getRecruiterApplyList(long memberId){
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberNotFoundException());
+
+        return member.getRecruiterList();
     }
 
-    public void getVolunteerApplyList(){
+    @Transactional(readOnly = true)
+    public List<Apply> getVolunteerApplyList(long memberId){
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberNotFoundException());
 
+        return member.getVolunteerList();
     }
 }
