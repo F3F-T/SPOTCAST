@@ -28,24 +28,24 @@ public class CommentController {
 
 
     /* CREATE */
-    @PostMapping("/board/{board_id}/user_id}/comment")
-    public ResponseEntity commentSave( @RequestBody CommentDTO.SaveRequest dto) {
-        return ResponseEntity.ok(commentService.commentSave(dto));
+    @PostMapping("/board/{boardId}/comment")
+    public ResponseEntity saveComment(@PathVariable Long boardId, @RequestBody CommentDTO.SaveRequest dto) {
+        return ResponseEntity.ok(commentService.saveComment(dto));
     }
 
 
     /* UPDATE */
-    @PatchMapping({"/board/comment/{comment_id}"})
-    public ResponseEntity commentUpdate(@PathVariable Long id, @RequestBody CommentDTO.SaveRequest  dto) {
-        commentService.commentUpdate(id, dto);
-        return ResponseEntity.ok(id);
+    @PatchMapping({"/board/comment/{commentId}"})
+    public ResponseEntity updateComment(@PathVariable Long commentId, @RequestBody CommentDTO.SaveRequest  dto) {
+        commentService.updateComment(commentId, dto);
+        return ResponseEntity.ok(commentId);
     }
 
     /* DELETE */
-    @DeleteMapping("/board/comment/{comment_id}")
-    public ResponseEntity commentDelete(@PathVariable Long id) {
-        commentService.commentDelete(id);
-        return ResponseEntity.ok(id);
+    @DeleteMapping("/board/comment/{commentId}")
+    public ResponseEntity deleteComment(@PathVariable Long commentId) {
+        commentService.deleteComment(commentId);
+        return ResponseEntity.ok(commentId);
     }
 
 

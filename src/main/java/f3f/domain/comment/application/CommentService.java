@@ -36,7 +36,7 @@ public class CommentService {
 
     /*CREATE*/
     @Transactional
-    public Long commentSave(CommentDTO.SaveRequest saveRequest) { //TODO 파라미터에 ( HttpServletRequest request ) 동혁이뭐시기
+    public Long saveComment(CommentDTO.SaveRequest saveRequest) { //TODO 파라미터에 ( HttpServletRequest request ) 동혁이뭐시기
 
 
         Comment parent = null;
@@ -74,7 +74,7 @@ public class CommentService {
     }
     /*READ*/
     @Transactional(readOnly = true)
-    public List<Comment> findCommentsByBoard(Long boardId){
+    public List<Comment> findCommentsByBoardId(Long boardId){
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new NotFoundBoardByIdException());
@@ -90,7 +90,7 @@ public class CommentService {
 
     /* UPDATE */
     @Transactional
-    public void commentUpdate(Long id, CommentDTO.SaveRequest dto) {
+    public void updateComment(Long id, CommentDTO.SaveRequest dto) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다. " + id));
 
@@ -113,7 +113,7 @@ public class CommentService {
         */
     /* DELETE */
     @Transactional
-    public void commentDelete(Long id) {
+    public void deleteComment(Long id) {
         //삭제할 코멘트를 찾아옴
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다. id=" + id));
