@@ -5,7 +5,7 @@ import f3f.domain.comment.domain.Comment;
 public class CommentResponseDto {
 
     private Long id;
-    private String comment;
+    private String content;
     private String nickname;
     private Long boardId;
 
@@ -16,7 +16,7 @@ public class CommentResponseDto {
     /* Entity -> Dto*/
     public CommentResponseDto(Comment comment) {
         this.id = comment.getId();
-        this.comment = comment.getComment();
+        this.content = comment.getContent();
         this.nickname = comment.getAuthor().getNickname();
         this.boardId = comment.getBoard().getId();
     }
