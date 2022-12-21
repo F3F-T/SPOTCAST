@@ -19,7 +19,7 @@ public class CommentDTO {
     public static class SaveRequest{
 
         @NotNull
-        private String comment;
+        private String content;
         @NotNull
         private Member author;
         @NotNull
@@ -33,7 +33,7 @@ public class CommentDTO {
         /*Dto -> Entity*/
         public Comment toEntity(){
             return Comment.builder()
-                    .comment(this.comment)
+                    .content(this.content)
                     .board(this.board)
                     .author(this.author)
                     .parentComment(this.parentComment)

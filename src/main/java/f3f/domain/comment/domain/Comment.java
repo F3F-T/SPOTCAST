@@ -25,7 +25,7 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "comment_id")
     private Long id;
 
-    private String comment;
+    private String content;
 
     //임시) 표시여부 필드
     private Boolean view;
@@ -55,8 +55,8 @@ public class Comment extends BaseTimeEntity {
     }
 
     //== update ==//
-    public void updateComment(String comment) {
-        this.comment = comment;
+    public void updateComment(String content) {
+        this.content = content;
     }
     public void updateView(Boolean view) {
         this.view = view;
@@ -98,9 +98,9 @@ public class Comment extends BaseTimeEntity {
 //    }
 
     @Builder
-    public Comment(Long id, String comment, Member author, Board board, Comment parentComment, List<Comment> childComment, Long depth) {
+    public Comment(Long id, String content, Member author, Board board, Comment parentComment, List<Comment> childComment, Long depth) {
         //this.id = id;
-        this.comment = comment;
+        this.content = content;
         this.author = author;
         this.board = board;
         this.parentComment = parentComment;

@@ -48,7 +48,7 @@ public class CommentService {
         Comment comment = Comment.builder()
                 .author(author)
                 .board(board)
-                .comment(saveRequest.getComment())
+                .content(saveRequest.getContent())
                 .build();
 
 
@@ -63,7 +63,7 @@ public class CommentService {
             }
 
             comment.updateParent(parent); //부모 update
-            parent.getChildComment().add(comment); //TODO 해줘야되나 ? ->
+            //parent.getChildComment().add(comment); //TODO 해줘야되나 ? ->nope
             comment.setDepth(parent.getDepth()+1);
         }
 
@@ -94,7 +94,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다. " + id));
 
-        comment.updateComment(dto.getComment());
+        comment.updateComment(dto.getContent());
 
 
         //save해줘야함
