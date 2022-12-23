@@ -791,35 +791,10 @@ class MemberServiceTest {
 
         
         //when
-        TokenDTO tokenDTO = memberService.reissue(tokenRequestDTO, refreshToken);
-        System.out.println("tokenDTO.getAccessTokenExpiresIn() = " + tokenDTO.getAccessTokenExpiresIn());
+        TokenDTO tokenDTO = memberService.reissue(tokenRequestDTO);
+
         //then
         assertThat(tokenRequestDTO.getAccessToken()).isNotEqualTo(tokenDTO.getAccessToken());
-    }
-
-    @Test
-    @DisplayName("토큰 재발급 실패 - 유효하지 않은 refresh token")
-    public void fail_Reissue_InvalidRefreshToken() throws Exception {
-        //given
-        memberService.saveMember(createMemberDto());
-
-        //when
-        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
-                .email(EMAIL)
-                .password(PASSWORD)
-                .build();
-
-        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
-        String refreshToken = "loginServiceResponseDto.getRefreshToken()";
-
-
-        //when
-        TokenDTO.TokenRequestDTO tokenRequestDTO = TokenDTO.TokenRequestDTO.builder()
-                .accessToken(loginServiceResponseDto.getAccessToken())
-                .build();
-
-        //then
-        assertThrows(InvalidRefreshTokenException.class, () -> memberService.reissue(tokenRequestDTO, refreshToken));
     }
 
     @Test
@@ -844,34 +819,9 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(RuntimeException.class, () -> memberService.reissue(tokenRequestDTO, refreshToken));//MalformedJwtException 라는 exception 이 발생하는데 테스트코드에서 확인 불가능..
+        assertThrows(RuntimeException.class, () -> memberService.reissue(tokenRequestDTO));//MalformedJwtException 라는 exception 이 발생하는데 테스트코드에서 확인 불가능..
     }
 
-    @Test
-    @DisplayName("토큰 재발급 실패 - 로그아웃한 사용자(DB 에 refresh token 이 없음)")
-    public void fail_Reissue_Logout() throws Exception {
-        //given
-        memberService.saveMember(createMemberDto());
-
-        //when
-        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
-                .email(EMAIL)
-                .password(PASSWORD)
-                .build();
-
-        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
-        String refreshToken = loginServiceResponseDto.getRefreshToken();
-
-
-        //when
-        TokenDTO.TokenRequestDTO tokenRequestDTO = TokenDTO.TokenRequestDTO.builder()
-                .accessToken(loginServiceResponseDto.getAccessToken())
-                .build();
-        httpSession.removeAttribute("refreshToken");
-
-        //then
-        assertThrows(UnauthenticatedMemberException.class, () -> memberService.reissue(tokenRequestDTO, refreshToken));
-    }
 
     @Test
     @DisplayName("이메일 중복 체크 성공")

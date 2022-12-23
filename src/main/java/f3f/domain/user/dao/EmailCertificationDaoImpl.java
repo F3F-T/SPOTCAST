@@ -11,7 +11,7 @@ import static f3f.global.constants.EmailConstants.PREFIX_CERTIFICATION;
 
 @RequiredArgsConstructor
 @Repository
-public class EmailCertificationNumberDao implements EmailCertificationDao{
+public class EmailCertificationDaoImpl implements EmailCertificationDao{
 
     private final StringRedisTemplate stringRedisTemplate;
 

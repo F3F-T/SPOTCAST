@@ -1,7 +1,6 @@
 package f3f.global.jwt;
 
 import f3f.domain.user.dto.TokenDTO;
-import f3f.domain.user.dto.TokenDTO.TokenResponseDTO;
 import f3f.domain.user.exception.InvalidAccessTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -22,7 +21,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import static f3f.global.constants.jwtConstants.*;
+import static f3f.global.constants.JwtConstants.*;
 
 @Component
 @Slf4j
