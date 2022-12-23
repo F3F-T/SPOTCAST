@@ -1,5 +1,6 @@
 package f3f.domain.user.api;
 
+import f3f.domain.user.application.EmailCertificationService;
 import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dto.MemberDTO;
 import f3f.domain.user.dto.TokenDTO;
@@ -27,6 +28,7 @@ public class MemberAuthController {
 
     private final MemberService memberService;
 
+    private final EmailCertificationService emailCertificationService;
     /**
      * 회원가입
      * @param memberRequestDto
@@ -90,6 +92,11 @@ public class MemberAuthController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/email-certification/sends")
+    public ResponseEntity<Void> sendEmailCertification(@RequestBody MemberDTO.EmailCertificationRequest request){
+        emailCertificationService.sendEmailForCertification(request.getEmail());
+        return ResponseEntity.ok().build();
+    }
 
     /**
      * 이메일 중복 검사

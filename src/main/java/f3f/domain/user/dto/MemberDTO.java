@@ -327,4 +327,16 @@ public class MemberDTO {
     }
 
 
+    @Getter
+    @NoArgsConstructor
+    public static class EmailCertificationRequest{
+        private String email;
+        private String certificationNumber;
+
+        @Builder
+        public EmailCertificationRequest(String email, String certificationNumber) {
+            this.email = email;
+            this.certificationNumber = certificationNumber;
+        }
+    }
 }

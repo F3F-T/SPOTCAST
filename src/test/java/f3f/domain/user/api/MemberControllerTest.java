@@ -84,23 +84,21 @@ public class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(saveRequestDto)))
                 .andDo(print())
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andDo(document("auth/signup/successful", requestFields(
-                        fieldWithPath("userName").description("The user's name"),
-                        fieldWithPath("address").description("The user's address class"),
-                        fieldWithPath("address.addressName").description("The user's address name"),
-                        fieldWithPath("address.postalAddress").description("The user's postal address"),
-                        fieldWithPath("address.latitude").description("latitude of user address"),
-                        fieldWithPath("address.longitude").description("longitude of user address"),
+                        fieldWithPath("name").description("The user's name"),
                         fieldWithPath("nickname").description("The user's nickname"),
-                        fieldWithPath("phoneNumber").description("The user's phoneNumber"),
+                        fieldWithPath("phone").description("The user's phoneNumber"),
                         fieldWithPath("email").description("The user's email"),
                         fieldWithPath("password").description("The user's password"),
-                        fieldWithPath("birthDate").description("The user's birthDate"),
-                        fieldWithPath("userLoginType").description("The user's loginType")
+                        fieldWithPath("information").description("The user's information"),
+                        fieldWithPath("loginMemberType").description("The user's loginMemberType"),
+                        fieldWithPath("loginType").description("The user's loginType"),
+                        fieldWithPath("authority").description("The user's authority")
+
                 )));
 
-
+        // TODO 컨트롤러 테스트 코드 ㅌ작성 및 에러 코드 대응
     }
 
 }
