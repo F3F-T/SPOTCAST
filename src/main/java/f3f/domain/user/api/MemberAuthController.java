@@ -98,6 +98,11 @@ public class MemberAuthController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/email-certification/confirms")
+    public ResponseEntity<Void> confirmEmailCertification(@RequestBody MemberDTO.EmailCertificationRequest request){
+        emailCertificationService.verifyEmail(request);
+        return ResponseEntity.ok().build();
+    }
     /**
      * 이메일 중복 검사
      * @param email
