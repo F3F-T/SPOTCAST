@@ -1,6 +1,5 @@
 package f3f.domain.user.application;
 
-import com.sun.xml.bind.v2.TODO;
 import f3f.domain.model.LoginType;
 import f3f.domain.model.LoginMemberType;
 import f3f.domain.model.Authority;
@@ -14,13 +13,10 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
@@ -383,7 +379,7 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(NotGeneralLoginType.class, () -> memberService.updatePassword(passwordRequest, memberId));
+        assertThrows(NotGeneralLoginTypeException.class, () -> memberService.updatePassword(passwordRequest, memberId));
     }
 
     @Test
@@ -439,7 +435,7 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(NotGeneralLoginType.class, () -> memberService.updatePasswordByForgot(passwordRequest));
+        assertThrows(NotGeneralLoginTypeException.class, () -> memberService.updatePasswordByForgot(passwordRequest));
     }
 
     @Test
@@ -625,7 +621,7 @@ class MemberServiceTest {
                 .password(password)
                 .build();
         //then
-        assertThrows(NotMatchPasswordException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
+        assertThrows(InvalidPasswordException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
     }
 
     @Test

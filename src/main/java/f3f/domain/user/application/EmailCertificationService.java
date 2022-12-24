@@ -2,11 +2,10 @@ package f3f.domain.user.application;
 
 import f3f.domain.user.dao.EmailCertificationDao;
 import f3f.domain.user.dto.MemberDTO;
-import f3f.domain.user.exception.EmailCertificationNumberMismatchException;
+import f3f.domain.user.exception.EmailCertificationMismatchException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -44,7 +43,7 @@ public class EmailCertificationService {
 
     public void verifyEmail(MemberDTO.EmailCertificationRequest request){
         if(!isVerify(request)){
-            throw new EmailCertificationNumberMismatchException();
+            throw new EmailCertificationMismatchException();
         }
         emailCertificationDao.removeEmailCertification(request.getEmail());
     }

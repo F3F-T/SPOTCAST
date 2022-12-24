@@ -1,13 +1,11 @@
 package f3f.domain.user.application;
 
-import antlr.Token;
 import f3f.domain.model.LoginType;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.dao.RefreshTokenDao;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO.MemberSaveRequestDto;
 import f3f.domain.user.dto.TokenDTO;
-import f3f.domain.user.dto.TokenDTO.TokenResponseDTO;
 import f3f.domain.user.exception.*;
 import f3f.global.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +17,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 
 import static f3f.domain.user.dto.MemberDTO.*;
-import static f3f.global.constants.MemberConstants.*;
-import static f3f.global.constants.SecurityConstants.JSESSIONID;
-import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 
 @Service
 @RequiredArgsConstructor
@@ -83,7 +77,7 @@ public class MemberService {
         String password = deleteRequest.getPassword();
         if(!passwordEncoder.matches(password, findMember.getPassword()))
         {
-            throw new NotMatchPasswordException("비밀번호가 일치하지 않습니다.");
+            throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
 
         existsByIdAndPassword(memberId, findMember.getPassword());
@@ -317,7 +311,7 @@ public class MemberService {
      */
     private void checkNotGeneralLoginUser(Member member) {
         if(!member.getLoginType().equals(LoginType.GENERAL_LOGIN)){
-            throw new NotGeneralLoginType(member.getLoginType().name()+" 로그인으로 회원가입 되어있습니다.");
+            throw new NotGeneralLoginTypeException(member.getLoginType().name()+" 로그인으로 회원가입 되어있습니다.");
         }
     }
 
