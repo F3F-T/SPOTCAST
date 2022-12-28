@@ -336,8 +336,13 @@ public class MemberService {
      */
     @Transactional(readOnly = true)
     public Member findMemberByEmail(String email) {
-        return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
+
+        Member findMember = memberRepository.findByEmail(email);
+        if(findMember==null){
+            throw new MemberNotFoundException("존재하지 않는 사용자입니다.");
+        }
+
+        return findMember;
     }
 
 
