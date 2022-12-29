@@ -76,7 +76,15 @@ public class MemberAuthController {
         deleteCookie(response,REMEMBER_ME);
         return ResponseEntity.ok().build();
     }
+    /**
+     * 소셜 로그인 시 정보 return
+     * @return
+     */
+    @GetMapping("/myInfo")
+    public ResponseEntity<MemberDTO.MemberInfoResponseDto> findMyInfoById() {
 
+        return ResponseEntity.ok(memberService.findMyInfo(SecurityUtil.getCurrentMemberId()));
+    }
     /**
      * 이메일 인증 번호 전송
      * @param request

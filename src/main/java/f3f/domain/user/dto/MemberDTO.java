@@ -95,6 +95,7 @@ public class MemberDTO {
     @NoArgsConstructor
     public static class MemberInfoResponseDto {
 
+        private Long id;
         private String email;
 
         private String name;
@@ -114,8 +115,9 @@ public class MemberDTO {
         private String phone;
 
         @Builder
-        public MemberInfoResponseDto(String email, String name, String nickname, LoginMemberType loginMemberType,
+        public MemberInfoResponseDto(Long id,String email, String name, String nickname, LoginMemberType loginMemberType,
                                      LoginType loginType, Authority authority, String information, String phone) {
+            this.id = id;
             this.email = email;
             this.name = name;
             this.nickname = nickname;
