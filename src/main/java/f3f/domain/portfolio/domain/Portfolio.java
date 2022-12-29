@@ -1,8 +1,7 @@
 package f3f.domain.portfolio.domain;
 
 
-import f3f.domain.bookmark.domain.Bookmark;
-import f3f.domain.user.domain.User;
+import f3f.domain.user.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -21,8 +20,8 @@ public class Portfolio {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
 
     @OneToMany(mappedBy = "portfolio",fetch = FetchType.LAZY)

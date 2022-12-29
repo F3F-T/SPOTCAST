@@ -1,12 +1,17 @@
 package f3f.domain.category.domain;
 
 import f3f.domain.board.domain.Board;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@NoArgsConstructor
 public class Category {
 
     @Id
@@ -16,9 +21,10 @@ public class Category {
 
     private String name;
 
-    private Long depth;
+    private Integer depth;
 
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Category parentCategory;
 
     @OneToMany(mappedBy = "parentCategory", fetch = FetchType.LAZY)
@@ -26,4 +32,19 @@ public class Category {
 
     @OneToMany(mappedBy = "category",fetch = FetchType.LAZY)
     private List<Board> boardList = new ArrayList<>();
+
+    @Builder
+    public Category(String name, Integer depth,Category parentCategory, List<Category> child) {
+        this.name = name;
+        this.depth = depth;
+        this.parentCategory = parentCategory;
+        this.child = child;
+    }
+
+    public void updateCategory(Category category){
+        this.name = category.getName();
+        this.depth = category.getDepth();
+        this.parentCategory = category.getParentCategory();
+
+    }
 }

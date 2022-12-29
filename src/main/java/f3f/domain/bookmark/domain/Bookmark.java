@@ -1,10 +1,7 @@
 package f3f.domain.bookmark.domain;
 
-import f3f.domain.board.domain.Board;
-import f3f.domain.portfolio.domain.Portfolio;
 import f3f.domain.portfolio.domain.PortfolioBookmark;
-import f3f.domain.scrap.domain.ScrapBoard;
-import f3f.domain.user.domain.User;
+import f3f.domain.user.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +21,7 @@ public class Bookmark {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private Member member;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "bookmark_id")

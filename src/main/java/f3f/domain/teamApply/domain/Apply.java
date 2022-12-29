@@ -3,12 +3,14 @@ package f3f.domain.teamApply.domain;
 
 import f3f.domain.board.domain.Board;
 import f3f.domain.model.BaseTimeEntity;
-import f3f.domain.user.domain.User;
+import f3f.domain.user.domain.Member;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Getter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,8 +27,8 @@ public class Apply extends BaseTimeEntity {
     private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User recruiter;
+    private Member recruiter;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User volunteer;
+    private Member volunteer;
 }
