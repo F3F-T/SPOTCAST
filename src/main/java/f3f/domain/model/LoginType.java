@@ -2,6 +2,8 @@ package f3f.domain.model;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 public enum LoginType {
     //
@@ -13,5 +15,12 @@ public enum LoginType {
     LoginType(long id, String type) {
         this.id = id;
         this.type = type;
+    }
+
+    public static LoginType valueOfLabel(String label) {
+        return Arrays.stream(values())
+                .filter(value -> value.type.equals(label))
+                .findAny()
+                .orElse(null);
     }
 }
