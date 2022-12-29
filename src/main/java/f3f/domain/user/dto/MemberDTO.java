@@ -164,12 +164,11 @@ public class MemberDTO {
 
         private String accessToken;
 
-        private String refreshToken;
 
         private Long accessTokenExpiresIn;
 
         @Builder
-        public MemberLoginServiceResponseDto(String email, Authority authority, String name, String nickname, LoginMemberType loginMemberType, String grantType, String accessToken, String refreshToken, Long accessTokenExpiresIn) {
+        public MemberLoginServiceResponseDto(String email, Authority authority, String name, String nickname, LoginMemberType loginMemberType, String grantType, String accessToken, Long accessTokenExpiresIn) {
             this.email = email;
             this.authority = authority;
             this.name = name;
@@ -177,21 +176,7 @@ public class MemberDTO {
             this.loginMemberType = loginMemberType;
             this.grantType = grantType;
             this.accessToken = accessToken;
-            this.refreshToken = refreshToken;
             this.accessTokenExpiresIn = accessTokenExpiresIn;
-        }
-
-        public MemberLoginResponseDto toEntity(){
-            return MemberLoginResponseDto.builder()
-                    .email(this.email)
-                    .authority(this.authority)
-                    .nickname(this.nickname)
-                    .name(this.name)
-                    .loginMemberType(this.loginMemberType)
-                    .grantType(this.grantType)
-                    .accessToken(this.accessToken)
-                    .accessTokenExpiresIn(this.accessTokenExpiresIn)
-                    .build();
         }
 
 
@@ -199,39 +184,7 @@ public class MemberDTO {
 
 
 
-    @Getter
-    @NoArgsConstructor
-    public static class MemberLoginResponseDto {
 
-        private String Email;
-
-        private Authority authority;
-
-        private String name;
-
-        private String nickname;
-
-        private LoginMemberType loginMemberType;
-
-        private String grantType;
-
-        private String accessToken;
-
-        private Long accessTokenExpiresIn;
-
-        @Builder
-
-        public MemberLoginResponseDto(String email, Authority authority, String name, String nickname, LoginMemberType loginMemberType, String grantType, String accessToken, Long accessTokenExpiresIn) {
-            Email = email;
-            this.authority = authority;
-            this.name = name;
-            this.nickname = nickname;
-            this.loginMemberType = loginMemberType;
-            this.grantType = grantType;
-            this.accessToken = accessToken;
-            this.accessTokenExpiresIn = accessTokenExpiresIn;
-        }
-    }
     @Getter
     @NoArgsConstructor
     public static class MemberDeleteRequestDto {

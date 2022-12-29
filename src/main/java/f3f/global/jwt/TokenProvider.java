@@ -41,6 +41,7 @@ public class TokenProvider {
 
 //        long now = (new Date()).getTime();
         long now = System.currentTimeMillis();
+
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = Jwts.builder()

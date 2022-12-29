@@ -33,7 +33,6 @@ public class TokenDTO {
                 .authority(member.getAuthority())
                 .grantType(this.grantType)
                 .accessToken(this.accessToken)
-                .refreshToken(this.refreshToken)
                 .accessTokenExpiresIn(this.accessTokenExpiresIn)
                 .build();
     }

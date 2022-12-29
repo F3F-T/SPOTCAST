@@ -115,9 +115,9 @@ public class SecurityConfig {
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/oauth2/**").permitAll()
 //                .antMatchers("/admin/**").hasRole("ADMIN")
-//                .antMatchers("/member/**").hasRole("USER")
+                .antMatchers("/member/**").hasRole("USER")
                 .antMatchers("/admin/**").permitAll()
-                .antMatchers("/member/**").permitAll()
+//                .antMatchers("/member/**").permitAll()
 //                .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
                 .anyRequest().permitAll()   // 나머지 API 는 전부 인증 필요
 
