@@ -1,5 +1,6 @@
 package f3f.global.oauth.handler;
 
+import com.nimbusds.oauth2.sdk.util.StringUtils;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.dao.RefreshTokenDao;
 import f3f.domain.user.domain.Member;
@@ -8,6 +9,7 @@ import f3f.global.constants.SecurityConstants;
 import f3f.global.jwt.TokenProvider;
 import f3f.global.oauth.OAuth2UserInfo;
 import f3f.global.oauth.OAuth2UserInfoFactory;
+import f3f.global.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import f3f.global.util.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -41,89 +44,54 @@ import static f3f.global.constants.SecurityConstants.REDIRECT_URI_PARAM_COOKIE_N
 public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 
-
     private final TokenProvider tokenProvider;
 
     private final RefreshTokenDao refreshTokenDao;
 
-    private final MemberRepository memberRepository;
 
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String targetUrl = determineTargetUrl(request, response, authentication);
-        log.info("TEST : {}" , targetUrl);
         if (response.isCommitted()) {
             logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
             return;
         }
 
-        clearAuthenticationAttributes(request);
+        clearAuthenticationAttributes(request, response);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         Optional<String> redirectUri = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
-
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
-
-        OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
-        String loginType = authToken.getAuthorizedClientRegistrationId().toUpperCase();
-
-        OidcUser user = ((OidcUser) authentication.getPrincipal());
-
-        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(loginType, user.getAttributes());
-
-//        Collection<? extends GrantedAuthority> authorities = ((OidcUser) authentication.getPrincipal()).getAuthorities();
-
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-        log.info("TEST:{}",authorities);
-        log.info("authentication.getName():{}",authentication.getName());
-        log.info("authentication.getPrincipal():{}",authentication.getPrincipal().toString());
-        log.info("authentication.getCredentials():{}",authentication.getCredentials());
-        log.info("user : {}",user);
-
-
-        Member findMember = memberRepository.findByEmail(userInfo.getEmail());
-
-//        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(findMember.getEmail(), findMember.getPassword());
-//        Authentication memberAuthentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         //토큰 생성
         TokenDTO tokenDTO = tokenProvider.generateTokenDto(authentication);
 
-//        saveRefreshTokenInStorage()
+        saveRefreshTokenInStorage(tokenDTO.getRefreshToken(), Long.valueOf(authentication.getName()));
 
-//        // DB 저장
-//        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userInfo.getId());
-//        if (userRefreshToken != null) {
-//            userRefreshToken.setRefreshToken(refreshToken.getToken());
-//        } else {
-//            userRefreshToken = new UserRefreshToken(userInfo.getId(), refreshToken.getToken());
-//            userRefreshTokenRepository.saveAndFlush(userRefreshToken);
-//        }
-//
-//        int cookieMaxAge = (int) refreshTokenExpiry / 60;
-//
-//        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-//        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-
-        return UriComponentsBuilder.fromUriString(targetUrl)
+        String uriString = UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", tokenDTO.getAccessToken())
                 .build().toUriString();
+        return uriString;
     }
 
     /**
      * redis 에 refresh token 저장
+     *
      * @param refreshToken
      * @param memberId
      */
     private void saveRefreshTokenInStorage(String refreshToken, Long memberId) {
-        refreshTokenDao.createRefreshToken(memberId,refreshToken);
+        refreshTokenDao.createRefreshToken(memberId, refreshToken);
+    }
+
+    protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
+        super.clearAuthenticationAttributes(request);
+        authorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
     }
 }

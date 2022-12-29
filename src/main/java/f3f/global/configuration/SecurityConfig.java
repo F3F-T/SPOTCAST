@@ -8,6 +8,7 @@ import f3f.global.jwt.JwtAuthenticationEntryPoint;
 import f3f.global.jwt.TokenProvider;
 import f3f.global.oauth.handler.OAuth2AuthenticationFailureHandler;
 import f3f.global.oauth.handler.OAuthAuthenticationSuccessHandler;
+import f3f.global.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -65,7 +66,7 @@ public class SecurityConfig {
 
     @Bean
     public OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler() {
-        return new OAuth2AuthenticationFailureHandler();
+        return new OAuth2AuthenticationFailureHandler(oAuth2AuthorizationRequestBasedOnCookieRepository());
     }
 
     @Bean
@@ -73,11 +74,19 @@ public class SecurityConfig {
         return new OAuthAuthenticationSuccessHandler(
                 tokenProvider,
                 refreshTokenDao,
-                memberRepository,
-                authenticationManagerBuilder
-
+                oAuth2AuthorizationRequestBasedOnCookieRepository()
         );
     }
+
+    /*
+     * 쿠키 기반 인가 Repository
+     * 인가 응답을 연계 하고 검증할 때 사용.
+     * */
+    @Bean
+    public OAuth2AuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository() {
+        return new OAuth2AuthorizationRequestBasedOnCookieRepository();
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // CSRF 설정 Disable
@@ -117,9 +126,16 @@ public class SecurityConfig {
                 .apply(new JwtSecurityConfig(tokenProvider))
 
                 .and()
-                .oauth2Login()
-                .userInfoEndpoint()
-                .userService(customOAuth2UserService)
+                    .oauth2Login()
+                    .authorizationEndpoint()
+                    .baseUri("/oauth2/authorization")
+                    .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
+                .and()
+                    .redirectionEndpoint()
+                    .baseUri("/*/oauth2/code/*")
+                .and()
+                    .userInfoEndpoint()
+                    .userService(customOAuth2UserService)
                 .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler())
                 .failureHandler(oAuth2AuthenticationFailureHandler());

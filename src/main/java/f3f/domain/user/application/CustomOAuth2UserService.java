@@ -67,7 +67,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private Member createUser(OAuth2UserInfo memberInfo, LoginType loginType) {
         String password = passwordEncoder.encode(memberInfo.getId());
         Member createMember = Member.builder()
-                .id(Long.valueOf(memberInfo.getId()))
                 .email(memberInfo.getEmail())
                 .password(password)
                 .name(memberInfo.getName())

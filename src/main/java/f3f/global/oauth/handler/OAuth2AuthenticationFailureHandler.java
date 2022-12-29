@@ -1,6 +1,7 @@
 
 package f3f.global.oauth.handler;
 
+import f3f.global.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import f3f.global.util.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import static f3f.global.constants.SecurityConstants.REDIRECT_URI_PARAM_COOKIE_N
 public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
 
+    private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         String targetUrl = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
@@ -32,12 +34,12 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
 
         exception.printStackTrace();
 
-        log.debug("fail");
         targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("error", exception.getLocalizedMessage())
                 .build().toUriString();
 
 
+        authorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 }
