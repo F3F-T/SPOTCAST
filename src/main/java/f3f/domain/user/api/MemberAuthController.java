@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import java.io.IOException;
 
@@ -31,7 +32,7 @@ public class MemberAuthController {
      * @return
      */
     @PostMapping("/signup")
-    public ResponseEntity<Long> signup(@RequestBody MemberDTO.MemberSaveRequestDto memberRequestDto) {
+    public ResponseEntity<Long> signup(@Valid @RequestBody MemberDTO.MemberSaveRequestDto memberRequestDto) {
         return ResponseEntity.ok(memberService.saveMember(memberRequestDto));
     }
 
