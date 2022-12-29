@@ -6,18 +6,20 @@ import f3f.domain.model.Authority;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO;
+import f3f.domain.user.dto.TokenDTO;
 import f3f.domain.user.exception.*;
 import f3f.global.encrypt.EncryptionService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -45,6 +47,9 @@ class MemberServiceTest {
 
     @Autowired
     MemberService memberService;
+
+    @Autowired
+    HttpSession httpSession;
 
     private Validator validator = null;
 
@@ -374,7 +379,7 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(NotGeneralLoginType.class, () -> memberService.updatePassword(passwordRequest, memberId));
+        assertThrows(NotGeneralLoginTypeException.class, () -> memberService.updatePassword(passwordRequest, memberId));
     }
 
     @Test
@@ -430,7 +435,7 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(NotGeneralLoginType.class, () -> memberService.updatePasswordByForgot(passwordRequest));
+        assertThrows(NotGeneralLoginTypeException.class, () -> memberService.updatePasswordByForgot(passwordRequest));
     }
 
     @Test
@@ -616,7 +621,7 @@ class MemberServiceTest {
                 .password(password)
                 .build();
         //then
-        assertThrows(NotMatchPasswordException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
+        assertThrows(InvalidPasswordException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
     }
 
     @Test
@@ -692,4 +697,203 @@ class MemberServiceTest {
 
     }
 
+
+    @Test
+    @DisplayName("로그인 성공")
+    public void success_Login() throws Exception {
+        //given
+        Long memberId = memberService.saveMember(createMemberDto());
+        Member findMember = memberService.findMemberByMemberId(memberId);
+
+        //when
+        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
+
+        //then
+        assertThat(loginServiceResponseDto.getEmail()).isEqualTo(findMember.getEmail());
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 이메일이 잘못된 경우")
+    public void fail_Login_WrongEmail() throws Exception {
+        //given
+        Long memberId = memberService.saveMember(createMemberDto());
+
+        //when
+        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
+                .email("EMAIL")
+                .password(PASSWORD)
+                .build();
+
+
+        //then
+        assertThrows(InternalAuthenticationServiceException.class, () -> memberService.login(memberLoginRequest));
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 비밀번호가 일치하지 않는 경우")
+    public void fail_Login_WrongPassword() throws Exception {
+        //given
+        Long memberId = memberService.saveMember(createMemberDto());
+
+        //when
+        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
+                .email(EMAIL)
+                .password("PASSWORD")
+                .build();
+
+
+        //then
+        assertThrows(BadCredentialsException.class, () -> memberService.login(memberLoginRequest));
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 데이터가 안넘어온경우")
+    public void fail_Login_NoData() throws Exception {
+        //given
+        Long memberId = memberService.saveMember(createMemberDto());
+
+        //when
+        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
+                .email(null)
+                .password(null)
+                .build();
+
+
+        //then
+        assertThrows(InternalAuthenticationServiceException.class, () -> memberService.login(memberLoginRequest));
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 성공")
+    public void success_Reissue() throws Exception {
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
+        String refreshToken = loginServiceResponseDto.getRefreshToken();
+        TokenDTO.TokenRequestDTO tokenRequestDTO = TokenDTO.TokenRequestDTO.builder()
+                .accessToken(loginServiceResponseDto.getAccessToken())
+                .build();
+
+        
+        //when
+        TokenDTO tokenDTO = memberService.reissue(tokenRequestDTO);
+
+        //then
+        assertThat(tokenRequestDTO.getAccessToken()).isNotEqualTo(tokenDTO.getAccessToken());
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 실패 - 유효하지 않은 access token")
+    public void fail_Reissue_InvalidAccessToken() throws Exception {
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
+        String refreshToken = loginServiceResponseDto.getRefreshToken();
+
+
+        //when
+        TokenDTO.TokenRequestDTO tokenRequestDTO = TokenDTO.TokenRequestDTO.builder()
+                .accessToken("")
+                .build();
+
+        //then
+        assertThrows(RuntimeException.class, () -> memberService.reissue(tokenRequestDTO));//MalformedJwtException 라는 exception 이 발생하는데 테스트코드에서 확인 불가능..
+    }
+
+
+    @Test
+    @DisplayName("이메일 중복 체크 성공")
+    public void success_CheckDuplicateEmail_TRUE() throws Exception{
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        boolean duplicateCheck = memberService.emailDuplicateCheck(EMAIL);
+
+        //then
+        assertThat(duplicateCheck).isTrue();
+    }
+
+    @Test
+    @DisplayName("이메일 중복 체크 성공")
+    public void success_CheckDuplicateEmail_FALSE() throws Exception{
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        boolean duplicateCheck = memberService.emailDuplicateCheck("test@test.net");
+
+        //then
+        assertThat(duplicateCheck).isFalse();
+    }
+
+    @Test
+    @DisplayName("닉네임 중복 체크 성공")
+    public void success_CheckDuplicateNickname_TRUE() throws Exception{
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        boolean duplicateCheck = memberService.nicknameDuplicateCheck(NICKNAME);
+
+        //then
+        assertThat(duplicateCheck).isTrue();
+    }
+
+    @Test
+    @DisplayName("닉네임 중복 체크 성공")
+    public void success_CheckDuplicateNickname_FALSE() throws Exception{
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        boolean duplicateCheck = memberService.nicknameDuplicateCheck("test222");
+
+        //then
+        assertThat(duplicateCheck).isFalse();
+    }
+
+    @Test
+    @DisplayName("휴대폰번호 중복 체크 성공")
+    public void success_CheckDuplicatePhone_TRUE() throws Exception{
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        boolean duplicateCheck = memberService.phoneDuplicateCheck(PHONE);
+
+        //then
+        assertThat(duplicateCheck).isTrue();
+    }
+
+    @Test
+    @DisplayName("휴대폰번호 중복 체크 성공")
+    public void success_CheckDuplicatePhone_FALSE() throws Exception{
+        //given
+        memberService.saveMember(createMemberDto());
+
+        //when
+        boolean duplicateCheck = memberService.phoneDuplicateCheck("01010102222");
+
+        //then
+        assertThat(duplicateCheck).isFalse();
+    }
 }

@@ -1,12 +1,11 @@
 package f3f.domain.user.application;
 
-import antlr.Token;
 import f3f.domain.model.LoginType;
 import f3f.domain.user.dao.MemberRepository;
+import f3f.domain.user.dao.RefreshTokenDao;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO.MemberSaveRequestDto;
 import f3f.domain.user.dto.TokenDTO;
-import f3f.domain.user.dto.TokenDTO.TokenResponseDTO;
 import f3f.domain.user.exception.*;
 import f3f.global.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +17,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 
 import static f3f.domain.user.dto.MemberDTO.*;
-import static f3f.global.constants.MemberConstants.*;
-import static f3f.global.constants.SecurityConstants.JSESSIONID;
-import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +34,7 @@ public class MemberService {
 
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
+    private final RefreshTokenDao refreshTokenDao;
     private final HttpSession session;
 
     /**
@@ -81,7 +77,7 @@ public class MemberService {
         String password = deleteRequest.getPassword();
         if(!passwordEncoder.matches(password, findMember.getPassword()))
         {
-            throw new NotMatchPasswordException("비밀번호가 일치하지 않습니다.");
+            throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
 
         existsByIdAndPassword(memberId, findMember.getPassword());
@@ -116,7 +112,7 @@ public class MemberService {
         MemberLoginServiceResponseDto memberLoginResponse = tokenDto.toLoginEntity(findMember);
 
         String refreshToken = tokenDto.getRefreshToken();
-        saveRefreshTokenInStorage(refreshToken); // 추후 DB 나 어딘가 저장 예정
+        saveRefreshTokenInStorage(refreshToken, Long.valueOf(authentication.getName())); // 추후 DB 나 어딘가 저장 예정
 
 
         return memberLoginResponse;
@@ -127,46 +123,36 @@ public class MemberService {
     /**
      * 토큰 재발급
      * @param tokenRequestDto
-     * @param cookieRefreshToken
      * @return
      */
     @Transactional
-    public TokenDTO reissue(TokenDTO.TokenRequestDTO tokenRequestDto, String cookieRefreshToken) {
+    public TokenDTO reissue(TokenDTO.TokenRequestDTO tokenRequestDto) {
 
 
-        // 1. Refresh Token 검증
-        if (!tokenProvider.validateToken(cookieRefreshToken)) {
-            throw new InvalidRefreshTokenException("Refresh Token 이 유효하지 않습니다.");
-        }
-
-        // 2. Access Token 에서 Member ID 가져오기
+        // 1. Access Token 에서 Member ID 가져오기
         Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
 
-        // 3. 저장소에서 Member ID 를 기반으로 유저 확인
-
+        // 2. 저장소에서 Member ID 를 기반으로 유저 확인
         if(!memberRepository.existsById(Long.valueOf(authentication.getName()))){
             throw new MemberNotFoundException("로그아웃 된 사용자입니다.");
         }
 
-//        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-//                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
-
-        String refreshToken = (String)session.getAttribute(REFRESH_TOKEN); // 추후에 디비에서 가져올 예정
+        // 3. cache 에서 member Id 를 기반으로 refresh token 확인
+        String refreshToken = refreshTokenDao.getRefreshToken(Long.valueOf(authentication.getName()));
         if(refreshToken == null){
-            throw new UnauthenticatedMemberException("로그아웃 된 사용자입니다.");
+            throw new RefreshTokenNotFoundException("로그아웃 된 사용자입니다.");
         }
 
-
-        // 4. Refresh Token 일치하는지 검사
-        if (!refreshToken.equals(cookieRefreshToken)) {
-            throw new UnauthenticatedMemberException("토큰의 유저 정보가 일치하지 않습니다.");
+        // 4. Refresh Token 검증
+        if (!tokenProvider.validateToken(refreshToken)) {
+            throw new InvalidRefreshTokenException("Refresh Token 이 유효하지 않습니다.");
         }
 
         // 5. 새로운 토큰 생성
         TokenDTO tokenDTO = tokenProvider.generateTokenDto(authentication);
 
         // 6. 저장소 정보 업데이트
-        saveRefreshTokenInStorage(tokenDTO.getRefreshToken());// 추후 디비에 저장
+        saveRefreshTokenInStorage(tokenDTO.getRefreshToken(),Long.valueOf(authentication.getName()));// 추후 디비에 저장
 
         // 토큰 발급
         return tokenDTO;
@@ -178,10 +164,8 @@ public class MemberService {
      * @throws IOException
      */
     @Transactional
-    public void logout() throws IOException {
-
-
-//        response.sendRedirect("/login"); //로그아웃 시 로그인 할 수 있는 페이지로 이동하도록 처리한다.
+    public void logout(Long memberId) throws IOException {
+        refreshTokenDao.removeRefreshToken(memberId);
     }
 
     /**
@@ -310,13 +294,14 @@ public class MemberService {
 
 
 
-    /**
-     * 저장소에 토큰 저장 추후에 DB 나 캐시 고려
-     * @param tokenSaveDTO
-     */
-    private void saveRefreshTokenInStorage(String tokenSaveDTO) {
 
-        session.setAttribute(REFRESH_TOKEN, tokenSaveDTO);
+    /**
+     * redis 에 refresh token 저장
+     * @param refreshToken
+     * @param memberId
+     */
+    private void saveRefreshTokenInStorage(String refreshToken, Long memberId) {
+        refreshTokenDao.createRefreshToken(memberId,refreshToken);
     }
 
 
@@ -326,7 +311,7 @@ public class MemberService {
      */
     private void checkNotGeneralLoginUser(Member member) {
         if(!member.getLoginType().equals(LoginType.GENERAL_LOGIN)){
-            throw new NotGeneralLoginType(member.getLoginType().name()+" 로그인으로 회원가입 되어있습니다.");
+            throw new NotGeneralLoginTypeException(member.getLoginType().name()+" 로그인으로 회원가입 되어있습니다.");
         }
     }
 
