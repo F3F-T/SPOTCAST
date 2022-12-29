@@ -1,89 +1,82 @@
 package f3f.domain.user.application;
 
+import f3f.domain.model.Authority;
+import f3f.domain.model.LoginMemberType;
 import f3f.domain.model.LoginType;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
+import f3f.domain.user.domain.UserPrincipal;
+import f3f.domain.user.exception.OAuthTypeMissMatchException;
 import f3f.global.oauth.OAuth2UserInfo;
 import f3f.global.oauth.OAuth2UserInfoFactory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.core.AuthenticationException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 
 @Service
-@RequiredArgsConstructor
-public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+@Slf4j
+public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-        private final MemberRepository memberRepository;
+
+    private MemberRepository memberRepository;
+
+
+    private PasswordEncoder passwordEncoder;
+
+    CustomOAuth2UserService(MemberRepository memberRepository, @Lazy PasswordEncoder passwordEncoder) {
+        this.memberRepository = memberRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User user = super.loadUser(userRequest);
+        OAuth2UserService delegate = new DefaultOAuth2UserService();
+        OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-        try {
-            return this.process(userRequest, user);
-        } catch (AuthenticationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new InternalAuthenticationServiceException(ex.getMessage(), ex.getCause());
-        }
-    }
+        LoginType loginType =  LoginType.valueOfLabel(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
+        String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails()
+                .getUserInfoEndpoint().getUserNameAttributeName();
+        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(loginType.getType(), oAuth2User.getAttributes());
 
-    private OAuth2User process(OAuth2UserRequest userRequest, OAuth2User user) {
-        LoginType providerType = LoginType.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
+        Member findMember = memberRepository.findByEmail(userInfo.getEmail());
 
-        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
-        Member savedMember = memberRepository.findByEmail(userInfo.getId());
 
-        if (savedMember != null) {
-            if (providerType != savedMember.getProviderType()) {
-                throw new OAuthProviderMissMatchException(
-                        "Looks like you're signed up with " + providerType +
-                                " account. Please use your " + savedUser.getProviderType() + " account to login."
+        if (findMember != null) { //회원가입 된경우
+            if (loginType != findMember.getLoginType()) {
+                throw new OAuthTypeMissMatchException(
+                        "Looks like you're signed up with " + loginType +
+                                " account. Please use your " + findMember.getLoginType() + " account to login."
                 );
             }
-            updateUser(savedUser, userInfo);
         } else {
-            savedMember = createUser(userInfo, providerType);
+            // 회원가입 안된 경우 회원가입 진행
+            findMember = createUser(userInfo,loginType);
         }
 
-        return UserPrincipal.create(savedUser, user.getAttributes());
+        return UserPrincipal.create(findMember, oAuth2User.getAttributes());
     }
 
-    private Member createMember(OAuth2UserInfo userInfo, ProviderType providerType) {
-        LocalDateTime now = LocalDateTime.now();
-        User user = new User(
-                userInfo.getId(),
-                userInfo.getName(),
-                userInfo.getEmail(),
-                "Y",
-                userInfo.getImageUrl(),
-                providerType,
-                RoleType.USER,
-                now,
-                now
-        );
 
-        return userRepository.saveAndFlush(user);
-    }
+    private Member createUser(OAuth2UserInfo memberInfo, LoginType loginType) {
+        String password = passwordEncoder.encode(memberInfo.getId());
+        Member createMember = Member.builder()
+                .id(Long.valueOf(memberInfo.getId()))
+                .email(memberInfo.getEmail())
+                .password(password)
+                .name(memberInfo.getName())
+                .loginType(loginType)
+                .loginMemberType(LoginMemberType.GENERAL_USER)
+                .authority(Authority.ROLE_USER)
+                .build();
 
-    private User updateUser(User user, OAuth2UserInfo userInfo) {
-        if (userInfo.getName() != null && !user.getUsername().equals(userInfo.getName())) {
-            user.setUsername(userInfo.getName());
-        }
-
-        if (userInfo.getImageUrl() != null && !user.getProfileImageUrl().equals(userInfo.getImageUrl())) {
-            user.setProfileImageUrl(userInfo.getImageUrl());
-        }
-
-        return user;
+        return memberRepository.save(createMember);
     }
 
 }

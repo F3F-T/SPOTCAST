@@ -10,6 +10,7 @@ import f3f.domain.user.exception.*;
 import f3f.global.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -17,25 +18,30 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 
 import static f3f.domain.user.dto.MemberDTO.*;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class MemberService {
 
 
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final PasswordEncoder passwordEncoder;
+    private AuthenticationManagerBuilder authenticationManagerBuilder;
+    private PasswordEncoder passwordEncoder;
 
-    private final TokenProvider tokenProvider;
-    private final MemberRepository memberRepository;
-    private final RefreshTokenDao refreshTokenDao;
-    private final HttpSession session;
+    private TokenProvider tokenProvider;
+    private MemberRepository memberRepository;
+    private RefreshTokenDao refreshTokenDao;
+
+    public MemberService(AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, RefreshTokenDao refreshTokenDao) {
+        this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenProvider = tokenProvider;
+        this.memberRepository = memberRepository;
+        this.refreshTokenDao = refreshTokenDao;
+    }
 
     /**
      * 회원가입
