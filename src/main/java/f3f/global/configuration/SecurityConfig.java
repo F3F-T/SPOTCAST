@@ -1,12 +1,17 @@
 package f3f.global.configuration;
 
 import f3f.domain.user.application.CustomOAuth2UserService;
+import f3f.domain.user.dao.MemberRepository;
+import f3f.domain.user.dao.RefreshTokenDao;
 import f3f.global.jwt.JwtAccessDeniedHandler;
 import f3f.global.jwt.JwtAuthenticationEntryPoint;
 import f3f.global.jwt.TokenProvider;
+import f3f.global.oauth.handler.OAuth2AuthenticationFailureHandler;
+import f3f.global.oauth.handler.OAuthAuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,10 +39,16 @@ import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final TokenProvider tokenProvider;
+
+    private final RefreshTokenDao refreshTokenDao;
+
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
+
+    private final MemberRepository memberRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -51,6 +62,22 @@ public class SecurityConfig {
                 .antMatchers("/h2-console/**", "/favicon.ico");
     }
 
+
+    @Bean
+    public OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler() {
+        return new OAuth2AuthenticationFailureHandler();
+    }
+
+    @Bean
+    public OAuthAuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
+        return new OAuthAuthenticationSuccessHandler(
+                tokenProvider,
+                refreshTokenDao,
+                memberRepository,
+                authenticationManagerBuilder
+
+        );
+    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // CSRF 설정 Disable
@@ -78,9 +105,12 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/oauth2/**").permitAll()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/member/**").hasRole("USER")
-                .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
+//                .antMatchers("/admin/**").hasRole("ADMIN")
+//                .antMatchers("/member/**").hasRole("USER")
+                .antMatchers("/admin/**").permitAll()
+                .antMatchers("/member/**").permitAll()
+//                .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
+                .anyRequest().permitAll()   // 나머지 API 는 전부 인증 필요
 
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
                 .and()
@@ -89,8 +119,14 @@ public class SecurityConfig {
                 .and()
                 .oauth2Login()
                 .userInfoEndpoint()
-                .userService(customOAuth2UserService);
+                .userService(customOAuth2UserService)
+                .and()
+                .successHandler(oAuth2AuthenticationSuccessHandler())
+                .failureHandler(oAuth2AuthenticationFailureHandler());
+
 
         return http.build();
     }
+
+
 }

@@ -9,8 +9,8 @@ import f3f.global.oauth.impl.NaverOAuth2UserInfo;
 import java.util.Map;
 
 public class OAuth2UserInfoFactory {
-    public static OAuth2UserInfo getOAuth2UserInfo(LoginType providerType, Map<String, Object> attributes) {
-        switch (providerType.getType()) {
+    public static OAuth2UserInfo getOAuth2UserInfo(String loginType, Map<String, Object> attributes) {
+        switch (loginType) {
             case "GOOGLE": return new GoogleOAuth2UserInfo(attributes);
             case "FACEBOOK": return new FacebookOAuth2UserInfo(attributes);
             case "NAVER": return new NaverOAuth2UserInfo(attributes);
