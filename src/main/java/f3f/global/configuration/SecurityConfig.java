@@ -90,33 +90,34 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // CSRF 설정 Disable
+        //스프링 사용 가이드 에 따르면 session 을 저장하지 않는 REST 서버는 csrf 와같은 공격에 대해 영향을 받지 않는다 라고 나와있다. 서버에 탈취할 수 있는 session 이 없기때문이다.
         http.csrf().disable()
-
                 // exception handling 할 때 우리가 만든 클래스를 추가
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
 
                 .and()
-                .headers()
-                .frameOptions()
-                .sameOrigin()
+                    .headers()
+                    .frameOptions()
+                    .sameOrigin()
 
                 // 시큐리티는 기본적으로 세션을 사용
                 // 여기서는 세션을 사용하지 않기 때문에 세션 설정을 Stateless 로 설정
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
 
                 // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**").permitAll()
-                .antMatchers("/oauth2/**").permitAll()
+                    .antMatchers("/auth/**").permitAll()
+                    .antMatchers("/oauth2/**").permitAll()
 //                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/member/**").hasRole("USER")
-                .antMatchers("/admin/**").permitAll()
+                    .antMatchers("/member/**").hasRole("USER")
+                    //유저정보보기
+                    .antMatchers("/admin/**").permitAll()
 //                .antMatchers("/member/**").permitAll()
 //                .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
                 .anyRequest().permitAll()   // 나머지 API 는 전부 인증 필요
@@ -128,7 +129,7 @@ public class SecurityConfig {
                 .and()
                     .oauth2Login()
                     .authorizationEndpoint()
-                    .baseUri("/oauth2/authorization")
+                    .baseUri("/oauth2/authorization") //default
                     .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
                 .and()
                     .redirectionEndpoint()
