@@ -1,13 +1,11 @@
 package f3f.domain.scrap.application;
 
-import f3f.domain.board.domain.Board;
-import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.scrap.dao.ScrapBoardRepository;
 import f3f.domain.scrap.dao.ScrapRepository;
 import f3f.domain.scrap.domain.Scrap;
 import f3f.domain.scrap.dto.ScrapDTO;
 import f3f.domain.scrap.exception.DuplicateScrapNameException;
-import f3f.domain.scrap.exception.ScrapMissMatchUserException;
+import f3f.domain.scrap.exception.ScrapMissMatchMemberException;
 import f3f.domain.scrap.exception.ScrapNotFoundException;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
@@ -41,7 +39,7 @@ public class ScrapService {
      * 스크랩 박스 생성
      * @param request
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public void saveScrapBox(ScrapDTO.SaveRequest request,Long memberId){
 
         Member findMember = memberRepository.findById(memberId)
@@ -60,6 +58,7 @@ public class ScrapService {
      * @param request
      * @param scrapId
      */
+    @Transactional
     public void updateScrapBox(ScrapDTO.SaveRequest request,Long scrapId,Long memberId) {
 
         Member findMember = memberRepository.findById(memberId)
@@ -81,6 +80,7 @@ public class ScrapService {
      * @param scrapId
      * @param memberId
      */
+    @Transactional
     public void deleteScrapBox(Long scrapId, Long memberId){
 
         Member findMember = memberRepository.findById(memberId)
@@ -90,7 +90,7 @@ public class ScrapService {
                 .orElseThrow(() -> new ScrapNotFoundException("존재하지 않는 스크랩입니다."));
 
         if(scrap.getMember().getId()!= findMember.getId()){
-            throw new ScrapMissMatchUserException();
+            throw new ScrapMissMatchMemberException();
         }
 
         scrapRepository.deleteById(scrapId);
@@ -103,6 +103,7 @@ public class ScrapService {
      * @param memberId
      * @return
      */
+    @Transactional(readOnly = true)
     public List<ScrapDTO.ScrapInfoDTO> getScrapBoxList(Long memberId){
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
