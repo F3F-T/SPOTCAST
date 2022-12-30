@@ -9,6 +9,7 @@ import f3f.domain.model.LoginMemberType;
 import f3f.domain.model.MemberBase;
 import f3f.domain.model.Authority;
 import f3f.domain.portfolio.domain.Portfolio;
+import f3f.domain.scrap.domain.Scrap;
 import f3f.domain.teamApply.domain.Apply;
 import f3f.domain.user.dto.MemberDTO.MemberInfoResponseDto;
 import lombok.*;
@@ -26,6 +27,10 @@ public class Member extends MemberBase {
     private String phone;
 
     private String nickname;
+
+
+    @OneToMany(mappedBy = "member")
+    private List<Scrap> scrapList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<Board> boardList = new ArrayList<>();

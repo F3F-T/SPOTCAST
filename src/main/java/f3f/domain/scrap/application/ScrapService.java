@@ -42,9 +42,9 @@ public class ScrapService {
      * @param request
      */
     @Transactional(readOnly = true)
-    public void saveScrapBox(ScrapDTO.SaveRequest request){
+    public void saveScrapBox(ScrapDTO.SaveRequest request,Long memberId){
 
-        Member findMember = memberRepository.findById(request.getMemberId())
+        Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
         boolean nameExists = findMember.getScrapList().contains(request.getName());
@@ -60,9 +60,9 @@ public class ScrapService {
      * @param request
      * @param scrapId
      */
-    public void updateScrapBox(ScrapDTO.SaveRequest request,Long scrapId) {
+    public void updateScrapBox(ScrapDTO.SaveRequest request,Long scrapId,Long memberId) {
 
-        Member findMember = memberRepository.findById(request.getMemberId())
+        Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
         boolean nameExists = findMember.getScrapList().contains(request.getName());

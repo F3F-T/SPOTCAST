@@ -12,13 +12,11 @@ public class ScrapDTO {
     public static class SaveRequest {
 
         private String name;
-        private Long memberId;
 
 
         @Builder
-        public SaveRequest(String name, Long memberId) {
+        public SaveRequest(String name) {
             this.name = name;
-            this.memberId = memberId;
         }
 
 
