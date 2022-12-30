@@ -24,9 +24,13 @@ public class UserDetailService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws MemberNotFoundException {
-        return memberRepository.findByEmail(username)
-                .map(this::createUserDetails)
-                .orElseThrow(() -> new MemberNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다."));
+
+        Member findMember = memberRepository.findByEmail(username);
+        if(findMember==null){
+            throw new MemberNotFoundException("존재하지 않는 사용자입니다.");
+        }
+
+        return createUserDetails(findMember);
     }
 
     // DB 에 User 값이 존재한다면 UserDetails 객체로 만들어서 리턴
