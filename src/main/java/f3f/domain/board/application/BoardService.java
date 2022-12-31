@@ -10,6 +10,7 @@ import f3f.domain.board.exception.NotFoundBoardException;
 import f3f.domain.category.dao.CategoryRepository;
 import f3f.domain.category.domain.Category;
 import f3f.domain.category.exception.NotFoundCategoryException;
+import f3f.domain.model.BoardType;
 import f3f.domain.model.SortType;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
@@ -111,7 +112,7 @@ public class BoardService {
      * 유저 식별자로 게시글 조회
      */
     @Transactional(readOnly = true)
-    public List<BoardInfoDTO> getBoardListByMemberId(long memberId){
+    public List<BoardInfoDTO> getBoardListByMemberId(long memberId, BoardType boardType, SortType sortType){
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException());
@@ -124,7 +125,7 @@ public class BoardService {
      * 카테고리 식별자로 게시글 조회
      */
     @Transactional(readOnly = true)
-    public List<BoardInfoDTO> getBoardListByCategoryId(long categoryId){
+    public List<BoardInfoDTO> getBoardListByCategoryId(long categoryId, BoardType boardType, SortType sortType){
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(NotFoundCategoryException::new);
 

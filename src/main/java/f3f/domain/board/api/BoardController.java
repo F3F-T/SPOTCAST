@@ -45,12 +45,12 @@ public class BoardController {
 
     @GetMapping(value = "/board/list/{categoryId}/{boardType}/{sortType}")
     public List<BoardDTO.BoardInfoDTO> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType,@PathVariable SortType sortType){
-        return boardService.getBoardListByCategoryId(categoryId);
+        return boardService.getBoardListByCategoryId(categoryId,boardType,sortType);
     }
 
     @GetMapping(value = "/board/list/{memberId}/{boardType}/{sortType}")
     public List<BoardDTO.BoardInfoDTO> getBoardListByMemberId(@PathVariable Long memberId,@PathVariable BoardType boardType,@PathVariable SortType sortType){
-        return boardService.getBoardListByMemberId(memberId);
+        return boardService.getBoardListByMemberId(memberId,boardType,sortType);
     }
 
     //게시글 조회
