@@ -1,7 +1,6 @@
 package f3f.global.jwt;
 
 import f3f.domain.user.dto.TokenDTO;
-import f3f.domain.user.dto.TokenDTO.TokenResponseDTO;
 import f3f.domain.user.exception.InvalidAccessTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -22,7 +21,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import static f3f.global.constants.jwtConstants.*;
+import static f3f.global.constants.JwtConstants.*;
 
 @Component
 @Slf4j
@@ -48,7 +47,6 @@ public class TokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())       // payload "sub": "name"
                 .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
-                .claim("test",now)
                 .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
                 .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
                 .compact();

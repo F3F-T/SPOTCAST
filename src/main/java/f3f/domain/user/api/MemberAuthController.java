@@ -1,24 +1,22 @@
 package f3f.domain.user.api;
 
+import f3f.domain.user.application.EmailCertificationService;
 import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dto.MemberDTO;
 import f3f.domain.user.dto.TokenDTO;
+import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import java.io.IOException;
 
-import static f3f.global.constants.MemberConstants.REFRESH_TOKEN;
-import static f3f.global.constants.MemberConstants.SET_COOKIE;
 import static f3f.global.constants.SecurityConstants.JSESSIONID;
 import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
-import static f3f.global.constants.jwtConstants.REFRESH_TOKEN_COOKIE_EXPIRE_TIME;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,13 +25,14 @@ public class MemberAuthController {
 
     private final MemberService memberService;
 
+    private final EmailCertificationService emailCertificationService;
     /**
      * 회원가입
      * @param memberRequestDto
      * @return
      */
     @PostMapping("/signup")
-    public ResponseEntity<Long> signup(@RequestBody MemberDTO.MemberSaveRequestDto memberRequestDto) {
+    public ResponseEntity<Long> signup(@Valid @RequestBody MemberDTO.MemberSaveRequestDto memberRequestDto) {
         return ResponseEntity.ok(memberService.saveMember(memberRequestDto));
     }
 
@@ -44,53 +43,69 @@ public class MemberAuthController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity<MemberDTO.MemberLoginResponseDto> login(@RequestBody MemberDTO.MemberLoginRequestDto
+    public ResponseEntity<MemberDTO.MemberLoginServiceResponseDto> login(@RequestBody MemberDTO.MemberLoginRequestDto
                                                                               loginRequestDto, HttpServletResponse response) {
 
         MemberDTO.MemberLoginServiceResponseDto loginResponseDto = memberService.login(loginRequestDto);
-        String refreshToken = loginResponseDto.getRefreshToken();
-        setRefreshTokenInCookie(response, refreshToken); // 리프레시 토큰 쿠키에 저장
-        return ResponseEntity.ok(loginResponseDto.toEntity());
+        return ResponseEntity.ok(loginResponseDto);
     }
 
     /**
      * JWT 토큰 재발급
      * @param tokenRequestDto
-     * @param response
-     * @param refreshToken
      * @return
      */
     @PostMapping("/reissue")
-    public ResponseEntity<TokenDTO.TokenResponseDTO> reissue(@RequestBody TokenDTO.TokenRequestDTO tokenRequestDto,HttpServletResponse response,
-                                                             @CookieValue(value="refreshToken", required = false) String refreshToken) {
-        System.out.println("refreshToken = " + refreshToken);
-        TokenDTO tokenDTO = memberService.reissue(tokenRequestDto, refreshToken);
-
-        String newRefreshToken = tokenDTO.getRefreshToken();
-        setRefreshTokenInCookie(response,newRefreshToken);
+    public ResponseEntity<TokenDTO.TokenResponseDTO> reissue(@RequestBody TokenDTO.TokenRequestDTO tokenRequestDto) {
+        TokenDTO tokenDTO = memberService.reissue(tokenRequestDto);
         TokenDTO.TokenResponseDTO tokenResponseDTO = tokenDTO.toEntity();
-
         return ResponseEntity.ok(tokenResponseDTO);
     }
 
     /**
      * 로그아웃
-     * @param request
      * @param response
      * @return
      * @throws IOException
      */
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public ResponseEntity<Void> logout(HttpServletResponse response) throws IOException {
 
-        request.getSession().removeAttribute(REFRESH_TOKEN);
+        memberService.logout(SecurityUtil.getCurrentMemberId());
         deleteCookie(response,JSESSIONID);
         deleteCookie(response,REMEMBER_ME);
-        deleteCookie(response,REFRESH_TOKEN);
+        return ResponseEntity.ok().build();
+    }
+    /**
+     * 소셜 로그인 시 정보 return
+     * @return
+     */
+    @GetMapping("/myInfo")
+    public ResponseEntity<MemberDTO.MemberInfoResponseDto> findMyInfoById() {
+
+        return ResponseEntity.ok(memberService.findMyInfo(SecurityUtil.getCurrentMemberId()));
+    }
+    /**
+     * 이메일 인증 번호 전송
+     * @param request
+     * @return
+     */
+    @PostMapping("/email-certification/sends")
+    public ResponseEntity<Void> sendEmailCertification(@RequestBody MemberDTO.EmailCertificationRequest request){
+        emailCertificationService.sendEmailForCertification(request.getEmail());
         return ResponseEntity.ok().build();
     }
 
-
+    /**
+     * 이메일 인증 번호 확인
+     * @param request
+     * @return
+     */
+    @PostMapping("/email-certification/confirms")
+    public ResponseEntity<Void> confirmEmailCertification(@RequestBody MemberDTO.EmailCertificationRequest request){
+        emailCertificationService.verifyEmail(request);
+        return ResponseEntity.ok().build();
+    }
     /**
      * 이메일 중복 검사
      * @param email
@@ -124,26 +139,6 @@ public class MemberAuthController {
         return ResponseEntity.ok(memberService.phoneDuplicateCheck(phone));
     }
 
-
-    /**
-     * 쿠키에 refresh 토큰 저장
-     * @param response
-     * @param refreshToken
-     */
-    private void setRefreshTokenInCookie(HttpServletResponse response, String refreshToken) {
-        ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN, refreshToken)
-                .maxAge(REFRESH_TOKEN_COOKIE_EXPIRE_TIME) //7일
-                .path("/")
-                .sameSite("None")
-                .httpOnly(true)
-                .build();
-
-        Cookie cookie2 = new Cookie(REFRESH_TOKEN,refreshToken);
-        cookie2.setMaxAge((int) REFRESH_TOKEN_COOKIE_EXPIRE_TIME);
-        cookie2.setPath("/");
-
-        response.setHeader(SET_COOKIE, cookie.toString());
-    }
     /**
      * 쿠키 제거
      * @param response
