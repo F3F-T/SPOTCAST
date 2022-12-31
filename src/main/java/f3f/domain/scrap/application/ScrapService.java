@@ -40,7 +40,7 @@ public class ScrapService {
      * @param request
      */
     @Transactional
-    public void saveScrapBox(ScrapDTO.SaveRequest request,Long memberId){
+    public Scrap saveScrapBox(ScrapDTO.SaveRequest request,Long memberId){
 
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
@@ -50,7 +50,8 @@ public class ScrapService {
             throw new DuplicateScrapNameException("스크랩 이름이 중복되었습니다.");
         }
 
-        scrapRepository.save(request.toEntity(findMember));
+        Scrap scrap = scrapRepository.save(request.toEntity(findMember));
+        return scrap;
     }
 
     /**
