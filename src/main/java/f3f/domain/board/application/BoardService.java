@@ -7,10 +7,10 @@ import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
 import f3f.domain.board.exception.BoardMissMatchUserException;
 import f3f.domain.board.exception.NotFoundBoardCategoryException;
 import f3f.domain.board.exception.NotFoundBoardException;
-import f3f.domain.board.exception.NotFoundBoardUserException;
 import f3f.domain.category.dao.CategoryRepository;
 import f3f.domain.category.domain.Category;
 import f3f.domain.category.exception.NotFoundCategoryException;
+import f3f.domain.model.SortType;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.MemberNotFoundException;
@@ -39,18 +39,25 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
+
     @Transactional
-    public void saveBoard(BoardDTO.SaveRequest request) {
+    public Long saveBoard(BoardDTO.SaveRequest request) {
 
         if (request.getCategory() == null){
             throw new NotFoundBoardCategoryException("게시글에 카테고리 정보가 존재하지 않습니다.");
         }
 
-        if (request.getMember() == null){
-            throw new NotFoundBoardUserException("게시글에 유저 정보가 존재하지 않습니다.");
-        }
+        Member member = memberRepository.findById(request.getMemberId()).orElseThrow(() -> new MemberNotFoundException());
+        Board board = Board.builder()
+                .title(request.getTitle())
+                .content(request.getContent())
+                .category(request.getCategory())
+                .boardType(request.getBoardType())
+                .member(member)
+                .build();
+        boardRepository.save(board);
 
-        boardRepository.save(request.toEntity());
+        return board.getId();
     }
 
     @Transactional
@@ -67,7 +74,7 @@ public class BoardService {
 
         board.updateBoard(request);
 
-        return request.toEntity();
+        return board;
     }
 
     @Transactional
@@ -125,5 +132,9 @@ public class BoardService {
                 .map(Board::toBoardInfoDTO).collect(Collectors.toList());
 
         return boardInfoList;
+    }
+
+    public List<BoardInfoDTO> getBoardListByBoardType(SortType sortType) {
+        return null;
     }
 }

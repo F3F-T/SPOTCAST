@@ -1,31 +1,77 @@
 package f3f.domain.board.application;
 
 import f3f.domain.board.dao.BoardRepository;
+import f3f.domain.board.domain.Board;
+import f3f.domain.board.dto.BoardDTO;
+import f3f.domain.category.application.CategoryService;
+import f3f.domain.category.domain.Category;
+import f3f.domain.category.dto.CategoryDTO;
+import f3f.domain.model.BoardType;
+import f3f.domain.model.LoginMemberType;
+import f3f.domain.user.domain.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class BoardServiceTest {
 
     @Autowired
     BoardRepository boardRepository;
 
-    @InjectMocks
+    @Autowired
     BoardService boardService;
 
+    @Autowired
+    CategoryService categoryService;
+
+    private Category createCategory(){
+        return Category.builder()
+                .name("카테고리 1")
+                .build();
+    }
+
+
+    private Member createMember(){
+        return Member.builder()
+                .name("ryu")
+                .email("rdj1014@naver.com")
+                .information("내다")
+                .nickname("닉닉닉")
+                .phone("01012345678")
+                .loginMemberType(LoginMemberType.GENERAL_USER)
+                .build();
+    }
+
+    private BoardDTO.SaveRequest createBoard(){
+        return BoardDTO.SaveRequest.builder()
+                .title("title1")
+                .content("content1")
+                .boardType(BoardType.GENERAL)
+                .category(createCategory())
+                .memberId(createMember().getId())
+                .build();
+    }
 
     @Test
     @DisplayName("게시글 저장_성공")
     void saveBoard_success()throws Exception{
         //given
-
+        BoardDTO.SaveRequest request = createBoard();
+        CategoryDTO.SaveRequest categoryRequest= new CategoryDTO.SaveRequest(createCategory());
         //when
+        categoryService.saveCategory(categoryRequest);
+        Long boardId = boardService.saveBoard(request);
+        Board board = boardRepository.findById(boardId).get();
 
         //then
+        assertThat(board.getTitle()).isEqualTo(request.getTitle());
     }
 
 
