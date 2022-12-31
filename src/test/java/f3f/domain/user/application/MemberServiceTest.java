@@ -561,7 +561,7 @@ class MemberServiceTest {
         memberService.deleteMember(deleteRequestDto, memberId);
 
         //then
-        assertThat(memberRepository.findByEmail(email)).isEqualTo(Optional.empty());
+        assertThat(memberRepository.findByEmail(email)).isEqualTo(null);
     }
 
     @Test
@@ -780,7 +780,6 @@ class MemberServiceTest {
                 .build();
 
         MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
-        String refreshToken = loginServiceResponseDto.getRefreshToken();
         TokenDTO.TokenRequestDTO tokenRequestDTO = TokenDTO.TokenRequestDTO.builder()
                 .accessToken(loginServiceResponseDto.getAccessToken())
                 .build();
@@ -790,7 +789,7 @@ class MemberServiceTest {
         TokenDTO tokenDTO = memberService.reissue(tokenRequestDTO);
 
         //then
-        assertThat(tokenRequestDTO.getAccessToken()).isNotEqualTo(tokenDTO.getAccessToken());
+        assertThat(loginServiceResponseDto.getAccessToken()).isNotEqualTo(tokenDTO.getAccessToken());
     }
 
     @Test
@@ -806,7 +805,6 @@ class MemberServiceTest {
                 .build();
 
         MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
-        String refreshToken = loginServiceResponseDto.getRefreshToken();
 
 
         //when

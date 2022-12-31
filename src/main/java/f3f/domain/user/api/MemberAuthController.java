@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import java.io.IOException;
 
@@ -31,7 +32,7 @@ public class MemberAuthController {
      * @return
      */
     @PostMapping("/signup")
-    public ResponseEntity<Long> signup(@RequestBody MemberDTO.MemberSaveRequestDto memberRequestDto) {
+    public ResponseEntity<Long> signup(@Valid @RequestBody MemberDTO.MemberSaveRequestDto memberRequestDto) {
         return ResponseEntity.ok(memberService.saveMember(memberRequestDto));
     }
 
@@ -42,11 +43,11 @@ public class MemberAuthController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity<MemberDTO.MemberLoginResponseDto> login(@RequestBody MemberDTO.MemberLoginRequestDto
+    public ResponseEntity<MemberDTO.MemberLoginServiceResponseDto> login(@RequestBody MemberDTO.MemberLoginRequestDto
                                                                               loginRequestDto, HttpServletResponse response) {
 
         MemberDTO.MemberLoginServiceResponseDto loginResponseDto = memberService.login(loginRequestDto);
-        return ResponseEntity.ok(loginResponseDto.toEntity());
+        return ResponseEntity.ok(loginResponseDto);
     }
 
     /**
@@ -75,7 +76,15 @@ public class MemberAuthController {
         deleteCookie(response,REMEMBER_ME);
         return ResponseEntity.ok().build();
     }
+    /**
+     * 소셜 로그인 시 정보 return
+     * @return
+     */
+    @GetMapping("/myInfo")
+    public ResponseEntity<MemberDTO.MemberInfoResponseDto> findMyInfoById() {
 
+        return ResponseEntity.ok(memberService.findMyInfo(SecurityUtil.getCurrentMemberId()));
+    }
     /**
      * 이메일 인증 번호 전송
      * @param request
@@ -83,7 +92,7 @@ public class MemberAuthController {
      */
     @PostMapping("/email-certification/sends")
     public ResponseEntity<Void> sendEmailCertification(@RequestBody MemberDTO.EmailCertificationRequest request){
-        emailCertificationService.sendEmailForCertification(request.getEmail());
+        //emailCertificationService.sendEmailForCertification(request.getEmail());
         return ResponseEntity.ok().build();
     }
 

@@ -32,8 +32,9 @@ public class ApplyService {
         if (!board.getBoardType().equals(BoardType.RECRUIT)){
             throw new IllegalArgumentException();
         }
-        if(apply.getRecruiter().getId() == board.getMember().getId()){
-            //구인자가 게시글을 쓴사람인지 체크
+
+        if(apply.getRecruiter().getId() != board.getMember().getId()){
+            // 예외
         }
 
         applyRepository.save(apply);
