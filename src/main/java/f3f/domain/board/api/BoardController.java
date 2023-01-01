@@ -39,7 +39,6 @@ public class BoardController {
     public long deleteBoard(@PathVariable long boardId){
         Long memberId = SecurityUtil.getCurrentMemberId();
         Board board = boardService.deleteBoard(boardId,memberId);
-
         return board.getId();
     }
 
