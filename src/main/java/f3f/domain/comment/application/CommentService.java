@@ -36,14 +36,16 @@ public class CommentService {
 
     /*CREATE*/
     @Transactional
-    public Long saveComment(CommentDTO.SaveRequest saveRequest) { //TODO 파라미터에 ( HttpServletRequest request ) 동혁이뭐시기
-
+    public Long saveComment(Long boardId, CommentDTO.SaveRequest saveRequest) { //TODO 파라미터에 ( HttpServletRequest request ) 동혁이뭐시기
 
         Comment parent = null;
 
         Member author = userRepository.findById(saveRequest.getAuthor().getId()).orElseThrow(NotFoundUserException::new);
         Board board = boardRepository.findById(saveRequest.getBoard().getId()).orElseThrow(NotFoundBoardByIdException::new);
 
+        if (board.getId() != boardId){
+            throw new IllegalArgumentException();
+        }
         //댓글생성
         Comment comment = Comment.builder()
                 .author(author)

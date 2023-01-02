@@ -6,6 +6,7 @@ import f3f.domain.comment.domain.Comment;
 import f3f.domain.likes.domain.Likes;
 import f3f.domain.model.BaseTimeEntity;
 import f3f.domain.model.BoardType;
+import f3f.domain.model.Image;
 import f3f.domain.scrap.domain.ScrapBoard;
 import f3f.domain.user.domain.Member;
 import lombok.Builder;
@@ -42,6 +43,9 @@ public class Board extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Embedded
+    private Image image;
 
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     private List<ScrapBoard> scrapBoardList = new ArrayList<>();
