@@ -14,24 +14,18 @@ import f3f.domain.scrap.dao.ScrapBoardRepository;
 import f3f.domain.scrap.dao.ScrapRepository;
 import f3f.domain.scrap.domain.Scrap;
 import f3f.domain.scrap.dto.ScrapDTO;
-import f3f.domain.scrap.exception.DuplicateScrapNameException;
 import f3f.domain.scrap.exception.ScrapMissMatchMemberException;
 import f3f.domain.scrap.exception.ScrapNotFoundException;
 import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO;
-import f3f.domain.user.exception.DuplicateEmailException;
 import f3f.domain.user.exception.MemberNotFoundException;
-import org.assertj.core.api.Assertions;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -177,28 +171,6 @@ public class ScrapServiceTest {
 
     }
 
-    @Test
-    @DisplayName("스크랩 박스 생성 실패 - 스크랩 박스 이름 중복")
-    public void fail_SaveScrapBox_DuplicateScrapBoxName() throws Exception {
-        //given
-        Long memberId = 743L;
-
-        ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
-                .name("test1")
-                .build();
-
-        ScrapDTO.SaveRequest saveRequestDuplicated = ScrapDTO.SaveRequest.builder()
-                .name("test1")
-                .build();
-
-        //when
-        scrapService.saveScrapBox(saveRequest, memberId);
-
-//        then
-        assertThrows(DuplicateScrapNameException.class, () ->
-                scrapService.saveScrapBox(saveRequestDuplicated,memberId));
-
-    }
 
     @Test
     @DisplayName("스크랩 박스 삭제 성공")
@@ -328,29 +300,6 @@ public class ScrapServiceTest {
     }
 
 
-    @Test
-    @DisplayName("스크랩 박스 이름 수정 실패 - 스크랩 박스 이름 중복")
-    public void fail_UpdateScrapBox_DuplicatedScrapName() throws Exception {
-        //given
-        Long memberId = 743L;
-        ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
-                .name("test1")
-                .build();
-
-        //when
-        Scrap scrap = scrapService.saveScrapBox(saveRequest, memberId);
-
-        Long scrapId = scrap.getId();
-
-        ScrapDTO.SaveRequest updateRequest = ScrapDTO.SaveRequest.builder()
-                .name("test1")
-                .build();
-
-
-        //then
-        assertThrows(DuplicateScrapNameException.class, () ->
-                scrapService.updateScrapBox(updateRequest,scrapId,memberId));
-    }
 
 
     @Test

@@ -47,16 +47,6 @@ public class ScrapService {
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
 
-        List<ScrapDTO.ScrapInfoDTO> scrapBoxList = findMember.getScrapList().stream()
-                .map(Scrap::toScrapInfoDTO).collect(Collectors.toList());
-
-        for (ScrapDTO.ScrapInfoDTO scrapBox : scrapBoxList) {
-            if(scrapBox.getName() == request.getName())
-            {
-                throw new DuplicateScrapNameException("스크랩 이름이 중복되었습니다.");
-            }
-        }
-
         Scrap scrap = scrapRepository.save(request.toEntity(findMember));
         return scrap;
     }
@@ -71,16 +61,6 @@ public class ScrapService {
 
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
-
-        List<ScrapDTO.ScrapInfoDTO> scrapBoxList = findMember.getScrapList().stream()
-                .map(Scrap::toScrapInfoDTO).collect(Collectors.toList());
-
-        for (ScrapDTO.ScrapInfoDTO scrapBox : scrapBoxList) {
-            if(scrapBox.getName() == request.getName())
-            {
-                throw new DuplicateScrapNameException("스크랩 이름이 중복되었습니다.");
-            }
-        }
 
         Scrap scrap = scrapRepository.findById(scrapId)
                 .orElseThrow(() -> new ScrapNotFoundException("존재하지 않는 스크랩입니다."));
