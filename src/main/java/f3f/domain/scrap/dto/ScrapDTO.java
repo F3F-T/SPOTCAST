@@ -30,7 +30,19 @@ public class ScrapDTO {
             return scrap;
         }
     }
+    @Getter
+    public static class UpdateRequest {
 
+        private String name;
+        private Long scrapId;
+
+        @Builder
+
+        public UpdateRequest(String name, Long scrapId) {
+            this.name = name;
+            this.scrapId = scrapId;
+        }
+    }
     @Getter
     public static class ScrapInfoDTO{
         private Long scrapId;
@@ -40,6 +52,16 @@ public class ScrapDTO {
         public ScrapInfoDTO(Long scrapId, String name) {
             this.scrapId = scrapId;
             this.name = name;
+        }
+    }
+
+    @Getter
+    public static class ScrapDeleteRequestDTO {
+        private Long scrapId;
+
+        @Builder
+        public ScrapDeleteRequestDTO(Long scrapId) {
+            this.scrapId = scrapId;
         }
     }
 

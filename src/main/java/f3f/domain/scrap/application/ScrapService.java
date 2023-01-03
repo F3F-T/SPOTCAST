@@ -53,15 +53,15 @@ public class ScrapService {
     /**
      * 스크랩 박스 이름 수정
      * @param request
-     * @param scrapId
+     * @param memberId
      */
     @Transactional
-    public void updateScrapBox(ScrapDTO.SaveRequest request,Long scrapId,Long memberId) {
+    public void updateScrapBox(ScrapDTO.UpdateRequest request,Long memberId) {
 
-        Member findMember = memberRepository.findById(memberId)
+        memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
-        Scrap scrap = scrapRepository.findById(scrapId)
+        Scrap scrap = scrapRepository.findById(request.getScrapId())
                 .orElseThrow(() -> new ScrapNotFoundException("존재하지 않는 스크랩입니다."));
 
         scrap.updateScrap(request);
@@ -69,24 +69,25 @@ public class ScrapService {
 
     /**
      * 스크랩 박스 삭제
-     * @param scrapId
+     * @param deleteRequest
      * @param memberId
      */
     @Transactional
-    public void deleteScrapBox(Long scrapId, Long memberId){
+    public void deleteScrapBox(ScrapDTO.ScrapDeleteRequestDTO deleteRequest, Long memberId){
 
+        Long scrapId = deleteRequest.getScrapId();
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
         Scrap scrap = scrapRepository.findById(scrapId)
-                .orElseThrow(() -> new ScrapNotFoundException("존재하지 않는 스크랩입니다."));
+                .orElseThrow(() -> new ScrapNotFoundException("존재하지 않는 스크랩박스입니다."));
 
         if(scrap.getMember().getId()!= findMember.getId()){
             throw new ScrapMissMatchMemberException();
         }
 
-        scrapRepository.deleteById(scrapId);
         scrapBoardRepository.deleteAllByScrapId(scrapId);
+        scrapRepository.deleteById(scrapId);
     }
 
     /**

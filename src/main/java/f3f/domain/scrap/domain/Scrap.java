@@ -39,7 +39,7 @@ public class Scrap {
         this.member = member;
     }
 
-    public void updateScrap(ScrapDTO.SaveRequest request){
+    public void updateScrap(ScrapDTO.UpdateRequest request){
         this.name = request.getName();
     }
 

@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -39,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
+@WebAppConfiguration
 @RunWith(SpringRunner.class)
 public class ScrapServiceTest {
 
@@ -126,7 +128,7 @@ public class ScrapServiceTest {
     @Before
     public void setupData() {
 
-        Long memberId = 743L;
+        Long memberId = 1L;
         Member member = memberRepository.findById(memberId).get();
 
         BoardDTO.SaveRequest boardRequest = createBoardRequest(member);
@@ -139,7 +141,7 @@ public class ScrapServiceTest {
     public void success_SaveScrapBox() throws Exception {
         //given
 
-        Long memberId = 743L;
+        Long memberId = 1L;
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
@@ -157,7 +159,7 @@ public class ScrapServiceTest {
     @DisplayName("스크랩 박스 생성 실패 - 유저 존재 X")
     public void fail_SaveScrapBox_MemberNotFound() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
@@ -176,15 +178,18 @@ public class ScrapServiceTest {
     @DisplayName("스크랩 박스 삭제 성공")
     public void success_DeleteScrapBox() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
 
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
         Scrap scrap = scrapService.saveScrapBox(saveRequest, memberId);
         Long scrapId = scrap.getId();
+        ScrapDTO.ScrapDeleteRequestDTO deleteRequestDTO = ScrapDTO.ScrapDeleteRequestDTO.builder()
+                .scrapId(scrapId)
+                .build();
         //when
-        scrapService.deleteScrapBox(scrap.getId(), memberId);
+        scrapService.deleteScrapBox(deleteRequestDTO, memberId);
 
         //then
         assertThat(scrapRepository.findById(scrapId)).isEmpty();
@@ -195,66 +200,72 @@ public class ScrapServiceTest {
     @DisplayName("스크랩 박스 삭제 실패 - 존재하지 않는 사용자")
     public void fail_DeleteScrapBox_MemberNotFound() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
 
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
         Scrap scrap = scrapService.saveScrapBox(saveRequest, memberId);
         Long scrapId = scrap.getId();
-
+        ScrapDTO.ScrapDeleteRequestDTO deleteRequestDTO = ScrapDTO.ScrapDeleteRequestDTO.builder()
+                .scrapId(scrapId)
+                .build();
         //when
 
 
         //then
         assertThrows(MemberNotFoundException.class, () ->
-                scrapService.deleteScrapBox(scrapId, 111111111L));
+                scrapService.deleteScrapBox(deleteRequestDTO, 111111111L));
     }
 
     @Test
     @DisplayName("스크랩 박스 삭제 실패 - 존재하지 않는 스크랩")
     public void fail_DeleteScrapBox_ScrapNotFound() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
 
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
         Scrap scrap = scrapService.saveScrapBox(saveRequest, memberId);
-
+        ScrapDTO.ScrapDeleteRequestDTO deleteRequestDTO = ScrapDTO.ScrapDeleteRequestDTO.builder()
+                .scrapId(1111111111L)
+                .build();
         //when
 
 
         //then
         assertThrows(ScrapNotFoundException.class, () ->
-                scrapService.deleteScrapBox(1111111111L, memberId));
+                scrapService.deleteScrapBox(deleteRequestDTO, memberId));
     }
 
     @Test
     @DisplayName("스크랩 박스 삭제 실패 - 스크랩을 한 member의 id와 요청한 member id 가 다를 경우")
     public void fail_DeleteScrapBox_ScrapMissMatchMember() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
 
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
         Scrap scrap = scrapService.saveScrapBox(saveRequest, memberId);
         Long scrapId = scrap.getId();
-
+        ScrapDTO.ScrapDeleteRequestDTO deleteRequestDTO = ScrapDTO.ScrapDeleteRequestDTO.builder()
+                .scrapId(scrapId)
+                .build();
         //when
 
 
         //then
         assertThrows(ScrapMissMatchMemberException.class, () ->
-                scrapService.deleteScrapBox(scrapId, 744L));
+                scrapService.deleteScrapBox(deleteRequestDTO, 2L));
     }
 
     @Test
     @DisplayName("스크랩 박스 이름 수정 성공")
     public void success_UpdateScrapBox() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
@@ -264,11 +275,13 @@ public class ScrapServiceTest {
 
         Long scrapId = scrap.getId();
 
-        ScrapDTO.SaveRequest updateRequest = ScrapDTO.SaveRequest.builder()
+        ScrapDTO.UpdateRequest updateRequest = ScrapDTO.UpdateRequest.builder()
+                .scrapId(scrapId)
                 .name("test2")
                 .build();
 
-        scrapService.updateScrapBox(updateRequest,scrapId,memberId);
+
+        scrapService.updateScrapBox(updateRequest,memberId);
 
         //then
         assertThat(scrapRepository.findById(scrapId).get().getName()).isEqualTo(updateRequest.getName());
@@ -278,7 +291,7 @@ public class ScrapServiceTest {
     @DisplayName("스크랩 박스 이름 수정 실패 - member 존재 X")
     public void fail_UpdateScrapBox_MemberNotFound() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
@@ -288,15 +301,15 @@ public class ScrapServiceTest {
 
         Long scrapId = scrap.getId();
 
-        ScrapDTO.SaveRequest updateRequest = ScrapDTO.SaveRequest.builder()
-                .name("test2")
+        ScrapDTO.UpdateRequest updateRequest = ScrapDTO.UpdateRequest.builder()
+                .scrapId(scrapId)
                 .build();
 
 
 
         //then
         assertThrows(MemberNotFoundException.class, () ->
-                scrapService.updateScrapBox(updateRequest,scrapId,111111111L));
+                scrapService.updateScrapBox(updateRequest,111111111L));
     }
 
 
@@ -306,7 +319,7 @@ public class ScrapServiceTest {
     @DisplayName("스크랩 박스 이름 수정 실패 - scrap 존재 X")
     public void fail_UpdateScrapBox_ScrapNotFound() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
@@ -316,21 +329,22 @@ public class ScrapServiceTest {
 
         Long scrapId = scrap.getId();
 
-        ScrapDTO.SaveRequest updateRequest = ScrapDTO.SaveRequest.builder()
+        ScrapDTO.UpdateRequest updateRequest = ScrapDTO.UpdateRequest.builder()
+                .scrapId(11111111111L)
                 .name("test2")
                 .build();
 
 
         //then
         assertThrows(ScrapNotFoundException.class, () ->
-                scrapService.updateScrapBox(updateRequest,11111111111L,memberId));
+                scrapService.updateScrapBox(updateRequest,memberId));
     }
 
     @Test
     @DisplayName("스크랩 박스 조회 성공")
     public void success_GetScrapBoxList() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         ScrapDTO.SaveRequest saveRequest1 = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
@@ -353,7 +367,7 @@ public class ScrapServiceTest {
     @DisplayName("스크랩 박스 조회 실패 - member 존재 X")
     public void fail_GetScrapBoxList_MemberNotFound() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         ScrapDTO.SaveRequest saveRequest1 = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
