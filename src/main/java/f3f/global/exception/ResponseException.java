@@ -1,5 +1,6 @@
 package f3f.global.exception;
 
+import f3f.global.response.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

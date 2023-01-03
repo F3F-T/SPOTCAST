@@ -1,4 +1,4 @@
-package f3f.global.exception;
+package f3f.global.response;
 
 import f3f.domain.user.exception.DuplicateEmailException;
 import f3f.domain.user.exception.MemberNotFoundException;
@@ -17,12 +17,6 @@ import static f3f.global.constants.ResponseConstants.DUPLICATION_EMAIL;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-//    @ExceptionHandler(InvalidJwtTokenException.class)
-//    protected final ResponseEntity<String> handleJwtTokenException(
-//            InvalidJwtTokenException  ex) {
-//        log.debug("Wrong jwt :: {}, detection time = {}");
-//        return JwtAccessDenied;
-//    }
     @ExceptionHandler(DuplicateEmailException.class)
     protected final ResponseEntity<String> handleDuplicateEmailException(
             DuplicateEmailException ex, WebRequest request) {
