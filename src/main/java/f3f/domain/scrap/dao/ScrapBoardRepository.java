@@ -11,5 +11,5 @@ public interface ScrapBoardRepository extends JpaRepository<ScrapBoard, Long> {
     void deleteAllByScrapId(Long scrapId);
 
 
-    List<Board> findByScrapId(Long scrapId);
+    List<ScrapBoard> findByScrapId(Long scrapId);
 }

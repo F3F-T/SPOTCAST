@@ -1,6 +1,7 @@
 package f3f.domain.scrap.domain;
 
 import f3f.domain.board.domain.Board;
+import f3f.domain.board.dto.BoardDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,4 +33,17 @@ public class ScrapBoard {
         this.scrap = scrap;
         this.board = board;
     }
+
+    public BoardDTO.BoardInfoDTO toBoardInfoDTO(){
+        return BoardDTO.BoardInfoDTO.builder()
+                .title(this.board.getTitle())
+                .content(this.board.getContent())
+                .viewCount(this.board.getViewCount())
+                .boardType(this.board.getBoardType())
+                .category(this.board.getCategory())
+                .member(this.board.getMember())
+                .build();
+    }
+
+
 }
