@@ -22,10 +22,12 @@ public class ScrapDTO {
 
 
         public Scrap toEntity(Member member) {
-            return Scrap.builder()
+            Scrap scrap = Scrap.builder()
                     .name(this.name)
                     .member(member)
                     .build();
+            member.addScrapList(scrap);
+            return scrap;
         }
     }
 
