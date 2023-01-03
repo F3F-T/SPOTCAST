@@ -50,7 +50,6 @@ public class MemberDTO {
         @Enumerated(value = EnumType.STRING)
         private Authority authority;
 
-        @NotBlank
         private String information;
 
         @NotBlank
