@@ -1,5 +1,8 @@
 package f3f.global.response;
 
+import lombok.Getter;
+
+@Getter
 public class ResultDataResponseDTO<T> extends ResponseDTO  {
 
     private final T data;
