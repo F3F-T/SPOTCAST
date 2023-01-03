@@ -21,13 +21,13 @@
 | 즐겨찾기 추가 | POST | /user/favorite/{user1_id}/{user2_id} |  |  |  |
 | 즐겨찾기 삭제 | DELETE | /user/favorite/{user1_id}/{user2_id} |  |  |  |
 | 즐겨찾기 리스트 조회 | GET | /user/{user_id}/favorite |  |  |  |
-| 스크랩 박스 조회 | GET | /member/{member_id}/scrap |  |  |  |
-| 스크랩 박스 생성 | POST | /member/{member_id}/scrap |  | name |  |
-| 스크랩 박스 삭제 | DELETE | /member/{member_id}/scrap |  |  |  |
-| 스크랩 박스 수정 | PATCH | /member/{member_id}/scrap |  |  |  |
+| 스크랩 박스 조회 | GET | /member/{memberId}/scrap |  |  |  |
+| 스크랩 박스 생성 | POST | /member/{memberId}/scrap |  | name |  |
+| 스크랩 박스 삭제 | DELETE | /member/{memberId}/scrap |  | scrapId |  |
+| 스크랩 박스 수정 | PATCH | /member/{memberId}/scrap |  | name |  |
 | 스크랩 리스트 조회 | GET | /member/{member_id}/scrap/{scrap_id} |  |  |  |
 | 스크랩 추가 | POST | /member/{member_id}/scrap/{scrap_id} |  | board_id |  |
-| 스크랩 삭제 | DELETE | /member/{member_id}/scrap/{scrap_id} |  | board_id |  |
+| 스크랩 삭제 | DELETE | /member/{member_id}/scrap/{scrap_id} |  | board_id,scrap_Post_id |  |
 | 게시글 조회 | GET | /board | board_type, category(업종) |  |  |
 | 게시글 작성 | POST | /board |  | 상세 내용들,token |  |
 | 게시글 정보 조회 | GET | /borad/{board_id} |  |  |  |
