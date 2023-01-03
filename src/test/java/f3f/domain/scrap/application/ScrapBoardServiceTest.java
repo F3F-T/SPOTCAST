@@ -10,6 +10,7 @@ import f3f.domain.scrap.dao.ScrapBoardRepository;
 import f3f.domain.scrap.dao.ScrapRepository;
 import f3f.domain.scrap.domain.Scrap;
 import f3f.domain.scrap.domain.ScrapBoard;
+import f3f.domain.scrap.dto.ScrapBoardDTO;
 import f3f.domain.scrap.dto.ScrapDTO;
 import f3f.domain.scrap.exception.ScrapBoardMissMatchMemberException;
 import f3f.domain.scrap.exception.ScrapNotFoundException;
@@ -77,9 +78,9 @@ public class ScrapBoardServiceTest {
 
     @Test
     @DisplayName("스크랩 생성 성공")
-    public void success_SaveScrap() throws Exception{
+    public void success_SaveScrap() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         Member member = memberRepository.findById(memberId).get();
 
         BoardDTO.SaveRequest boardRequest = createBoardRequest(member);
@@ -91,9 +92,9 @@ public class ScrapBoardServiceTest {
                 .build();
         Scrap scrap = scrapService.saveScrapBox(saveRequest, memberId);
         Long scrapId = scrap.getId();
-
+        ScrapBoardDTO.SaveRequest boardSaveRequest = ScrapBoardDTO.SaveRequest.builder().boardId(boardId).build();
         //when
-        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardId);
+        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest);
         Long scrapBoardId = scrapBoard.getId();
 
         //then
@@ -107,14 +108,15 @@ public class ScrapBoardServiceTest {
 
     @Test
     @DisplayName("스크랩 생성 실패 - member 존재 X")
-    public void fail_SaveScrap_MemberNotFound() throws Exception{
+    public void fail_SaveScrap_MemberNotFound() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         Member member = memberRepository.findById(memberId).get();
 
         BoardDTO.SaveRequest boardRequest = createBoardRequest(member);
         Board board = boardRepository.save(boardRequest.toEntity());
         Long boardId = board.getId();
+        ScrapBoardDTO.SaveRequest boardSaveRequest = ScrapBoardDTO.SaveRequest.builder().boardId(boardId).build();
 
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
@@ -125,20 +127,22 @@ public class ScrapBoardServiceTest {
         //when
 
         //then
-        assertThrows(MemberNotFoundException.class,() ->
-                scrapBoardService.saveScrap(1111111111L, scrapId, boardId));
+        assertThrows(MemberNotFoundException.class, () ->
+                scrapBoardService.saveScrap(1111111111L, scrapId, boardSaveRequest));
     }
 
     @Test
     @DisplayName("스크랩 생성 실패 - scrapBox 존재 X")
-    public void fail_SaveScrap_ScrapNotFound() throws Exception{
+    public void fail_SaveScrap_ScrapNotFound() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         Member member = memberRepository.findById(memberId).get();
 
         BoardDTO.SaveRequest boardRequest = createBoardRequest(member);
         Board board = boardRepository.save(boardRequest.toEntity());
         Long boardId = board.getId();
+
+        ScrapBoardDTO.SaveRequest boardSaveRequest = ScrapBoardDTO.SaveRequest.builder().boardId(boardId).build();
 
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
@@ -149,20 +153,22 @@ public class ScrapBoardServiceTest {
         //when
 
         //then
-        assertThrows(ScrapNotFoundException.class,() ->
-                scrapBoardService.saveScrap(memberId, 1111111111111L, boardId));
+        assertThrows(ScrapNotFoundException.class, () ->
+                scrapBoardService.saveScrap(memberId, 1111111111111L, boardSaveRequest));
     }
 
     @Test
     @DisplayName("스크랩 생성 실패 - board 존재 X")
-    public void fail_SaveScrap_BoardNotFound() throws Exception{
+    public void fail_SaveScrap_BoardNotFound() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         Member member = memberRepository.findById(memberId).get();
 
         BoardDTO.SaveRequest boardRequest = createBoardRequest(member);
         Board board = boardRepository.save(boardRequest.toEntity());
         Long boardId = board.getId();
+
+        ScrapBoardDTO.SaveRequest boardSaveRequest = ScrapBoardDTO.SaveRequest.builder().boardId(11111111111L).build();
 
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
@@ -173,32 +179,35 @@ public class ScrapBoardServiceTest {
         //when
 
         //then
-        assertThrows(NotFoundBoardException.class,() ->
-                scrapBoardService.saveScrap(memberId, scrapId, 11111111111L));
+        assertThrows(NotFoundBoardException.class, () ->
+                scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest));
     }
 
     @Test
     @DisplayName("스크랩 삭제 성공")
-    public void success_DeleteScrap() throws Exception{
+    public void success_DeleteScrap() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         Member member = memberRepository.findById(memberId).get();
 
         BoardDTO.SaveRequest boardRequest = createBoardRequest(member);
         Board board = boardRepository.save(boardRequest.toEntity());
         Long boardId = board.getId();
 
+        ScrapBoardDTO.SaveRequest boardSaveRequest = ScrapBoardDTO.SaveRequest.builder().boardId(boardId).build();
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
         Scrap scrap = scrapService.saveScrapBox(saveRequest, memberId);
         Long scrapId = scrap.getId();
 
-        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardId);
+        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest);
         Long scrapBoardId = scrapBoard.getId();
-
+        ScrapBoardDTO.DeleteRequest deleteRequest = ScrapBoardDTO.DeleteRequest.builder()
+                .id(scrapBoardId)
+                .build();
         //when
-        scrapBoardService.deleteScrap(memberId,scrapId,scrapBoardId);
+        scrapBoardService.deleteScrap(memberId, scrapId, deleteRequest);
 
         //then
         assertThat(scrapBoardRepository.findById(scrapBoardId)).isEmpty();
@@ -207,69 +216,76 @@ public class ScrapBoardServiceTest {
 
     @Test
     @DisplayName("스크랩 삭제 실패 - member 존재 X")
-    public void fail_DeleteScrap_MemberNotFound() throws Exception{
+    public void fail_DeleteScrap_MemberNotFound() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         Member member = memberRepository.findById(memberId).get();
 
         BoardDTO.SaveRequest boardRequest = createBoardRequest(member);
         Board board = boardRepository.save(boardRequest.toEntity());
         Long boardId = board.getId();
 
+        ScrapBoardDTO.SaveRequest boardSaveRequest = ScrapBoardDTO.SaveRequest.builder().boardId(boardId).build();
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
         Scrap scrap = scrapService.saveScrapBox(saveRequest, memberId);
         Long scrapId = scrap.getId();
 
-        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardId);
+        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest);
         Long scrapBoardId = scrapBoard.getId();
-
+        ScrapBoardDTO.DeleteRequest deleteRequest = ScrapBoardDTO.DeleteRequest.builder()
+                .id(scrapBoardId)
+                .build();
         //when
 
         //then
-        assertThrows(MemberNotFoundException.class,()->
-                scrapBoardService.deleteScrap(111111111L,scrapId,scrapBoardId));
+        assertThrows(MemberNotFoundException.class, () ->
+                scrapBoardService.deleteScrap(111111111L, scrapId, deleteRequest));
     }
 
     @Test
     @DisplayName("스크랩 삭제 실패 - scrap 존재 X")
-    public void fail_DeleteScrap_ScrapNotFound() throws Exception{
+    public void fail_DeleteScrap_ScrapNotFound() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         Member member = memberRepository.findById(memberId).get();
 
         BoardDTO.SaveRequest boardRequest = createBoardRequest(member);
         Board board = boardRepository.save(boardRequest.toEntity());
         Long boardId = board.getId();
 
+        ScrapBoardDTO.SaveRequest boardSaveRequest = ScrapBoardDTO.SaveRequest.builder().boardId(boardId).build();
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
         Scrap scrap = scrapService.saveScrapBox(saveRequest, memberId);
         Long scrapId = scrap.getId();
 
-        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardId);
+        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest);
         Long scrapBoardId = scrapBoard.getId();
-
+        ScrapBoardDTO.DeleteRequest deleteRequest = ScrapBoardDTO.DeleteRequest.builder()
+                .id(scrapBoardId)
+                .build();
         //when
 
         //then
-        assertThrows(ScrapNotFoundException.class,()->
-                scrapBoardService.deleteScrap(memberId,11111111L,scrapBoardId));
+        assertThrows(ScrapNotFoundException.class, () ->
+                scrapBoardService.deleteScrap(memberId, 11111111L, deleteRequest));
     }
 
     @Test
     @DisplayName("스크랩 삭제 실패 - scrap member와 member id 로 찾은 member missmatch")
-    public void fail_DeleteScrap_ScrapBoardMissMatchMember() throws Exception{
+    public void fail_DeleteScrap_ScrapBoardMissMatchMember() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         Member member = memberRepository.findById(memberId).get();
 
         BoardDTO.SaveRequest boardRequest = createBoardRequest(member);
         Board board = boardRepository.save(boardRequest.toEntity());
         Long boardId = board.getId();
 
+        ScrapBoardDTO.SaveRequest boardSaveRequest = ScrapBoardDTO.SaveRequest.builder().boardId(boardId).build();
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
@@ -279,33 +295,37 @@ public class ScrapBoardServiceTest {
         ScrapDTO.SaveRequest newSaveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
-        Scrap scrap2 = scrapService.saveScrapBox(newSaveRequest, 744L);
+        Scrap scrap2 = scrapService.saveScrapBox(newSaveRequest, 2L);
         Long scrapId2 = scrap2.getId();
 
-        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardId);
+        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest);
         Long scrapBoardId = scrapBoard.getId();
-
+        ScrapBoardDTO.DeleteRequest deleteRequest = ScrapBoardDTO.DeleteRequest.builder()
+                .id(scrapBoardId)
+                .build();
         //when
 
         //then
-        assertThrows(ScrapBoardMissMatchMemberException.class,()->
-                scrapBoardService.deleteScrap(memberId,scrapId2,scrapBoardId));
+        assertThrows(ScrapBoardMissMatchMemberException.class, () ->
+                scrapBoardService.deleteScrap(memberId, scrapId2, deleteRequest));
     }
 
     @Test
     @DisplayName("스크랩 목록 조회 성공")
-    public void success_GetScrapList() throws Exception{
+    public void success_GetScrapList() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         Member member = memberRepository.findById(memberId).get();
 
         BoardDTO.SaveRequest boardRequest1 = createBoardRequest(member);
         Board board1 = boardRepository.save(boardRequest1.toEntity());
         Long boardId1 = board1.getId();
+        ScrapBoardDTO.SaveRequest boardSaveRequest1 = ScrapBoardDTO.SaveRequest.builder().boardId(boardId1).build();
 
         BoardDTO.SaveRequest boardRequest2 = createBoardRequest(member);
         Board board2 = boardRepository.save(boardRequest2.toEntity());
         Long boardId2 = board2.getId();
+        ScrapBoardDTO.SaveRequest boardSaveRequest2 = ScrapBoardDTO.SaveRequest.builder().boardId(boardId2).build();
 
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
@@ -313,8 +333,8 @@ public class ScrapBoardServiceTest {
         Scrap scrap = scrapService.saveScrapBox(saveRequest, memberId);
         Long scrapId = scrap.getId();
 
-        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardId1);
-        ScrapBoard scrapBoard2 = scrapBoardService.saveScrap(memberId, scrapId, boardId2);
+        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest1);
+        ScrapBoard scrapBoard2 = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest2);
         Long scrapBoardId = scrapBoard.getId();
 
         //when
@@ -326,68 +346,70 @@ public class ScrapBoardServiceTest {
 
     @Test
     @DisplayName("스크랩 목록 조회 실패 - member 조회 X")
-    public void fail_GetScrapList_MemberNotFound() throws Exception{
+    public void fail_GetScrapList_MemberNotFound() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         Member member = memberRepository.findById(memberId).get();
 
         BoardDTO.SaveRequest boardRequest1 = createBoardRequest(member);
         Board board1 = boardRepository.save(boardRequest1.toEntity());
         Long boardId1 = board1.getId();
-
+        ScrapBoardDTO.SaveRequest boardSaveRequest1 = ScrapBoardDTO.SaveRequest.builder().boardId(boardId1).build();
         BoardDTO.SaveRequest boardRequest2 = createBoardRequest(member);
         Board board2 = boardRepository.save(boardRequest2.toEntity());
         Long boardId2 = board2.getId();
-
+        ScrapBoardDTO.SaveRequest boardSaveRequest2 = ScrapBoardDTO.SaveRequest.builder().boardId(boardId2).build();
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
         Scrap scrap = scrapService.saveScrapBox(saveRequest, memberId);
         Long scrapId = scrap.getId();
 
-        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardId1);
-        ScrapBoard scrapBoard2 = scrapBoardService.saveScrap(memberId, scrapId, boardId2);
+        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest1);
+        ScrapBoard scrapBoard2 = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest2);
         Long scrapBoardId = scrapBoard.getId();
 
         //when
 
         //then
 
-        assertThrows(MemberNotFoundException.class,()->
+        assertThrows(MemberNotFoundException.class, () ->
                 scrapBoardService.getScrapList(scrapId, 1111111111L));
 
     }
 
     @Test
     @DisplayName("스크랩 목록 조회 실패 - scrap 조회 X")
-    public void fail_GetScrapList_ScrapNotFound() throws Exception{
+    public void fail_GetScrapList_ScrapNotFound() throws Exception {
         //given
-        Long memberId = 743L;
+        Long memberId = 1L;
         Member member = memberRepository.findById(memberId).get();
 
         BoardDTO.SaveRequest boardRequest1 = createBoardRequest(member);
         Board board1 = boardRepository.save(boardRequest1.toEntity());
         Long boardId1 = board1.getId();
 
+        ScrapBoardDTO.SaveRequest boardSaveRequest1 = ScrapBoardDTO.SaveRequest.builder().boardId(boardId1).build();
         BoardDTO.SaveRequest boardRequest2 = createBoardRequest(member);
         Board board2 = boardRepository.save(boardRequest2.toEntity());
         Long boardId2 = board2.getId();
 
+        ScrapBoardDTO.SaveRequest boardSaveRequest2 = ScrapBoardDTO.SaveRequest.builder().boardId(boardId2).build();
         ScrapDTO.SaveRequest saveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
         Scrap scrap = scrapService.saveScrapBox(saveRequest, memberId);
         Long scrapId = scrap.getId();
 
-        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardId1);
-        ScrapBoard scrapBoard2 = scrapBoardService.saveScrap(memberId, scrapId, boardId2);
+        ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest1);
+        ScrapBoard scrapBoard2 = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest2);
         Long scrapBoardId = scrapBoard.getId();
 
         //when
 
         //then
 
-        assertThrows(ScrapNotFoundException.class,()->
+        assertThrows(ScrapNotFoundException.class, () ->
                 scrapBoardService.getScrapList(1111111111L, memberId));
     }
 

@@ -8,6 +8,7 @@ import f3f.domain.scrap.dao.ScrapBoardRepository;
 import f3f.domain.scrap.dao.ScrapRepository;
 import f3f.domain.scrap.domain.Scrap;
 import f3f.domain.scrap.domain.ScrapBoard;
+import f3f.domain.scrap.dto.ScrapBoardDTO;
 import f3f.domain.scrap.exception.ScrapBoardMissMatchMemberException;
 import f3f.domain.scrap.exception.ScrapNotFoundException;
 import f3f.domain.user.dao.MemberRepository;
@@ -43,15 +44,15 @@ public class ScrapBoardService {
      *
      * @param memberId
      * @param scrapId
-     * @param boardId
+     * @param saveRequest
      */
     @Transactional
-    public ScrapBoard saveScrap(Long memberId, Long scrapId, Long boardId) {
+    public ScrapBoard saveScrap(Long memberId, Long scrapId, ScrapBoardDTO.SaveRequest saveRequest) {
 
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
-        Board board = boardRepository.findById(boardId)
+        Board board = boardRepository.findById(saveRequest.getBoardId())
                 .orElseThrow(() -> new NotFoundBoardException("존재하지 않는 게시글입니다."));
 
         Scrap scrap = scrapRepository.findById(scrapId)
@@ -69,10 +70,10 @@ public class ScrapBoardService {
      * 스크랩 삭제
      * @param memberId
      * @param scrapId
-     * @param scrapPostId
+     * @param deleteRequest
      */
     @Transactional
-    public void deleteScrap(Long memberId, Long scrapId, Long scrapPostId) {
+    public void deleteScrap(Long memberId, Long scrapId, ScrapBoardDTO.DeleteRequest deleteRequest) {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
@@ -84,7 +85,7 @@ public class ScrapBoardService {
             throw new ScrapBoardMissMatchMemberException();
         }
 
-        scrapBoardRepository.deleteById(scrapPostId);
+        scrapBoardRepository.deleteById(deleteRequest.getId());
     }
 
     /**
