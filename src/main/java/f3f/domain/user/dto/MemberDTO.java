@@ -294,4 +294,54 @@ public class MemberDTO {
             this.certificationNumber = certificationNumber;
         }
     }
+
+    @Getter
+    @NoArgsConstructor
+    public static class MemberBoardInfoResponseDto {
+
+        private Long id;
+        private String email;
+
+        private String name;
+
+        private String nickname;
+
+
+
+        @Builder
+        public MemberBoardInfoResponseDto(Long id, String email, String name, String nickname) {
+            this.id = id;
+            this.email = email;
+            this.name = name;
+            this.nickname = nickname;
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class OtherMemberInfoResponseDto {
+
+        private Long id;
+        private String email;
+
+        private String name;
+
+        private String nickname;
+
+        private String information;
+
+
+        @Builder
+
+        public OtherMemberInfoResponseDto(Long id, String email, String name, String nickname, String information) {
+            this.id = id;
+            this.email = email;
+            this.name = name;
+            this.nickname = nickname;
+            this.information = information;
+        }
+    }
+
+
+
 }
