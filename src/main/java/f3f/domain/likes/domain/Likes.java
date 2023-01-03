@@ -3,8 +3,9 @@ package f3f.domain.likes.domain;
 
 import f3f.domain.board.domain.Board;
 import f3f.domain.user.domain.Member;
-
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class Likes {
 
     @Id
@@ -26,4 +28,13 @@ public class Likes {
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
+
+
+    @Builder
+    public Likes( Member member, Board board){
+
+        this.member = member;
+        this.board = board;
+    }
+
 }

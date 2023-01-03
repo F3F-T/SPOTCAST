@@ -92,7 +92,7 @@ public class MemberAuthController {
      */
     @PostMapping("/email-certification/sends")
     public ResponseEntity<Void> sendEmailCertification(@RequestBody MemberDTO.EmailCertificationRequest request){
-        emailCertificationService.sendEmailForCertification(request.getEmail());
+        //emailCertificationService.sendEmailForCertification(request.getEmail());
         return ResponseEntity.ok().build();
     }
 
