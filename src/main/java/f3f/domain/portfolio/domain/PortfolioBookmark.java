@@ -1,10 +1,15 @@
 package f3f.domain.portfolio.domain;
 
 import f3f.domain.bookmark.domain.Bookmark;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
+@NoArgsConstructor
 public class PortfolioBookmark {
 
     @Id
@@ -12,11 +17,19 @@ public class PortfolioBookmark {
     @Column(name = "portfolioBookmark_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "portfolio_id")
     private Portfolio portfolio;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bookmark_id")
     private Bookmark bookmark;
+
+    @Builder
+    public PortfolioBookmark(Long id, Bookmark bookmark, Portfolio portfolio){
+        this.id = id;
+        this.bookmark = bookmark;
+        this.portfolio = portfolio;
+    }
+
 }
