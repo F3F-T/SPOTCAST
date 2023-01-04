@@ -48,6 +48,9 @@ public class CategoryService {
             Category parentCategory = categoryRepository.findByName(parentCategoryName)
                     .orElseThrow(() -> new IllegalArgumentException("부모 카테고리 없음 예외"));
 
+            if (categoryRepository.existsByName(category.getName())) {
+                throw new DuplicateCategoryNameException("카테고리 이름은 같을수 없다 이놈아.");
+            }
             requestCategory = Category.builder()
                     .name(category.getName())
                     .parentCategory(parentCategory)

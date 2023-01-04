@@ -38,11 +38,19 @@ class CategoryServiceTest {
                 .build();
         return request;
     }
+
+    private CategoryDTO.SaveRequest createCategory3(){
+        CategoryDTO.SaveRequest  request = CategoryDTO.SaveRequest.builder()
+                .name("category3-1")
+                .parentCategoryName("category3")
+                .build();
+        return request;
+    }
     @Test
     @DisplayName("카테고리 저장_성공")
     void saveCategory_success()throws Exception{
         //given
-        long categoryId = categoryService.saveCategory(createCategory1());
+        long categoryId = categoryService.saveCategory(createCategory2());
         //when
         Category category = categoryRepository.findById(categoryId).orElseThrow();
         //then
