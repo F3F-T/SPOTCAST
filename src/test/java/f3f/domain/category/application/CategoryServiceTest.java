@@ -25,6 +25,7 @@ class CategoryServiceTest {
     private CategoryDTO.SaveRequest createCategory1(){
         CategoryDTO.SaveRequest  request = CategoryDTO.SaveRequest.builder()
                 .name("category1")
+                .parentCategoryName("ROOT")
                 .build();
         return request;
     }
@@ -109,7 +110,7 @@ class CategoryServiceTest {
     @DisplayName("카테고리 삭제_실패")
     void deleteCategory_fail()throws Exception{
         //given
-
+        assertThrows(NotFoundCategoryException.class , () -> categoryService.deleteCategory(2));
         //when
 
         //then
@@ -147,10 +148,6 @@ class CategoryServiceTest {
     @Test
     @DisplayName("카테고리 정보 조회_실패")
     void getCategoryInfo_fail()throws Exception{
-        //given
-
-        //when
-
-        //then
+        assertThrows(NotFoundCategoryException.class , () -> categoryService.getCategoryById(2));
     }
 }
