@@ -8,7 +8,7 @@ public class ResultDataResponseDTO<T> extends ResponseDTO  {
     private final T data;
 
     private ResultDataResponseDTO(T data) {
-        super(true, ErrorCode.OK.getCode(), ErrorCode.OK.getMessage());
+        super(true, ErrorCode.OK.getCode());
         this.data = data;
     }
 
