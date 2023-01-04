@@ -4,11 +4,9 @@ import f3f.domain.scrap.dao.ScrapRepository;
 import f3f.domain.scrap.domain.Scrap;
 import f3f.domain.scrap.dto.ScrapDTO;
 import f3f.domain.scrap.exception.ScrapMissMatchMemberException;
-import f3f.domain.scrap.exception.ScrapNotFoundException;
 import f3f.domain.scrapBoard.dao.ScrapBoardRepository;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
-import f3f.domain.user.exception.MemberNotFoundException;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +42,7 @@ public class ScrapService {
     public Scrap saveScrapBox(ScrapDTO.SaveRequest request,Long memberId){
 
         Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER));
 
 
         Scrap scrap = scrapRepository.save(request.toEntity(findMember));
@@ -63,7 +61,7 @@ public class ScrapService {
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER));
 
         Scrap scrap = scrapRepository.findById(request.getScrapId())
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_SCRAP));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_SCRAPBOX));
 
         scrap.updateScrap(request);
     }
@@ -81,7 +79,7 @@ public class ScrapService {
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER));
 
         Scrap scrap = scrapRepository.findById(scrapId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_SCRAP));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_SCRAPBOX));
 
         if(scrap.getMember().getId()!= findMember.getId()){
             throw new ScrapMissMatchMemberException();
@@ -99,7 +97,7 @@ public class ScrapService {
     @Transactional(readOnly = true)
     public List<ScrapDTO.ScrapInfoDTO> getScrapBoxList(Long memberId){
         Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER));
 
         List<ScrapDTO.ScrapInfoDTO> scrapList = findMember.getScrapList().stream()
                 .map(Scrap::toScrapInfoDTO).collect(Collectors.toList());

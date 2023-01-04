@@ -49,7 +49,7 @@ public enum ErrorCode {
     NOTFOUND_BOARD(400,HttpStatus.BAD_REQUEST,"존재하지 않는 게시글입니다."),
 
     //스크랩 없음
-    NOTFOUND_SCRAP(400,HttpStatus.BAD_REQUEST,"존재하지 않는 스크랩입니다."),
+    NOTFOUND_SCRAPBOX(400,HttpStatus.BAD_REQUEST,"존재하지 않는 스크랩 박스입니다."),
 
     //중복 회원가입
     DUPLICATION_SIGNUP(400,HttpStatus.BAD_REQUEST,"중복 회원가입입니다. "),
