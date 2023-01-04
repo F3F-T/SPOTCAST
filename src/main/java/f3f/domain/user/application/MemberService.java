@@ -1,6 +1,6 @@
 package f3f.domain.user.application;
 
-import f3f.domain.model.LoginType;
+import f3f.domain.publicModel.LoginType;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.dao.RefreshTokenDao;
 import f3f.domain.user.domain.Member;
@@ -8,7 +8,6 @@ import f3f.domain.user.dto.MemberDTO.MemberSaveRequestDto;
 import f3f.domain.user.dto.TokenDTO;
 import f3f.domain.user.exception.*;
 import f3f.global.jwt.TokenProvider;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -1,12 +1,12 @@
-package f3f.domain.teamApply.application;
+package f3f.domain.apply.application;
 
 import f3f.domain.board.dao.BoardRepository;
 import f3f.domain.board.domain.Board;
-import f3f.domain.model.BoardType;
-import f3f.domain.teamApply.dao.ApplyRepository;
-import f3f.domain.teamApply.domain.Apply;
-import f3f.domain.teamApply.exception.NotfoundException;
-import f3f.domain.teamApply.exception.UnauthorizedMemberException;
+import f3f.domain.publicModel.BoardType;
+import f3f.domain.apply.dao.ApplyRepository;
+import f3f.domain.apply.domain.Apply;
+import f3f.domain.apply.exception.NotfoundException;
+import f3f.domain.apply.exception.UnauthorizedMemberException;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.MemberNotFoundException;

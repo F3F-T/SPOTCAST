@@ -1,8 +1,8 @@
-package f3f.domain.teamApply.domain;
+package f3f.domain.apply.domain;
 
 
 import f3f.domain.board.domain.Board;
-import f3f.domain.model.BaseTimeEntity;
+import f3f.domain.publicModel.BaseTimeEntity;
 import f3f.domain.user.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

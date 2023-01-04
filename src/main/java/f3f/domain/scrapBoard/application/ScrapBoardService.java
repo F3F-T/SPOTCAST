@@ -2,6 +2,7 @@ package f3f.domain.scrapBoard.application;
 
 import f3f.domain.board.dao.BoardRepository;
 import f3f.domain.board.domain.Board;
+import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.exception.NotFoundBoardException;
 import f3f.domain.scrap.dao.ScrapRepository;
 import f3f.domain.scrap.domain.Scrap;
@@ -9,6 +10,7 @@ import f3f.domain.scrap.exception.ScrapBoardMissMatchMemberException;
 import f3f.domain.scrap.exception.ScrapNotFoundException;
 import f3f.domain.scrapBoard.dao.ScrapBoardRepository;
 import f3f.domain.scrapBoard.domain.ScrapBoard;
+import f3f.domain.scrapBoard.dto.ScrapBoardDTO;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.MemberNotFoundException;
@@ -45,7 +47,7 @@ public class ScrapBoardService {
      * @param saveRequest
      */
     @Transactional
-    public ScrapBoard saveScrap(Long memberId, Long scrapId, ScrapBoardDTO.SaveRequest saveRequest) {
+    public ScrapBoard saveScrap(Long memberId, Long scrapId,ScrapBoardDTO.SaveRequest saveRequest) {
 
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));

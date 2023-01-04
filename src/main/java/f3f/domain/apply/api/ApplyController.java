@@ -1,7 +1,7 @@
-package f3f.domain.teamApply.api;
+package f3f.domain.apply.api;
 
-import f3f.domain.teamApply.application.ApplyService;
-import f3f.domain.teamApply.domain.Apply;
+import f3f.domain.apply.application.ApplyService;
+import f3f.domain.apply.domain.Apply;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

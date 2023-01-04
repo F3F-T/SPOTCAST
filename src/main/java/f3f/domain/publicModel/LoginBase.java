@@ -1,4 +1,4 @@
-package f3f.domain.model;
+package f3f.domain.publicModel;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

@@ -1,7 +1,7 @@
 package f3f.domain.message.domain;
 
 
-import f3f.domain.model.BaseTimeEntity;
+import f3f.domain.publicModel.BaseTimeEntity;
 import f3f.domain.user.domain.Member;
 import lombok.Builder;
 import lombok.Getter;

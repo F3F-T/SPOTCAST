@@ -1,4 +1,4 @@
-package f3f.domain.teamApply.exception;
+package f3f.domain.apply.exception;
 
 public class NotfoundException extends IllegalArgumentException {
 

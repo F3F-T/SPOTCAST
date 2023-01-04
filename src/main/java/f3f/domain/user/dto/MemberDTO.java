@@ -1,8 +1,8 @@
 package f3f.domain.user.dto;
 
-import f3f.domain.model.LoginType;
-import f3f.domain.model.LoginMemberType;
-import f3f.domain.model.Authority;
+import f3f.domain.publicModel.LoginType;
+import f3f.domain.publicModel.LoginMemberType;
+import f3f.domain.publicModel.Authority;
 import f3f.domain.user.domain.Member;
 import lombok.Builder;
 import lombok.Getter;

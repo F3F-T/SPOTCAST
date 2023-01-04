@@ -1,4 +1,4 @@
-package f3f.domain.teamApply.application;
+package f3f.domain.apply.application;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

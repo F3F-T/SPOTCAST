@@ -1,16 +1,17 @@
 package f3f.domain.scrap.api;
 
 import f3f.domain.board.dto.BoardDTO;
-import f3f.domain.scrap.application.ScrapBoardService;
-import f3f.domain.scrap.dto.ScrapBoardDTO;
+
 import f3f.domain.scrap.dto.ScrapDTO;
+import f3f.domain.scrapBoard.application.ScrapBoardService;
+import f3f.domain.scrapBoard.dto.ScrapBoardDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static f3f.domain.scrap.dto.ScrapBoardDTO.*;
+
 
 
 /**
@@ -47,7 +48,7 @@ public class ScrapBoardController {
      * @return
      */
     @PostMapping("/{memberId}/scrap/{scrapId}")
-    public ResponseEntity<Void> saveScrap(@RequestBody SaveRequest saveRequest ,@PathVariable Long memberId, @PathVariable Long scrapId) {
+    public ResponseEntity<Void> saveScrap(@RequestBody ScrapBoardDTO.SaveRequest saveRequest , @PathVariable Long memberId, @PathVariable Long scrapId) {
         scrapBoardService.saveScrap(memberId,scrapId,saveRequest);
         return ResponseEntity.ok().build();
     }
@@ -60,7 +61,7 @@ public class ScrapBoardController {
      * @return
      */
     @DeleteMapping("/{memberId}/scrap/{scrapId}")
-    public ResponseEntity<Void> deleteScrap(@RequestBody DeleteRequest deleteRequest ,@PathVariable Long memberId, @PathVariable Long scrapId) {
+    public ResponseEntity<Void> deleteScrap(@RequestBody ScrapBoardDTO.DeleteRequest deleteRequest , @PathVariable Long memberId, @PathVariable Long scrapId) {
         scrapBoardService.deleteScrap(memberId,scrapId,deleteRequest);
         return ResponseEntity.ok().build();
     }

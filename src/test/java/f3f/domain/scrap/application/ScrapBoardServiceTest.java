@@ -6,30 +6,30 @@ import f3f.domain.board.domain.Board;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.exception.NotFoundBoardException;
 import f3f.domain.category.application.CategoryService;
-import f3f.domain.scrap.dao.ScrapBoardRepository;
+
 import f3f.domain.scrap.dao.ScrapRepository;
 import f3f.domain.scrap.domain.Scrap;
-import f3f.domain.scrap.domain.ScrapBoard;
-import f3f.domain.scrap.dto.ScrapBoardDTO;
+
 import f3f.domain.scrap.dto.ScrapDTO;
 import f3f.domain.scrap.exception.ScrapBoardMissMatchMemberException;
 import f3f.domain.scrap.exception.ScrapNotFoundException;
+import f3f.domain.scrapBoard.application.ScrapBoardService;
+import f3f.domain.scrapBoard.dao.ScrapBoardRepository;
+import f3f.domain.scrapBoard.domain.ScrapBoard;
+import f3f.domain.scrapBoard.dto.ScrapBoardDTO;
 import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.MemberNotFoundException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static f3f.domain.model.BoardType.GENERAL;
+import static f3f.domain.publicModel.BoardType.GENERAL;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
