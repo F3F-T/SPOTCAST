@@ -1,7 +1,7 @@
 package f3f.domain.user.domain;
 
-import f3f.domain.model.Authority;
-import f3f.domain.model.LoginType;
+import f3f.domain.publicModel.Authority;
+import f3f.domain.publicModel.LoginType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

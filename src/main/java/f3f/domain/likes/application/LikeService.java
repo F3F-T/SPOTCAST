@@ -7,7 +7,7 @@ import f3f.domain.likes.dao.LikesRepository;
 import f3f.domain.likes.domain.Likes;
 import f3f.domain.likes.dto.LikeDTO;
 import f3f.domain.likes.exception.ExistLikeAlreadyException;
-import f3f.domain.model.BaseTimeEntity;
+import f3f.domain.publicModel.BaseTimeEntity;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.MemberNotFoundException;

@@ -10,8 +10,8 @@ import f3f.domain.board.exception.NotFoundBoardException;
 import f3f.domain.category.dao.CategoryRepository;
 import f3f.domain.category.domain.Category;
 import f3f.domain.category.exception.NotFoundCategoryException;
-import f3f.domain.model.BoardType;
-import f3f.domain.model.SortType;
+import f3f.domain.publicModel.BoardType;
+import f3f.domain.publicModel.SortType;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.MemberNotFoundException;
@@ -48,7 +48,7 @@ public class BoardService {
             throw new NotFoundBoardCategoryException("게시글에 카테고리 정보가 존재하지 않습니다.");
         }
 
-        Member member = memberRepository.findById(request.getMemberId()).orElseThrow(() -> new MemberNotFoundException());
+        Member member = memberRepository.findById(request.getMember().getId()).orElseThrow(() -> new MemberNotFoundException());
         Board board = Board.builder()
                 .title(request.getTitle())
                 .content(request.getContent())

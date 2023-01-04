@@ -1,6 +1,6 @@
 package f3f.domain.admin.domain;
 
-import f3f.domain.model.MemberBase;
+import f3f.domain.publicModel.MemberBase;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;

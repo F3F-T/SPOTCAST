@@ -1,7 +1,8 @@
 package f3f.domain.board.dto;
 
+import f3f.domain.board.domain.Board;
 import f3f.domain.category.domain.Category;
-import f3f.domain.model.BoardType;
+import f3f.domain.publicModel.BoardType;
 import f3f.domain.user.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,16 +27,27 @@ public class BoardDTO {
 
         private Category category;
 
-        private Long  memberId;
+        private Member member;
 
         @Builder
-        public SaveRequest(String title, String content, long viewCount, BoardType boardType, Category category, Long memberId) {
+        public SaveRequest(String title, String content, long viewCount, BoardType boardType, Category category, Member member) {
             this.title = title;
             this.content = content;
             this.viewCount = viewCount;
             this.boardType = boardType;
             this.category = category;
-            this.memberId = memberId;
+            this.member = member;
+        }
+
+        public Board toEntity() {
+            return Board.builder()
+                    .title(this.title)
+                    .content(this.content)
+                    .viewCount(this.viewCount)
+                    .boardType(this.boardType)
+                    .category(this.category)
+                    .member(this.member)
+                    .build();
         }
     }
 
@@ -71,8 +83,7 @@ public class BoardDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SearchCondition{
+    public static class SearchCondition {
         private String keyword;
     }
-
 }
