@@ -30,7 +30,8 @@ class CategoryServiceTest {
 
     private CategoryDTO.SaveRequest createCategory2(){
         CategoryDTO.SaveRequest  request = CategoryDTO.SaveRequest.builder()
-                .name("category2")
+                .name("category3")
+                .depth(1)
                 .parentCategoryName("ROOT")
                 .build();
         return request;
@@ -67,11 +68,12 @@ class CategoryServiceTest {
     @Test
     @DisplayName("카테고리 수정_성공")
     void updateCategory_success()throws Exception{
-        //given
-
         //when
-
+        Category updateCategory = categoryService.updateCategory(2, createCategory2());
+        Category category = categoryRepository.findById(Long.valueOf(2)).orElseThrow();
         //then
+        Assertions.assertThat(category.getId()).isEqualTo(2);
+        Assertions.assertThat(category.getName()).isEqualTo(updateCategory.getName());
     }
 
     @Test
