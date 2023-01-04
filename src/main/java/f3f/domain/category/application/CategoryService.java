@@ -18,7 +18,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Transactional
-    public void saveCategory(CategoryDTO.SaveRequest category) {
+    public long saveCategory(CategoryDTO.SaveRequest category) {
 
         Category requestCategory = null;
 
@@ -66,7 +66,7 @@ public class CategoryService {
         }
 
 
-        categoryRepository.save(requestCategory);
+        return categoryRepository.save(requestCategory).getId();
     }
 
     @Transactional

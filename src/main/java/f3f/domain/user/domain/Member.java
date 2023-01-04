@@ -5,13 +5,13 @@ import f3f.domain.bookmark.domain.Bookmark;
 import f3f.domain.comment.domain.Comment;
 import f3f.domain.likes.domain.Likes;
 import f3f.domain.message.domain.Message;
-import f3f.domain.model.LoginType;
-import f3f.domain.model.LoginMemberType;
-import f3f.domain.model.MemberBase;
-import f3f.domain.model.Authority;
+import f3f.domain.publicModel.LoginType;
+import f3f.domain.publicModel.LoginMemberType;
+import f3f.domain.publicModel.MemberBase;
+import f3f.domain.publicModel.Authority;
 import f3f.domain.portfolio.domain.Portfolio;
 import f3f.domain.scrap.domain.Scrap;
-import f3f.domain.teamApply.domain.Apply;
+import f3f.domain.apply.domain.Apply;
 import f3f.domain.user.dto.MemberDTO.MemberInfoResponseDto;
 import lombok.*;
 
@@ -25,9 +25,11 @@ import java.util.List;
 @AllArgsConstructor
 public class Member extends MemberBase {
 
-    private String phone;
+    private String twitter;
 
-    private String nickname;
+    private String instagram;
+
+    private String otherSns;
 
 
     @OneToMany(mappedBy = "member")
@@ -65,10 +67,8 @@ public class Member extends MemberBase {
 
 
     @Builder
-    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information, String phone, String nickname, List<Board> boardList, List<Likes> likesList, List<Comment> commentList, List<Apply> volunteerList, List<Apply> recruiterList, List<Bookmark> bookmarkList, Portfolio portfolio) {
+    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information,  List<Board> boardList, List<Likes> likesList, List<Comment> commentList, List<Apply> volunteerList, List<Apply> recruiterList, List<Bookmark> bookmarkList, Portfolio portfolio) {
         super(id, email, name, password, loginMemberType, loginType, authority, information);
-        this.phone = phone;
-        this.nickname = nickname;
 
     }
 
@@ -77,12 +77,13 @@ public class Member extends MemberBase {
                 .id(this.getId())
                 .email(this.getEmail())
                 .name(this.getName())
-                .nickname(this.getNickname())
                 .loginMemberType(this.getLoginMemberType())
                 .loginType(this.getLoginType())
                 .authority(this.getAuthority())
                 .information(this.getInformation())
-                .phone(this.getPhone())
+                .instagram(instagram)
+                .twitter(twitter)
+                .otherSns(otherSns)
                 .build();
 
     }
@@ -92,15 +93,14 @@ public class Member extends MemberBase {
         this.password = password;
     }
 
-    public void updateNickname(String nickname){
-        this.nickname = nickname;
-    }
     public void updateInformation(String information){
         this.information = information;
     }
 
-    public void updatePhone(String phone){
-        this.phone = phone;
+
+    public void addScrapList(Scrap scrap){
+        this.scrapList.add(scrap);
+
     }
 
 }

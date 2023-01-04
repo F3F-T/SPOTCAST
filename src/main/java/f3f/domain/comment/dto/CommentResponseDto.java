@@ -6,7 +6,7 @@ public class CommentResponseDto {
 
     private Long id;
     private String content;
-    private String nickname;
+    private String name;
     private Long boardId;
 
     /*댓글정보를 return할 응단 클래스
@@ -17,7 +17,7 @@ public class CommentResponseDto {
     public CommentResponseDto(Comment comment) {
         this.id = comment.getId();
         this.content = comment.getContent();
-        this.nickname = comment.getAuthor().getNickname();
+        this.name = comment.getAuthor().getName();
         this.boardId = comment.getBoard().getId();
     }
 }

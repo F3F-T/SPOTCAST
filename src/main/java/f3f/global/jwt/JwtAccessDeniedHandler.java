@@ -1,7 +1,8 @@
 package f3f.global.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import f3f.global.exception.ErrorResponse;
+import f3f.global.response.ErrorCode;
+import f3f.global.response.ResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -11,11 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Component
 @Slf4j
@@ -35,7 +31,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     }
 
     private void sendResponse(HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
-        String result = objectMapper.writeValueAsString(new ErrorResponse(FORBIDDEN, accessDeniedException.getMessage()));
+        String result = objectMapper.writeValueAsString(ResponseDTO.of(false,ErrorCode.AUTHORITY_FORBIDDEN,"접근 권한이 없습니다."));
 
 
         response.setContentType("application/json");

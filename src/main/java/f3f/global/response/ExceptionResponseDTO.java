@@ -2,7 +2,7 @@ package f3f.global.response;
 
 public class ExceptionResponseDTO extends ResponseDTO {
     private ExceptionResponseDTO(ErrorCode errorCode) {
-        super(false, errorCode.getCode(), errorCode.getMessage());
+        super(false, errorCode.getCode());
     }
 
     private ExceptionResponseDTO(ErrorCode errorCode, Exception e) {

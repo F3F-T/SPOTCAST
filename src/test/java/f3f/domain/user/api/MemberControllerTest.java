@@ -1,8 +1,8 @@
 package f3f.domain.user.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import f3f.domain.model.Authority;
-import f3f.domain.model.LoginType;
+import f3f.domain.publicModel.Authority;
+import f3f.domain.publicModel.LoginType;
 import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.dto.MemberDTO;
@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static f3f.domain.model.LoginMemberType.GENERAL_USER;
+import static f3f.domain.publicModel.LoginMemberType.GENERAL_USER;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -60,8 +60,6 @@ public class MemberControllerTest {
     public MemberDTO.MemberSaveRequestDto createSignUpRequest() {
         return MemberDTO.MemberSaveRequestDto.builder()
                 .name("username")
-                .nickname("nickname")
-                .phone("01012345678")
                 .email("userEmail@email.com")
                 .information("info")
                 .password("password")
