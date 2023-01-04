@@ -9,72 +9,75 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 @Getter
-@AllArgsConstructor
 public enum ErrorCode {
 
-    OK(200, HttpStatus.OK, "Ok"),
+    OK(200, HttpStatus.OK),
 
-    BAD_REQUEST(601, HttpStatus.BAD_REQUEST, "Bad request"),
-    VALIDATION_ERROR(602, HttpStatus.BAD_REQUEST, "Validation error"),
-    NOT_FOUND(603, HttpStatus.NOT_FOUND, "Requested resource is not found"),
+    BAD_REQUEST(601, HttpStatus.BAD_REQUEST),
+    VALIDATION_ERROR(602, HttpStatus.BAD_REQUEST),
+    NOT_FOUND(603, HttpStatus.NOT_FOUND),
 
-    INTERNAL_ERROR(604, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
-    DATA_ACCESS_ERROR(605, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error"),
+    INTERNAL_ERROR(604, HttpStatus.INTERNAL_SERVER_ERROR),
+    DATA_ACCESS_ERROR(605, HttpStatus.INTERNAL_SERVER_ERROR),
 
-    UNAUTHORIZED(606, HttpStatus.UNAUTHORIZED, "User unauthorized"),
+    UNAUTHORIZED(606, HttpStatus.UNAUTHORIZED),
 
 
     //요청한 정보가 유효하지 않음
-    INVALID_EMAIL_REQUEST(400,HttpStatus.BAD_REQUEST, "이메일이 일치하지 않습니다."),
+    INVALID_EMAIL_REQUEST(400,HttpStatus.BAD_REQUEST),
 
-    INVALID_PASSWORD_REQUEST(400,HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    INVALID_PASSWORD_REQUEST(400,HttpStatus.BAD_REQUEST),
 
-    INVALID_EMAIL_AND_PASSWORD_REQUEST(400,HttpStatus.BAD_REQUEST, "아이디 또는 비밀번호가 일치하지 않습니다."),
+    INVALID_EMAIL_AND_PASSWORD_REQUEST(400,HttpStatus.BAD_REQUEST),
 
 
     //refresh token 유효하지 않음
-    INVALID_REFRESHTOKEN(400,HttpStatus.BAD_REQUEST, "로그아웃 된 사용자입니다."),
+    INVALID_REFRESHTOKEN(400,HttpStatus.BAD_REQUEST),
 
     //현재 멤버와 불일치
-    NOTCURRENT_MEMBER(400,HttpStatus.BAD_REQUEST,"사용자 정보가 일치하지 않습니다."),
+    NOTCURRENT_MEMBER(400,HttpStatus.BAD_REQUEST),
 
     //이메일 인증 불일치
-    EMAIL_CERTIFICATION_MISMATCH(400,HttpStatus.BAD_REQUEST, "인증번호가 일치하지 않습니다."),
+    EMAIL_CERTIFICATION_MISMATCH(400,HttpStatus.BAD_REQUEST),
 
 
     //멤버 없음
-    NOTFOUND_MEMBER(400,HttpStatus.BAD_REQUEST,"존재하지 않는 사용자입니다."),
+    NOTFOUND_MEMBER(400,HttpStatus.BAD_REQUEST),
 
     //게시글 없음
-    NOTFOUND_BOARD(400,HttpStatus.BAD_REQUEST,"존재하지 않는 게시글입니다."),
+    NOTFOUND_BOARD(400,HttpStatus.BAD_REQUEST),
 
     //스크랩 없음
-    NOTFOUND_SCRAPBOX(400,HttpStatus.BAD_REQUEST,"존재하지 않는 스크랩 박스입니다."),
+    NOTFOUND_SCRAPBOX(400,HttpStatus.BAD_REQUEST),
 
     //중복 회원가입
-    DUPLICATION_SIGNUP(400,HttpStatus.BAD_REQUEST,"중복 회원가입입니다. "),
+    DUPLICATION_SIGNUP(400,HttpStatus.BAD_REQUEST),
 
     //이메일 중복
-    DUPLICATION_EMAIL(400,HttpStatus.BAD_REQUEST,"이미 가입되어 있는 이메일입니다."),
+    DUPLICATION_EMAIL(400,HttpStatus.BAD_REQUEST),
 
     //authority 불일치
-    AUTHORITY_FORBIDDEN(403,HttpStatus.FORBIDDEN,"접근 권한이 없습니다."),
+    AUTHORITY_FORBIDDEN(403,HttpStatus.FORBIDDEN),
     //토큰 없음
-    JWT_ACCESS_DENIED(401,HttpStatus.UNAUTHORIZED,"유효하지 않은 토큰입니다.");
+    JWT_ACCESS_DENIED(401,HttpStatus.UNAUTHORIZED);
 
     private final Integer code;
     private final HttpStatus httpStatus;
-    private final String message;
+
+    ErrorCode(Integer code, HttpStatus httpStatus) {
+        this.code = code;
+        this.httpStatus = httpStatus;
+    }
 
     public String getMessage(Throwable e) {
-        return this.getMessage(this.getMessage());
+        return e.getMessage();
         // 결과 예시 - "Validation error - Reason why it isn't valid"
     }
 
     public String getMessage(String message) {
         return Optional.ofNullable(message)
                 .filter(Predicate.not(String::isBlank))
-                .orElse(this.getMessage());
+                .orElse(message);
     }
 
     public static ErrorCode valueOf(HttpStatus httpStatus) {

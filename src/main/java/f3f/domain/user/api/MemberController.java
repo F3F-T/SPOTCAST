@@ -118,7 +118,7 @@ public class MemberController {
      */
     private static void CheckCurrentUser(Long memberId) {
         if(memberId != SecurityUtil.getCurrentMemberId()){
-            throw new GeneralException(ErrorCode.NOTCURRENT_MEMBER);
+            throw new GeneralException(ErrorCode.NOTCURRENT_MEMBER,"사용자 정보가 일치하지 않습니다.");
         }
     }
 }

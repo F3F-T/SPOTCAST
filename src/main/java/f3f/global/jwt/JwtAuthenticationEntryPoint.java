@@ -28,7 +28,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private void sendResponse(HttpServletResponse response, AuthenticationException authException) throws IOException {
 
-        String result = objectMapper.writeValueAsString(ResponseDTO.of(false,ErrorCode.JWT_ACCESS_DENIED));
+        String result = objectMapper.writeValueAsString(ResponseDTO.of(false,ErrorCode.JWT_ACCESS_DENIED,"유효하지 않은 토큰입니다."));
 
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");

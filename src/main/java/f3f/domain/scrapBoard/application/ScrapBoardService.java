@@ -51,13 +51,14 @@ public class ScrapBoardService {
     public ScrapBoard saveScrap(Long memberId, Long scrapId,ScrapBoardDTO.SaveRequest saveRequest) {
 
         memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다."));
+        
 
         Board board = boardRepository.findById(saveRequest.getBoardId())
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_BOARD));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_BOARD,"존재하지 않는 게시글입니다."));
 
         Scrap scrap = scrapRepository.findById(scrapId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_SCRAPBOX));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_SCRAPBOX,"존재하지 않는 스크랩박스입니다."));
 
         ScrapBoard scrapBoard = ScrapBoard.builder()
                 .scrap(scrap)
@@ -76,11 +77,11 @@ public class ScrapBoardService {
     @Transactional
     public void deleteScrap(Long memberId, Long scrapId, ScrapBoardDTO.DeleteRequest deleteRequest) {
         Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다."));
 
 
         Scrap scrap = scrapRepository.findById(scrapId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_SCRAPBOX));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_SCRAPBOX,"존재하지 않는 스크랩박스입니다."));
 
         if(scrap.getMember().getId()!= findMember.getId()){
             throw new ScrapBoardMissMatchMemberException();
@@ -98,10 +99,10 @@ public class ScrapBoardService {
     @Transactional(readOnly = true)
     public List<BoardDTO.BoardInfoDTO> getScrapList(Long scrapId, Long memberId){
         memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다."));
 
         scrapRepository.findById(scrapId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_SCRAPBOX));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_SCRAPBOX,"존재하지 않는 스크랩박스입니다."));
 
         List<ScrapBoard> scrapList = scrapBoardRepository.findByScrapId(scrapId);
 
