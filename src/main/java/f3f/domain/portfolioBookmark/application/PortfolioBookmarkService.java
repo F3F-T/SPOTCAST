@@ -1,18 +1,13 @@
-package f3f.domain.bookmark.application;
+package f3f.domain.portfolioBookmark.application;
 
-import f3f.domain.board.domain.Board;
 import f3f.domain.board.exception.NotFoundBoardException;
 import f3f.domain.bookmark.dao.BookmarkRepository;
 import f3f.domain.bookmark.domain.Bookmark;
-import f3f.domain.portfolio.dao.PortfolioBookmarkRepository;
+import f3f.domain.portfolioBookmark.dao.PortfolioBookmarkRepository;
 import f3f.domain.portfolio.dao.PortfolioRepository;
 import f3f.domain.portfolio.domain.Portfolio;
-import f3f.domain.portfolio.domain.PortfolioBookmark;
+import f3f.domain.portfolioBookmark.domain.PortfolioBookmark;
 import f3f.domain.portfolio.exception.PortfolioNotFoundException;
-import f3f.domain.scrap.domain.Scrap;
-import f3f.domain.scrap.domain.ScrapBoard;
-import f3f.domain.scrap.exception.ScrapBoardMissMatchMemberException;
-import f3f.domain.scrap.exception.ScrapNotFoundException;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.MemberNotFoundException;
@@ -24,7 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BookmarkPortfolioService {
+public class PortfolioBookmarkService {
 
     private final BookmarkRepository bookmarkRepository;
     private final MemberRepository memberRepository;

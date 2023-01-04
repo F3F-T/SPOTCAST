@@ -7,7 +7,7 @@ import f3f.domain.likes.domain.Likes;
 import f3f.domain.model.BaseTimeEntity;
 import f3f.domain.model.BoardType;
 import f3f.domain.model.Image;
-import f3f.domain.scrap.domain.ScrapBoard;
+import f3f.domain.scrapBoard.domain.ScrapBoard;
 import f3f.domain.user.domain.Member;
 import lombok.Builder;
 import lombok.Getter;

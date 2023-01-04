@@ -1,16 +1,14 @@
-package f3f.domain.scrap.application;
+package f3f.domain.scrapBoard.application;
 
 import f3f.domain.board.dao.BoardRepository;
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.exception.NotFoundBoardException;
-import f3f.domain.scrap.dao.ScrapBoardRepository;
 import f3f.domain.scrap.dao.ScrapRepository;
 import f3f.domain.scrap.domain.Scrap;
-import f3f.domain.scrap.domain.ScrapBoard;
-import f3f.domain.scrap.dto.ScrapDTO;
-import f3f.domain.scrap.exception.DuplicateScrapNameException;
 import f3f.domain.scrap.exception.ScrapBoardMissMatchMemberException;
 import f3f.domain.scrap.exception.ScrapNotFoundException;
+import f3f.domain.scrapBoard.dao.ScrapBoardRepository;
+import f3f.domain.scrapBoard.domain.ScrapBoard;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.MemberNotFoundException;

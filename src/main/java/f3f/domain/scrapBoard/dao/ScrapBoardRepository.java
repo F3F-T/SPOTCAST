@@ -1,7 +1,7 @@
-package f3f.domain.scrap.dao;
+package f3f.domain.scrapBoard.dao;
 
 import f3f.domain.board.domain.Board;
-import f3f.domain.scrap.domain.ScrapBoard;
+import f3f.domain.scrapBoard.domain.ScrapBoard;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

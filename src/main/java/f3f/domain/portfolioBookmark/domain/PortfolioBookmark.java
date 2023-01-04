@@ -1,6 +1,7 @@
-package f3f.domain.portfolio.domain;
+package f3f.domain.portfolioBookmark.domain;
 
 import f3f.domain.bookmark.domain.Bookmark;
+import f3f.domain.portfolio.domain.Portfolio;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

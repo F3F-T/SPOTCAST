@@ -1,7 +1,7 @@
-package f3f.domain.portfolio.dao;
+package f3f.domain.portfolioBookmark.dao;
 
 import f3f.domain.portfolio.domain.Portfolio;
-import f3f.domain.portfolio.domain.PortfolioBookmark;
+import f3f.domain.portfolioBookmark.domain.PortfolioBookmark;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
