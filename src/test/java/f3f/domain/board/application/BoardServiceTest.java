@@ -43,8 +43,7 @@ class BoardServiceTest {
                 .name("ryu")
                 .email("rdj1014@naver.com")
                 .information("내다")
-                .nickname("닉닉닉")
-                .phone("01012345678")
+                .name("닉닉닉")
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .build();
     }
@@ -55,7 +54,7 @@ class BoardServiceTest {
                 .content("content1")
                 .boardType(BoardType.GENERAL)
                 .category(createCategory())
-                .memberId(createMember().getId())
+                .member(createMember())
                 .build();
     }
 
