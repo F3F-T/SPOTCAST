@@ -1,7 +1,9 @@
 package f3f.domain.user.api;
 
 import f3f.domain.user.application.MemberService;
-import f3f.domain.user.exception.UnauthenticatedMemberException;
+import f3f.global.response.ErrorCode;
+import f3f.global.response.GeneralException;
+import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +25,14 @@ public class MemberController {
      * @return
      */
     @DeleteMapping("/{memberId}")
-    public ResponseEntity<Void> deleteMember(@RequestBody MemberDeleteRequestDto deleteRequest,
+    public ResultDataResponseDTO deleteMember(@RequestBody MemberDeleteRequestDto deleteRequest,
                                                               @PathVariable Long memberId) {
         //memberId 검증
         CheckCurrentUser(memberId);
 
         memberService.deleteMember(deleteRequest,memberId);
 
-        return ResponseEntity.ok().build();
+        return ResultDataResponseDTO.empty();
     }
 
     /**
@@ -39,8 +41,9 @@ public class MemberController {
      * @return
      */
     @GetMapping("/{memberId}")
-    public ResponseEntity<MemberInfoResponseDto> findMemberInfoById(@PathVariable Long memberId) {
-        return ResponseEntity.ok(memberService.findMemberInfoByMemberId(memberId));
+    public ResultDataResponseDTO<MemberInfoResponseDto> findMemberInfoById(@PathVariable Long memberId) {
+
+        return ResultDataResponseDTO.of(memberService.findMemberInfoByMemberId(memberId));
     }
 
     /**
@@ -49,11 +52,12 @@ public class MemberController {
      * @return
      */
     @GetMapping("/{memberId}/myInfo")
-    public ResponseEntity<MemberInfoResponseDto> findMyInfoById(@PathVariable Long memberId) {
+    public ResultDataResponseDTO<MemberInfoResponseDto> findMyInfoById(@PathVariable Long memberId) {
         //memberId 검증
         CheckCurrentUser(memberId);
 
-        return ResponseEntity.ok(memberService.findMyInfo(memberId));
+
+        return ResultDataResponseDTO.of(memberService.findMyInfo(memberId));
     }
 
     /**
@@ -62,11 +66,11 @@ public class MemberController {
      * @return
      */
     @PostMapping("/find/password/{email}")
-    public ResponseEntity<Void> changePasswordByForgot(@RequestBody MemberUpdateForgotPasswordRequestDto updatePasswordRequest) {
+    public ResultDataResponseDTO changePasswordByForgot(@RequestBody MemberUpdateForgotPasswordRequestDto updatePasswordRequest) {
 
         memberService.updatePasswordByForgot(updatePasswordRequest);
 
-        return ResponseEntity.ok().build();
+        return ResultDataResponseDTO.empty();
     }
 
     /**
@@ -76,7 +80,7 @@ public class MemberController {
      * @return
      */
     @PostMapping("/{memberId}/change/password")
-    public ResponseEntity<Void> changePasswordByLogin(@RequestBody MemberUpdateLoginPasswordRequestDto updatePasswordRequest,
+    public ResultDataResponseDTO changePasswordByLogin(@RequestBody MemberUpdateLoginPasswordRequestDto updatePasswordRequest,
             @PathVariable Long memberId) {
 
         //memberId 검증
@@ -84,7 +88,7 @@ public class MemberController {
 
         memberService.updatePassword(updatePasswordRequest,memberId);
 
-        return ResponseEntity.ok().build();
+        return ResultDataResponseDTO.empty();
     }
 
     /**
@@ -94,7 +98,7 @@ public class MemberController {
      * @return
      */
     @PostMapping("/{memberId}/change/nickname")
-    public ResponseEntity<Void> updateNickname(@RequestBody MemberUpdateNicknameRequestDto updateNicknameRequest,
+    public ResultDataResponseDTO updateNickname(@RequestBody MemberUpdateNicknameRequestDto updateNicknameRequest,
                                                             @PathVariable Long memberId) {
 
         //memberId 검증
@@ -102,7 +106,7 @@ public class MemberController {
 
         memberService.updateNickname(updateNicknameRequest,memberId);
 
-        return ResponseEntity.ok().build();
+        return ResultDataResponseDTO.empty();
     }
 
     /**
@@ -112,7 +116,7 @@ public class MemberController {
      * @return
      */
     @PostMapping("/{memberId}/change/information")
-    public ResponseEntity<Void> updateInformation(@RequestBody MemberUpdateInformationRequestDto updateInformationRequest,
+    public ResultDataResponseDTO updateInformation(@RequestBody MemberUpdateInformationRequestDto updateInformationRequest,
                                                @PathVariable Long memberId) {
 
         //memberId 검증
@@ -120,7 +124,7 @@ public class MemberController {
 
         memberService.updateInformation(updateInformationRequest,memberId);
 
-        return ResponseEntity.ok().build();
+        return ResultDataResponseDTO.empty();
     }
 
     /**
@@ -130,7 +134,7 @@ public class MemberController {
      * @return
      */
     @PostMapping("/{memberId}/change/phone")
-    public ResponseEntity<Void> updatePhone(@RequestBody MemberUpdatePhoneRequestDto updatePhoneRequest,
+    public ResultDataResponseDTO updatePhone(@RequestBody MemberUpdatePhoneRequestDto updatePhoneRequest,
                                                   @PathVariable Long memberId) {
 
         //memberId 검증
@@ -138,7 +142,7 @@ public class MemberController {
 
         memberService.updatePhone(updatePhoneRequest,memberId);
 
-        return ResponseEntity.ok().build();
+        return ResultDataResponseDTO.empty();
     }
 
 
@@ -150,7 +154,7 @@ public class MemberController {
      */
     private static void CheckCurrentUser(Long memberId) {
         if(memberId != SecurityUtil.getCurrentMemberId()){
-            throw new UnauthenticatedMemberException("유저 정보가 일치하지 않습니다.");
+            throw new GeneralException(ErrorCode.FORBIDDEN, "!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
     }
 }
