@@ -90,23 +90,6 @@ public class MemberController {
         return ResultDataResponseDTO.empty();
     }
 
-    /**
-     * 닉네임 변경
-     * @param updateNicknameRequest
-     * @param memberId
-     * @return
-     */
-    @PostMapping("/{memberId}/change/nickname")
-    public ResultDataResponseDTO updateNickname(@RequestBody MemberUpdateNicknameRequestDto updateNicknameRequest,
-                                                            @PathVariable Long memberId) {
-
-        //memberId 검증
-        CheckCurrentUser(memberId);
-
-        memberService.updateNickname(updateNicknameRequest,memberId);
-
-        return ResultDataResponseDTO.empty();
-    }
 
     /**
      * infromation 변경
@@ -122,24 +105,6 @@ public class MemberController {
         CheckCurrentUser(memberId);
 
         memberService.updateInformation(updateInformationRequest,memberId);
-
-        return ResultDataResponseDTO.empty();
-    }
-
-    /**
-     * 휴대전화 번호 변경
-     * @param updatePhoneRequest
-     * @param memberId
-     * @return
-     */
-    @PostMapping("/{memberId}/change/phone")
-    public ResultDataResponseDTO updatePhone(@RequestBody MemberUpdatePhoneRequestDto updatePhoneRequest,
-                                                  @PathVariable Long memberId) {
-
-        //memberId 검증
-        CheckCurrentUser(memberId);
-
-        memberService.updatePhone(updatePhoneRequest,memberId);
 
         return ResultDataResponseDTO.empty();
     }

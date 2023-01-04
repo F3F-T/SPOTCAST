@@ -54,10 +54,6 @@ public class MemberService {
             throw new GeneralException(ErrorCode.DUPLICATION_EMAIL, "이미 가입되어 있는 이메일입니다.");
         }
 
-//        if(nicknameDuplicateCheck(saveRequest.getNickname())){
-//            throw new DuplicateNicknameException("이미 가입되어 있는 닉네임입니다.");
-//        }
-
         saveRequest.passwordEncryption(passwordEncoder);
         Member member = saveRequest.toEntity();
         memberRepository.save(member);
@@ -246,24 +242,6 @@ public class MemberService {
     }
 
 
-    /**
-     * 닉네임 수정
-     * @param updateNicknameRequest
-     */
-    @Transactional
-    public void updateNickname(MemberUpdateNicknameRequestDto updateNicknameRequest, Long memberId){
-
-        String nickname = updateNicknameRequest.getNickname();
-
-        Member member = findMemberByMemberId(memberId);
-
-        if(nicknameDuplicateCheck(nickname)){
-            throw new DuplicateNicknameException("중복된 닉네임은 사용할 수 없습니다.");
-        }
-
-
-        member.updateNickname(nickname);
-    }
 
     /**
      * information 변경
@@ -277,25 +255,6 @@ public class MemberService {
         Member member = findMemberByMemberId(memberId);
 
         member.updateInformation(information);
-    }
-
-    /**
-     * phone 변경
-     * @param updatePhoneRequest
-     */
-    @Transactional
-    public void updatePhone(MemberUpdatePhoneRequestDto updatePhoneRequest, Long memberId){
-
-        String phone = updatePhoneRequest.getPhone();
-
-        if(phoneDuplicateCheck(phone)){
-            throw new DuplicatePhoneException("중복된 휴대폰 번호는 사용할 수 없습니다.");
-        }
-
-        Member member = findMemberByMemberId(memberId);
-
-
-        member.updatePhone(phone);
     }
 
 
@@ -384,23 +343,5 @@ public class MemberService {
         return memberRepository.existsByEmail(email);
     }
 
-    /**
-     * 닉네임 중복 검사
-     * @param nickname
-     * @return
-     */
-    @Transactional(readOnly = true)
-    public boolean nicknameDuplicateCheck(String nickname) {
-        return memberRepository.existsByNickname(nickname);
-    }
 
-    /**
-     * 휴대폰번호 중복 검사
-     * @param phone
-     * @return
-     */
-    @Transactional(readOnly = true)
-    public boolean phoneDuplicateCheck(String phone) {
-        return memberRepository.existsByPhone(phone);
-    }
 }

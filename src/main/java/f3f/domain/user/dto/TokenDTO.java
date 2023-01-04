@@ -28,7 +28,6 @@ public class TokenDTO {
         return MemberDTO.MemberLoginServiceResponseDto.builder()
                 .email(member.getEmail())
                 .name(member.getName())
-                .nickname(member.getNickname())
                 .loginMemberType(member.getLoginMemberType())
                 .authority(member.getAuthority())
                 .grantType(this.grantType)

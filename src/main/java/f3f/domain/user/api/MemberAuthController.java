@@ -122,28 +122,6 @@ public class MemberAuthController {
     }
 
     /**
-     * 닉네임 중복 검사
-     * @param nickname
-     * @return
-     */
-    @GetMapping("/member-nicknames/{nickname}/exists")
-    public ResultDataResponseDTO<Boolean> duplicateCheckNickname(@PathVariable String nickname) {
-
-        return ResultDataResponseDTO.of(memberService.nicknameDuplicateCheck(nickname));
-    }
-
-    /**
-     * 휴대전화 번호 중복 검사
-     * @param phone
-     * @return
-     */
-    @GetMapping("/member-phones/{phone}/exists")
-    public ResultDataResponseDTO<Boolean> duplicateCheckPhone(@PathVariable String phone) {
-
-        return ResultDataResponseDTO.of(memberService.phoneDuplicateCheck(phone));
-    }
-
-    /**
      * 쿠키 제거
      * @param response
      * @param cookieName
