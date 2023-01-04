@@ -4,7 +4,6 @@ import f3f.domain.category.dao.CategoryRepository;
 import f3f.domain.category.domain.Category;
 import f3f.domain.category.dto.CategoryDTO;
 import f3f.domain.category.exception.DuplicateCategoryNameException;
-import f3f.domain.category.exception.ExistCategoryByCoreBranchAndName;
 import f3f.domain.category.exception.MaxDepthCategoryException;
 import f3f.domain.category.exception.NotFoundCategoryException;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +24,6 @@ public class CategoryService {
         if (category.getParentCategoryName() == null) {
             if (categoryRepository.existsByName(category.getName())) {
                 throw new DuplicateCategoryNameException("카테고리 이름은 같을수 없다 이놈아.");
-            }
-            if (categoryRepository.existsByName(category.getName())) {
-                throw new ExistCategoryByCoreBranchAndName("categoryName 중복이다 이놈아");
             }
 
             Category parentCategory = categoryRepository.findByName("ROOT")

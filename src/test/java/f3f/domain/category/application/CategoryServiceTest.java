@@ -6,18 +6,16 @@ import f3f.domain.category.dto.CategoryDTO;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class CategoryServiceTest {
 
     @Autowired
     CategoryRepository categoryRepository;
 
-    @InjectMocks
+    @Autowired
     CategoryService categoryService;
 
     private CategoryDTO.SaveRequest createCategory(){
