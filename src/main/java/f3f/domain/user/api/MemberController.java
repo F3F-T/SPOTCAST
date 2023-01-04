@@ -6,7 +6,6 @@ import f3f.global.response.GeneralException;
 import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static f3f.domain.user.dto.MemberDTO.*;
@@ -154,7 +153,7 @@ public class MemberController {
      */
     private static void CheckCurrentUser(Long memberId) {
         if(memberId != SecurityUtil.getCurrentMemberId()){
-            throw new GeneralException(ErrorCode.FORBIDDEN, "!!!!!!!!!!!!!!!!!!!!!!!!!");
+            throw new GeneralException(ErrorCode.NOTCURRENT_MEMBER, "멤버 정보가 일치하지 않습니다.");
         }
     }
 }

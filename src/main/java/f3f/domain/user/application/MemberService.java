@@ -8,6 +8,8 @@ import f3f.domain.user.dto.MemberDTO.MemberSaveRequestDto;
 import f3f.domain.user.dto.TokenDTO;
 import f3f.domain.user.exception.*;
 import f3f.global.jwt.TokenProvider;
+import f3f.global.response.ErrorCode;
+import f3f.global.response.GeneralException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,8 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.io.IOException;
 
 import static f3f.domain.user.dto.MemberDTO.*;
 
@@ -51,12 +51,12 @@ public class MemberService {
     @Transactional
     public Long saveMember(MemberSaveRequestDto saveRequest){
         if(emailDuplicateCheck(saveRequest.getEmail())){
-            throw new DuplicateEmailException("이미 가입되어 있는 이메일입니다.");
+            throw new GeneralException(ErrorCode.DUPLICATION_EMAIL, "이미 가입되어 있는 이메일입니다.");
         }
 
-        if(nicknameDuplicateCheck(saveRequest.getNickname())){
-            throw new DuplicateNicknameException("이미 가입되어 있는 닉네임입니다.");
-        }
+//        if(nicknameDuplicateCheck(saveRequest.getNickname())){
+//            throw new DuplicateNicknameException("이미 가입되어 있는 닉네임입니다.");
+//        }
 
         saveRequest.passwordEncryption(passwordEncoder);
         Member member = saveRequest.toEntity();
@@ -76,13 +76,14 @@ public class MemberService {
         Member findMember = findMemberByMemberId(memberId);
 
         if(findMember.getEmail() != deleteRequest.getEmail()){
-            throw new InvalidEmailException("이메일이 일치하지 않습니다.");
+
+            throw new GeneralException(ErrorCode.INVALID_REQUEST, "이메일이 일치하지 않습니다.");
         }
 
         String password = deleteRequest.getPassword();
         if(!passwordEncoder.matches(password, findMember.getPassword()))
         {
-            throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
+            throw new GeneralException(ErrorCode.INVALID_REQUEST, "비밀번호가 일치하지 않습니다.");
         }
 
         existsByIdAndPassword(memberId, findMember.getPassword());
@@ -111,7 +112,7 @@ public class MemberService {
 
         //response 에 유저 정보를 담기 위한 findById
         Member findMember = memberRepository.findById(Long.valueOf(authentication.getName()))
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다."));
 
         //유저 정보 + 토큰 값
         MemberLoginServiceResponseDto memberLoginResponse = tokenDto.toLoginEntity(findMember);
@@ -139,18 +140,18 @@ public class MemberService {
 
         // 2. 저장소에서 Member ID 를 기반으로 유저 확인
         if(!memberRepository.existsById(Long.valueOf(authentication.getName()))){
-            throw new MemberNotFoundException("로그아웃 된 사용자입니다.");
+            throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "로그아웃 된 사용자입니다.");
         }
 
         // 3. cache 에서 member Id 를 기반으로 refresh token 확인
         String refreshToken = refreshTokenDao.getRefreshToken(Long.valueOf(authentication.getName()));
         if(refreshToken == null){
-            throw new RefreshTokenNotFoundException("로그아웃 된 사용자입니다.");
+            throw new GeneralException(ErrorCode.INVALID_REFRESHTOKEN, "로그아웃 된 사용자입니다.");
         }
 
         // 4. Refresh Token 검증
         if (!tokenProvider.validateToken(refreshToken)) {
-            throw new InvalidRefreshTokenException("Refresh Token 이 유효하지 않습니다.");
+            throw new GeneralException(ErrorCode.INVALID_REFRESHTOKEN, "Refresh Token 이 유효하지 않습니다.");
         }
 
         // 5. 새로운 토큰 생성
@@ -212,7 +213,7 @@ public class MemberService {
 
         if(!passwordEncoder.matches(beforePassword, findMember.getPassword()))
         {
-            throw new UnauthenticatedMemberException("아이디 또는 비밀번호가 일치하지 않습니다.");
+            throw new GeneralException(ErrorCode.INVALID_REQUEST, "아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
         existsByIdAndPassword(memberId,findMember.getPassword());
@@ -316,7 +317,7 @@ public class MemberService {
      */
     private void checkNotGeneralLoginUser(Member member) {
         if(!member.getLoginType().equals(LoginType.GENERAL_LOGIN)){
-            throw new NotGeneralLoginTypeException(member.getLoginType().name()+" 로그인으로 회원가입 되어있습니다.");
+             throw new GeneralException(ErrorCode.DUPLICATION_SIGNUP,member.getLoginType().name()+" 로그인으로 회원가입 되어있습니다.");
         }
     }
 
@@ -329,8 +330,10 @@ public class MemberService {
     @Transactional(readOnly = true)
     public Member findMemberByMemberId(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다."));
+
     }
+
 
 
 
@@ -344,7 +347,7 @@ public class MemberService {
 
         Member findMember = memberRepository.findByEmail(email);
         if(findMember==null){
-            throw new MemberNotFoundException("존재하지 않는 사용자입니다.");
+            throw new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다.");
         }
 
         return findMember;
@@ -359,14 +362,14 @@ public class MemberService {
     @Transactional(readOnly = true)
     public void existsByEmailAndPassword(String email,String password) {
         if(!memberRepository.existsByEmailAndPassword(email, password)){
-            throw new UnauthenticatedMemberException("아이디 또는 비밀번호가 일치하지 않습니다.");
+            throw new GeneralException(ErrorCode.INVALID_REQUEST,"아이디 또는 비밀번호가 일치하지 않습니다.");
         }
     }
 
     @Transactional(readOnly = true)
     public void existsByIdAndPassword(Long memberId,String password) {
         if(!memberRepository.existsByIdAndPassword(memberId, password)){
-            throw new UnauthenticatedMemberException("아이디 또는 비밀번호가 일치하지 않습니다.");
+            throw new GeneralException(ErrorCode.INVALID_REQUEST,"아이디 또는 비밀번호가 일치하지 않습니다.");
         }
     }
 

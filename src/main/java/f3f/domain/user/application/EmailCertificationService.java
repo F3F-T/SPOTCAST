@@ -3,6 +3,8 @@ package f3f.domain.user.application;
 import f3f.domain.user.dao.EmailCertificationDao;
 import f3f.domain.user.dto.MemberDTO;
 import f3f.domain.user.exception.EmailCertificationMismatchException;
+import f3f.global.response.ErrorCode;
+import f3f.global.response.GeneralException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +45,7 @@ public class EmailCertificationService {
 
     public void verifyEmail(MemberDTO.EmailCertificationRequest request){
         if(!isVerify(request)){
-            throw new EmailCertificationMismatchException();
+            throw new GeneralException(ErrorCode.EMAIL_CERTIFICATION_MISMATCH, "이메일 인증번호가 일치하지 않습니다.");
         }
         emailCertificationDao.removeEmailCertification(request.getEmail());
     }

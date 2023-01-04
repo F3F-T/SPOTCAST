@@ -22,13 +22,35 @@ public enum ErrorCode {
     DATA_ACCESS_ERROR(605, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error"),
 
     UNAUTHORIZED(606, HttpStatus.UNAUTHORIZED, "User unauthorized"),
-    //이메일 중복
-    DUPLICATION_EMAIL(630,HttpStatus.BAD_REQUEST,"이메일 중복"),
 
-    //auth 불일치
-    FORBIDDEN(403,HttpStatus.FORBIDDEN,"authority 불일치"),
+
+    //요청한 정보가 유효하지 않음
+    INVALID_REQUEST(400,HttpStatus.BAD_REQUEST,"요청 정보 불일치"),
+
+
+    //refresh token 유효하지 않음
+    INVALID_REFRESHTOKEN(400,HttpStatus.BAD_REQUEST,"리프레시 토큰 유효하지 않음"),
+
+    //현재 멤버와 불일치
+    NOTCURRENT_MEMBER(400,HttpStatus.BAD_REQUEST,"현재 멤버 불일치"),
+
+    //이메일 인증 불일치
+    EMAIL_CERTIFICATION_MISMATCH(400,HttpStatus.BAD_REQUEST,"이메일 인증번호 불일치"),
+
+
+    //멤버 없음
+    NOTFOUND_MEMBER(400,HttpStatus.BAD_REQUEST,"멤버 없음"),
+
+    //중복 회원가입
+    DUPLICATION_SIGNUP(400,HttpStatus.BAD_REQUEST,"중복 회원가입"),
+
+    //이메일 중복
+    DUPLICATION_EMAIL(400,HttpStatus.BAD_REQUEST,"이메일 중복"),
+
+    //authority 불일치
+    AUTHORITY_FORBIDDEN(403,HttpStatus.FORBIDDEN,"authority 불일치"),
     //토큰 없음
-    JWT_ACCESSDENIED(401,HttpStatus.UNAUTHORIZED,"토큰 없음");
+    JWT_ACCESS_DENIED(401,HttpStatus.UNAUTHORIZED,"토큰 없음");
 
     private final Integer code;
     private final HttpStatus httpStatus;
