@@ -2,7 +2,6 @@ package f3f.domain.user.application;
 
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
-import f3f.domain.user.exception.MemberNotFoundException;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,7 @@ public class UserDetailService implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws MemberNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws GeneralException {
 
         Member findMember = memberRepository.findByEmail(username);
         if(findMember==null){
