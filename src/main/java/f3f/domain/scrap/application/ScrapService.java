@@ -1,5 +1,6 @@
 package f3f.domain.scrap.application;
 
+import f3f.domain.scrap.dao.ScrapBoardRepository;
 import f3f.domain.scrap.dao.ScrapRepository;
 import f3f.domain.scrap.domain.Scrap;
 import f3f.domain.scrap.dto.ScrapDTO;
@@ -40,36 +41,28 @@ public class ScrapService {
      * @param request
      */
     @Transactional
-    public void saveScrapBox(ScrapDTO.SaveRequest request,Long memberId){
+    public Scrap saveScrapBox(ScrapDTO.SaveRequest request,Long memberId){
 
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
-        boolean nameExists = findMember.getScrapList().contains(request.getName());
-        if(nameExists){
-            throw new DuplicateScrapNameException("스크랩 이름이 중복되었습니다.");
-        }
 
-        scrapRepository.save(request.toEntity(findMember));
+        Scrap scrap = scrapRepository.save(request.toEntity(findMember));
+        return scrap;
     }
 
     /**
      * 스크랩 박스 이름 수정
      * @param request
-     * @param scrapId
+     * @param memberId
      */
     @Transactional
-    public void updateScrapBox(ScrapDTO.SaveRequest request,Long scrapId,Long memberId) {
+    public void updateScrapBox(ScrapDTO.UpdateRequest request,Long memberId) {
 
-        Member findMember = memberRepository.findById(memberId)
+        memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
-        boolean nameExists = findMember.getScrapList().contains(request.getName());
-        if(nameExists){
-            throw new DuplicateScrapNameException("스크랩 이름이 중복되었습니다.");
-        }
-
-        Scrap scrap = scrapRepository.findById(scrapId)
+        Scrap scrap = scrapRepository.findById(request.getScrapId())
                 .orElseThrow(() -> new ScrapNotFoundException("존재하지 않는 스크랩입니다."));
 
         scrap.updateScrap(request);
@@ -77,25 +70,25 @@ public class ScrapService {
 
     /**
      * 스크랩 박스 삭제
-     * @param scrapId
+     * @param deleteRequest
      * @param memberId
      */
     @Transactional
-    public void deleteScrapBox(Long scrapId, Long memberId){
+    public void deleteScrapBox(ScrapDTO.ScrapDeleteRequestDTO deleteRequest, Long memberId){
 
+        Long scrapId = deleteRequest.getScrapId();
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
         Scrap scrap = scrapRepository.findById(scrapId)
-                .orElseThrow(() -> new ScrapNotFoundException("존재하지 않는 스크랩입니다."));
+                .orElseThrow(() -> new ScrapNotFoundException("존재하지 않는 스크랩박스입니다."));
 
         if(scrap.getMember().getId()!= findMember.getId()){
             throw new ScrapMissMatchMemberException();
         }
 
+        scrapBoardRepository.deleteAllByScrapId(scrapId);
         scrapRepository.deleteById(scrapId);
-        scrapBoardRepository.deleteByScrapId(scrapId);
-
     }
 
     /**

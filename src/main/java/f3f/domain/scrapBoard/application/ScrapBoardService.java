@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 필요 기능들
@@ -41,15 +42,15 @@ public class ScrapBoardService {
      *
      * @param memberId
      * @param scrapId
-     * @param boardId
+     * @param saveRequest
      */
     @Transactional
-    public void saveScrap(Long memberId, Long scrapId, Long boardId) {
+    public ScrapBoard saveScrap(Long memberId, Long scrapId, ScrapBoardDTO.SaveRequest saveRequest) {
 
-        Member findMember = memberRepository.findById(memberId)
+        memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
-        Board board = boardRepository.findById(boardId)
+        Board board = boardRepository.findById(saveRequest.getBoardId())
                 .orElseThrow(() -> new NotFoundBoardException("존재하지 않는 게시글입니다."));
 
         Scrap scrap = scrapRepository.findById(scrapId)
@@ -60,23 +61,20 @@ public class ScrapBoardService {
                 .board(board)
                 .build();
 
-        ScrapBoard save = scrapBoardRepository.save(scrapBoard);
+        return scrapBoardRepository.save(scrapBoard);
     }
 
     /**
      * 스크랩 삭제
      * @param memberId
      * @param scrapId
-     * @param boardId
-     * @param scrapPostId
+     * @param deleteRequest
      */
     @Transactional
-    public void deleteScrap(Long memberId, Long scrapId, Long boardId,Long scrapPostId) {
+    public void deleteScrap(Long memberId, Long scrapId, ScrapBoardDTO.DeleteRequest deleteRequest) {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new NotFoundBoardException("존재하지 않는 게시글입니다."));
 
         Scrap scrap = scrapRepository.findById(scrapId)
                 .orElseThrow(() -> new ScrapNotFoundException("존재하지 않는 스크랩박스입니다."));
@@ -85,7 +83,7 @@ public class ScrapBoardService {
             throw new ScrapBoardMissMatchMemberException();
         }
 
-        scrapBoardRepository.deleteById(scrapPostId);
+        scrapBoardRepository.deleteById(deleteRequest.getId());
     }
 
     /**
@@ -95,15 +93,17 @@ public class ScrapBoardService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<Board> getScrapList(Long scrapId, Long memberId){
-        Member findMember = memberRepository.findById(memberId)
+    public List<BoardDTO.BoardInfoDTO> getScrapList(Long scrapId, Long memberId){
+        memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
 
-        Scrap scrap = scrapRepository.findById(scrapId)
+        scrapRepository.findById(scrapId)
                 .orElseThrow(() -> new ScrapNotFoundException("존재하지 않는 스크랩박스입니다."));
 
-        List<Board> scrapList = scrapBoardRepository.findByScrapId(scrapId);
+        List<ScrapBoard> scrapList = scrapBoardRepository.findByScrapId(scrapId);
 
-        return scrapList;
+        List<BoardDTO.BoardInfoDTO> scrapBoardInfoList = scrapList.stream()
+                .map(ScrapBoard::toBoardInfoDTO).collect(Collectors.toList());
+        return scrapBoardInfoList;
     }
 }

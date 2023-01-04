@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface ScrapBoardRepository extends JpaRepository<ScrapBoard, Long> {
 
-    void deleteByScrapId(Long scrapId);
+    void deleteAllByScrapId(Long scrapId);
 
-    List<Board> findByScrapId(Long scrapId);
+
+    List<ScrapBoard> findByScrapId(Long scrapId);
 }

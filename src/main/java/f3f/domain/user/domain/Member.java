@@ -103,4 +103,9 @@ public class Member extends MemberBase {
         this.phone = phone;
     }
 
+    public void addScrapList(Scrap scrap){
+        this.scrapList.add(scrap);
+
+    }
+
 }

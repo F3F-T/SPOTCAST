@@ -26,7 +26,7 @@ public class Scrap {
 
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
@@ -40,7 +40,7 @@ public class Scrap {
         this.member = member;
     }
 
-    public void updateScrap(ScrapDTO.SaveRequest request){
+    public void updateScrap(ScrapDTO.UpdateRequest request){
         this.name = request.getName();
     }
 
