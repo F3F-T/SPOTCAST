@@ -1,20 +1,24 @@
 package f3f.global.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @ToString
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ResponseDTO {
 
-    private final Boolean success;
-    private final Integer code;
-    private final String message;
+    private Boolean success;
+    private Integer code;
+    private String message;
 
+    public ResponseDTO(Boolean success, Integer code) {
+        this.success = success;
+        this.code = code;
+    }
     public static ResponseDTO of(Boolean success, ErrorCode code) {
-        return new ResponseDTO(success, code.getCode(), code.getMessage());
+        return new ResponseDTO(success, code.getCode());
     }
 
     public static ResponseDTO of(Boolean success, ErrorCode errorCode, Exception e) {
