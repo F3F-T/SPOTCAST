@@ -1,4 +1,4 @@
-package f3f.domain.scrap.api;
+package f3f.domain.scrapBoard.api;
 
 import f3f.domain.board.dto.BoardDTO;
 
