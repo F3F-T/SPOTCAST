@@ -90,9 +90,8 @@ public class CategoryService {
     public long deleteCategory(long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundCategoryException("존재하지 않는 카테고리 입니다."));
-        if(category.getParentCategory() != null){
-            throw new IllegalArgumentException("자식을 버리고 가면 안돼요!");
-        }
+
+        //todo 자식이 남아있는지 체크하고 버려야함
 
         categoryRepository.deleteById(category.getId());
 

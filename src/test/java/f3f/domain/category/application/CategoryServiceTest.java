@@ -4,6 +4,7 @@ import f3f.domain.category.dao.CategoryRepository;
 import f3f.domain.category.domain.Category;
 import f3f.domain.category.dto.CategoryDTO;
 import f3f.domain.category.exception.DuplicateCategoryNameException;
+import f3f.domain.category.exception.NotFoundCategoryException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -98,11 +99,10 @@ class CategoryServiceTest {
     @Test
     @DisplayName("카테고리 삭제_성공")
     void deleteCategory_success()throws Exception{
-        //given
-
         //when
+        long deleteCategory = categoryService.deleteCategory(2);
 
-        //then
+        assertThrows(NotFoundCategoryException.class , () -> categoryService.getCategoryById(deleteCategory));
     }
 
     @Test
