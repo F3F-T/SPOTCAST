@@ -167,10 +167,10 @@ public class MemberService {
 
     /**
      * 로그아웃
-     * @throws IOException
+     *
      */
     @Transactional
-    public void logout(Long memberId) throws IOException {
+    public void logout(Long memberId){
         refreshTokenDao.removeRefreshToken(memberId);
     }
 
