@@ -26,9 +26,9 @@ public enum ErrorCode {
     DUPLICATION_EMAIL(630,HttpStatus.BAD_REQUEST,"이메일 중복"),
 
     //auth 불일치
-    UNAUTHORIZATION(631,HttpStatus.UNAUTHORIZED,"authority 불일치"),
+    FORBIDDEN(403,HttpStatus.FORBIDDEN,"authority 불일치"),
     //토큰 없음
-    JWT_ACCESSDENIED(632,HttpStatus.UNAUTHORIZED,"토큰 없음");
+    JWT_ACCESSDENIED(401,HttpStatus.UNAUTHORIZED,"토큰 없음");
 
     private final Integer code;
     private final HttpStatus httpStatus;
