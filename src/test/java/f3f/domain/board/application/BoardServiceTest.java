@@ -4,7 +4,6 @@ import f3f.domain.board.dao.BoardRepository;
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.category.application.CategoryService;
-import f3f.domain.category.domain.Category;
 import f3f.domain.category.dto.CategoryDTO;
 import f3f.domain.publicModel.BoardType;
 import f3f.domain.publicModel.LoginMemberType;
@@ -31,8 +30,8 @@ class BoardServiceTest {
     @Autowired
     CategoryService categoryService;
 
-    private Category createCategory(){
-        return Category.builder()
+    private CategoryDTO.SaveRequest createCategory(){
+        return CategoryDTO.SaveRequest.builder()
                 .name("카테고리 1")
                 .build();
     }
@@ -53,7 +52,7 @@ class BoardServiceTest {
                 .title("title1")
                 .content("content1")
                 .boardType(BoardType.GENERAL)
-                .category(createCategory())
+                .category(createCategory().toEntity())
                 .member(createMember())
                 .build();
     }
@@ -63,7 +62,7 @@ class BoardServiceTest {
     void saveBoard_success()throws Exception{
         //given
         BoardDTO.SaveRequest request = createBoard();
-        CategoryDTO.SaveRequest categoryRequest= new CategoryDTO.SaveRequest(createCategory());
+        CategoryDTO.SaveRequest categoryRequest= createCategory();
         //when
         categoryService.saveCategory(categoryRequest);
         Long boardId = boardService.saveBoard(request);
