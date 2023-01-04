@@ -52,7 +52,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         if (findMember != null) { //회원가입 된경우
             if (loginType != findMember.getLoginType()) {
-                throw new GeneralException(ErrorCode.DUPLICATION_SIGNUP, findMember.getLoginType() + "로 이미 회원가입 되어있습니다.");
+                throw new GeneralException(ErrorCode.DUPLICATION_SIGNUP, findMember.getLoginType().getType() + "로 이미 회원가입 되어있습니다.");
             }
         } else {
             // 회원가입 안된 경우 회원가입 진행

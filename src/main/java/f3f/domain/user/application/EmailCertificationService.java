@@ -45,7 +45,7 @@ public class EmailCertificationService {
 
     public void verifyEmail(MemberDTO.EmailCertificationRequest request){
         if(!isVerify(request)){
-            throw new GeneralException(ErrorCode.EMAIL_CERTIFICATION_MISMATCH, "이메일 인증번호가 일치하지 않습니다.");
+            throw new GeneralException(ErrorCode.EMAIL_CERTIFICATION_MISMATCH);
         }
         emailCertificationDao.removeEmailCertification(request.getEmail());
     }

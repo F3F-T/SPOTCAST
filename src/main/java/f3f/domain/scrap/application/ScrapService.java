@@ -9,6 +9,8 @@ import f3f.domain.scrapBoard.dao.ScrapBoardRepository;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.MemberNotFoundException;
+import f3f.global.response.ErrorCode;
+import f3f.global.response.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +44,7 @@ public class ScrapService {
     public Scrap saveScrapBox(ScrapDTO.SaveRequest request,Long memberId){
 
         Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다."));
 
 
         Scrap scrap = scrapRepository.save(request.toEntity(findMember));
@@ -58,10 +60,10 @@ public class ScrapService {
     public void updateScrapBox(ScrapDTO.UpdateRequest request,Long memberId) {
 
         memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER));
 
         Scrap scrap = scrapRepository.findById(request.getScrapId())
-                .orElseThrow(() -> new ScrapNotFoundException("존재하지 않는 스크랩입니다."));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_SCRAP));
 
         scrap.updateScrap(request);
     }
@@ -76,10 +78,10 @@ public class ScrapService {
 
         Long scrapId = deleteRequest.getScrapId();
         Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER));
 
         Scrap scrap = scrapRepository.findById(scrapId)
-                .orElseThrow(() -> new ScrapNotFoundException("존재하지 않는 스크랩박스입니다."));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_SCRAP));
 
         if(scrap.getMember().getId()!= findMember.getId()){
             throw new ScrapMissMatchMemberException();

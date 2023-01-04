@@ -28,7 +28,7 @@ public class UserDetailService implements UserDetailsService {
 
         Member findMember = memberRepository.findByEmail(username);
         if(findMember==null){
-            throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다.");
+            throw new GeneralException(ErrorCode.NOTFOUND_MEMBER);
         }
 
         return createUserDetails(findMember);

@@ -73,7 +73,7 @@ public class TokenProvider {
         Claims claims = parseClaims(accessToken);
 
         if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new GeneralException(ErrorCode.JWT_ACCESS_DENIED, "권한 정보가 없는 토큰입니다.");
+            throw new GeneralException(ErrorCode.JWT_ACCESS_DENIED);
         }
 
         // 클레임에서 권한 정보 가져오기
