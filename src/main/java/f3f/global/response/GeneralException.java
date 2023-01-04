@@ -7,10 +7,10 @@ import lombok.Getter;
 public class GeneralException extends RuntimeException{
     private final ErrorCode errorCode;
 
-    public GeneralException() {
-        super(ErrorCode.INTERNAL_ERROR.getMessage());
-        this.errorCode = ErrorCode.INTERNAL_ERROR;
-    }
+//    public GeneralException() {
+//        super(ErrorCode.INTERNAL_ERROR.getMessage());
+//        this.errorCode = ErrorCode.INTERNAL_ERROR;
+//    }
 
     public GeneralException(String message) {
         super(ErrorCode.INTERNAL_ERROR.getMessage(message));
@@ -27,10 +27,10 @@ public class GeneralException extends RuntimeException{
         this.errorCode = ErrorCode.INTERNAL_ERROR;
     }
 
-    public GeneralException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
-        this.errorCode = errorCode;
-    }
+//    public GeneralException(ErrorCode errorCode) {
+//        super(errorCode.getMessage());
+//        this.errorCode = errorCode;
+//    }
 
     public GeneralException(ErrorCode errorCode, String message) {
         super(errorCode.getMessage(message));
