@@ -2,7 +2,6 @@ package f3f.domain.user.application;
 
 import f3f.domain.user.dao.EmailCertificationDao;
 import f3f.domain.user.dto.MemberDTO;
-import f3f.domain.user.exception.EmailCertificationMismatchException;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
 import lombok.RequiredArgsConstructor;

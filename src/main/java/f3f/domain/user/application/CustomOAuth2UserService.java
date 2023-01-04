@@ -6,7 +6,6 @@ import f3f.domain.publicModel.LoginType;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.domain.UserPrincipal;
-import f3f.domain.user.exception.OAuthTypeMissMatchException;
 import f3f.global.oauth.OAuth2UserInfo;
 import f3f.global.oauth.OAuth2UserInfoFactory;
 import f3f.global.response.ErrorCode;
@@ -38,7 +37,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws GeneralException {
         OAuth2UserService delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 

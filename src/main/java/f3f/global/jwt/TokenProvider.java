@@ -1,7 +1,6 @@
 package f3f.global.jwt;
 
 import f3f.domain.user.dto.TokenDTO;
-import f3f.domain.user.exception.InvalidAccessTokenException;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
 import io.jsonwebtoken.*;
