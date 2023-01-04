@@ -3,11 +3,14 @@ package f3f.domain.category.application;
 import f3f.domain.category.dao.CategoryRepository;
 import f3f.domain.category.domain.Category;
 import f3f.domain.category.dto.CategoryDTO;
+import f3f.domain.category.exception.DuplicateCategoryNameException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class CategoryServiceTest {
@@ -18,9 +21,17 @@ class CategoryServiceTest {
     @Autowired
     CategoryService categoryService;
 
-    private CategoryDTO.SaveRequest createCategory(){
+    private CategoryDTO.SaveRequest createCategory1(){
         CategoryDTO.SaveRequest  request = CategoryDTO.SaveRequest.builder()
                 .name("category1")
+                .build();
+        return request;
+    }
+
+    private CategoryDTO.SaveRequest createCategory2(){
+        CategoryDTO.SaveRequest  request = CategoryDTO.SaveRequest.builder()
+                .name("category2")
+                .parentCategoryName("ROOT")
                 .build();
         return request;
     }
@@ -28,7 +39,7 @@ class CategoryServiceTest {
     @DisplayName("카테고리 저장_성공")
     void saveCategory_success()throws Exception{
         //given
-        long categoryId = categoryService.saveCategory(createCategory());
+        long categoryId = categoryService.saveCategory(createCategory1());
         //when
         Category category = categoryRepository.findById(categoryId).orElseThrow();
         //then
@@ -37,13 +48,10 @@ class CategoryServiceTest {
 
 
     @Test
-    @DisplayName("카테고리 저장_실패")
+    @DisplayName("카테고리 저장_실패_이름 중복 ")
     void saveCategory_fail()throws Exception{
-        //given
-
-        //when
-
-        //then
+        assertThrows(DuplicateCategoryNameException.class ,
+                ()-> categoryService.saveCategory(createCategory1()));
     }
 
     @Test
