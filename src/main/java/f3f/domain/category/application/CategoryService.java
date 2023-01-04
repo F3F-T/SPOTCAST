@@ -4,7 +4,6 @@ import f3f.domain.category.dao.CategoryRepository;
 import f3f.domain.category.domain.Category;
 import f3f.domain.category.dto.CategoryDTO;
 import f3f.domain.category.exception.DuplicateCategoryNameException;
-import f3f.domain.category.exception.ExistCategoryByCoreBranchAndName;
 import f3f.domain.category.exception.MaxDepthCategoryException;
 import f3f.domain.category.exception.NotFoundCategoryException;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +24,6 @@ public class CategoryService {
         if (category.getParentCategoryName() == null) {
             if (categoryRepository.existsByName(category.getName())) {
                 throw new DuplicateCategoryNameException("카테고리 이름은 같을수 없다 이놈아.");
-            }
-            if (categoryRepository.existsByName(category.getName())) {
-                throw new ExistCategoryByCoreBranchAndName("categoryName 중복이다 이놈아");
             }
 
             Category parentCategory = categoryRepository.findByName("ROOT")
@@ -52,6 +48,9 @@ public class CategoryService {
             Category parentCategory = categoryRepository.findByName(parentCategoryName)
                     .orElseThrow(() -> new IllegalArgumentException("부모 카테고리 없음 예외"));
 
+            if (categoryRepository.existsByName(category.getName())) {
+                throw new DuplicateCategoryNameException("카테고리 이름은 같을수 없다 이놈아.");
+            }
             requestCategory = Category.builder()
                     .name(category.getName())
                     .parentCategory(parentCategory)
@@ -94,9 +93,8 @@ public class CategoryService {
     public long deleteCategory(long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundCategoryException("존재하지 않는 카테고리 입니다."));
-        if(category.getParentCategory() != null){
-            throw new IllegalArgumentException("자식을 버리고 가면 안돼요!");
-        }
+
+        //todo 자식이 남아있는지 체크하고 버려야함
 
         categoryRepository.deleteById(category.getId());
 

@@ -3,7 +3,6 @@ package f3f.domain.scrap.application;
 import f3f.domain.scrap.dao.ScrapRepository;
 import f3f.domain.scrap.domain.Scrap;
 import f3f.domain.scrap.dto.ScrapDTO;
-import f3f.domain.scrap.exception.ScrapMissMatchMemberException;
 import f3f.domain.scrapBoard.dao.ScrapBoardRepository;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
@@ -82,7 +81,7 @@ public class ScrapService {
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_SCRAPBOX,"존재하지 않는 스크랩박스입니다."));
 
         if(scrap.getMember().getId()!= findMember.getId()){
-            throw new ScrapMissMatchMemberException();
+            throw new GeneralException(ErrorCode.NOTCURRENT_MEMBER,"스크랩과 유저 정보가 일치하지 않습니다.");
         }
 
         scrapBoardRepository.deleteAllByScrapId(scrapId);
