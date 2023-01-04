@@ -1,6 +1,9 @@
 package f3f.domain.category.application;
 
 import f3f.domain.category.dao.CategoryRepository;
+import f3f.domain.category.domain.Category;
+import f3f.domain.category.dto.CategoryDTO;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,14 +20,21 @@ class CategoryServiceTest {
     @InjectMocks
     CategoryService categoryService;
 
+    private CategoryDTO.SaveRequest createCategory(){
+        CategoryDTO.SaveRequest  request = CategoryDTO.SaveRequest.builder()
+                .name("category1")
+                .build();
+        return request;
+    }
     @Test
     @DisplayName("카테고리 저장_성공")
     void saveCategory_success()throws Exception{
         //given
-
+        long categoryId = categoryService.saveCategory(createCategory());
         //when
-
+        Category category = categoryRepository.findById(categoryId).orElseThrow();
         //then
+        Assertions.assertThat(category.getId()).isEqualTo(categoryId);
     }
 
 
