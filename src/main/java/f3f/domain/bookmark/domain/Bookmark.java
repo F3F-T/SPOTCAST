@@ -1,8 +1,9 @@
 package f3f.domain.bookmark.domain;
 
-import f3f.domain.portfolio.domain.PortfolioBookmark;
+import f3f.domain.portfolioBookmark.domain.PortfolioBookmark;
 import f3f.domain.user.domain.Member;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,9 +22,15 @@ public class Bookmark {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id")
     private Member member;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bookmark_id")
+    @OneToMany(mappedBy="bookmark", fetch = FetchType.LAZY)
     private List<PortfolioBookmark> portfolioBookmarkList = new ArrayList<>();
+
+    @Builder
+    public Bookmark( Long id, Member member){
+        this.id = id;
+        this.member = member;
+    }
 }

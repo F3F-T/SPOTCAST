@@ -2,10 +2,12 @@ package f3f.domain.board.dto;
 
 import f3f.domain.board.domain.Board;
 import f3f.domain.category.domain.Category;
-import f3f.domain.model.BoardType;
+import f3f.domain.publicModel.BoardType;
 import f3f.domain.user.domain.Member;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -74,5 +76,14 @@ public class BoardDTO {
             this.category = category;
             this.member = member;
         }
+    }
+
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SearchCondition {
+        private String keyword;
     }
 }

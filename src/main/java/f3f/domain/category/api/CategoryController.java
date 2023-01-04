@@ -2,6 +2,7 @@ package f3f.domain.category.api;
 
 import f3f.domain.category.application.CategoryService;
 import f3f.domain.category.domain.Category;
+import f3f.domain.category.dto.CategoryDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,22 +13,23 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping(value = "/category")
-    public String saveCategory(@RequestBody Category request){
-        return null;
+    public CategoryDTO.SaveRequest saveCategory(@RequestBody CategoryDTO.SaveRequest request){
+        categoryService.saveCategory(request);
+        return request;
     }
 
     @PutMapping(value = "/category/{categoryId}")
-    public Category updateCategory(@PathVariable long categoryId, @RequestBody Category request){
-        return null;
+    public Category updateCategory(@PathVariable long categoryId, @RequestBody CategoryDTO.SaveRequest request){
+        return categoryService.updateCategory(categoryId,request);
     }
 
     @DeleteMapping(value = "/category/{categoryId}")
     public long deleteCategory(@PathVariable long categoryId){
-        return 0;
+        return categoryService.deleteCategory(categoryId);
     }
 
     @GetMapping(value = "/category/{categoryId}")
     public  Category getCategoryInfo(@PathVariable long categoryId){
-    return null;
+            return categoryService.getCategoryById(categoryId);
     }
 }

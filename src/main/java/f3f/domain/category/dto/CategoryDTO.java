@@ -1,6 +1,7 @@
 package f3f.domain.category.dto;
 
 import f3f.domain.category.domain.Category;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class CategoryDTO {
 
         private List<Category> child = new ArrayList<>();
 
+        @Builder
         public SaveRequest(Category category) {
             this.categoryId =category.getId();
             this.name = category.getName();

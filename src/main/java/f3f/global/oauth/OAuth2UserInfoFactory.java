@@ -1,6 +1,5 @@
 package f3f.global.oauth;
 
-import f3f.domain.model.LoginType;
 import f3f.global.oauth.impl.FacebookOAuth2UserInfo;
 import f3f.global.oauth.impl.GoogleOAuth2UserInfo;
 import f3f.global.oauth.impl.KakaoOAuth2UserInfo;

@@ -3,13 +3,14 @@ package f3f.domain.user.application;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.MemberNotFoundException;
+import f3f.global.response.ErrorCode;
+import f3f.global.response.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -27,7 +28,7 @@ public class UserDetailService implements UserDetailsService {
 
         Member findMember = memberRepository.findByEmail(username);
         if(findMember==null){
-            throw new MemberNotFoundException("존재하지 않는 사용자입니다.");
+            throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다.");
         }
 
         return createUserDetails(findMember);

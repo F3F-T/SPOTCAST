@@ -1,7 +1,8 @@
 package f3f.global.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import f3f.global.exception.ErrorResponse;
+import f3f.global.response.ErrorCode;
+import f3f.global.response.ResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -10,10 +11,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Component
 @Slf4j
@@ -31,8 +28,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private void sendResponse(HttpServletResponse response, AuthenticationException authException) throws IOException {
 
-        String result = objectMapper.writeValueAsString(new ErrorResponse(UNAUTHORIZED, authException.getMessage()));
-
+        String result = objectMapper.writeValueAsString(ResponseDTO.of(false,ErrorCode.JWT_ACCESS_DENIED,authException.getMessage()));
 
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
