@@ -60,8 +60,6 @@ public class MemberControllerTest {
     public MemberDTO.MemberSaveRequestDto createSignUpRequest() {
         return MemberDTO.MemberSaveRequestDto.builder()
                 .name("username")
-                .nickname("nickname")
-                .phone("01012345678")
                 .email("userEmail@email.com")
                 .information("info")
                 .password("password")

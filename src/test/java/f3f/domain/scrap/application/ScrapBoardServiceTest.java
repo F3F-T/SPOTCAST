@@ -4,15 +4,12 @@ import f3f.domain.board.application.BoardService;
 import f3f.domain.board.dao.BoardRepository;
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.dto.BoardDTO;
-import f3f.domain.board.exception.NotFoundBoardException;
 import f3f.domain.category.application.CategoryService;
 
 import f3f.domain.scrap.dao.ScrapRepository;
 import f3f.domain.scrap.domain.Scrap;
 
 import f3f.domain.scrap.dto.ScrapDTO;
-import f3f.domain.scrap.exception.ScrapBoardMissMatchMemberException;
-import f3f.domain.scrap.exception.ScrapNotFoundException;
 import f3f.domain.scrapBoard.application.ScrapBoardService;
 import f3f.domain.scrapBoard.dao.ScrapBoardRepository;
 import f3f.domain.scrapBoard.domain.ScrapBoard;
@@ -20,7 +17,7 @@ import f3f.domain.scrapBoard.dto.ScrapBoardDTO;
 import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
-import f3f.domain.user.exception.MemberNotFoundException;
+import f3f.global.response.GeneralException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,7 +124,7 @@ public class ScrapBoardServiceTest {
         //when
 
         //then
-        assertThrows(MemberNotFoundException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 scrapBoardService.saveScrap(1111111111L, scrapId, boardSaveRequest));
     }
 
@@ -153,7 +150,7 @@ public class ScrapBoardServiceTest {
         //when
 
         //then
-        assertThrows(ScrapNotFoundException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 scrapBoardService.saveScrap(memberId, 1111111111111L, boardSaveRequest));
     }
 
@@ -179,7 +176,7 @@ public class ScrapBoardServiceTest {
         //when
 
         //then
-        assertThrows(NotFoundBoardException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest));
     }
 
@@ -240,7 +237,7 @@ public class ScrapBoardServiceTest {
         //when
 
         //then
-        assertThrows(MemberNotFoundException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 scrapBoardService.deleteScrap(111111111L, scrapId, deleteRequest));
     }
 
@@ -270,7 +267,7 @@ public class ScrapBoardServiceTest {
         //when
 
         //then
-        assertThrows(ScrapNotFoundException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 scrapBoardService.deleteScrap(memberId, 11111111L, deleteRequest));
     }
 
@@ -295,7 +292,7 @@ public class ScrapBoardServiceTest {
         ScrapDTO.SaveRequest newSaveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
-        Scrap scrap2 = scrapService.saveScrapBox(newSaveRequest, 2L);
+        Scrap scrap2 = scrapService.saveScrapBox(newSaveRequest, 118L);
         Long scrapId2 = scrap2.getId();
 
         ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest);
@@ -306,7 +303,7 @@ public class ScrapBoardServiceTest {
         //when
 
         //then
-        assertThrows(ScrapBoardMissMatchMemberException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 scrapBoardService.deleteScrap(memberId, scrapId2, deleteRequest));
     }
 
@@ -373,7 +370,7 @@ public class ScrapBoardServiceTest {
 
         //then
 
-        assertThrows(MemberNotFoundException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 scrapBoardService.getScrapList(scrapId, 1111111111L));
 
     }
@@ -409,7 +406,7 @@ public class ScrapBoardServiceTest {
 
         //then
 
-        assertThrows(ScrapNotFoundException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 scrapBoardService.getScrapList(1111111111L, memberId));
     }
 

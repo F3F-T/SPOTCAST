@@ -13,16 +13,14 @@ import f3f.domain.publicModel.LoginType;
 import f3f.domain.scrap.dao.ScrapRepository;
 import f3f.domain.scrap.domain.Scrap;
 import f3f.domain.scrap.dto.ScrapDTO;
-import f3f.domain.scrap.exception.ScrapMissMatchMemberException;
-import f3f.domain.scrap.exception.ScrapNotFoundException;
 import f3f.domain.scrapBoard.application.ScrapBoardService;
 import f3f.domain.scrapBoard.dao.ScrapBoardRepository;
 import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO;
-import f3f.domain.user.exception.MemberNotFoundException;
 
+import f3f.global.response.GeneralException;
 import org.junit.Before;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,13 +85,11 @@ public class ScrapServiceTest {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email(EMAIL)
                 .password(PASSWORD)
-                .phone(PHONE)
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
                 .information(INFORMATION)
                 .name(NAME)
-                .nickname(NICKNAME)
                 .build();
         return memberSaveRequestDto;
     }
@@ -172,7 +168,7 @@ public class ScrapServiceTest {
 
 
         //then
-        assertThrows(MemberNotFoundException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 scrapService.saveScrapBox(saveRequest,111111L));
 
     }
@@ -218,7 +214,7 @@ public class ScrapServiceTest {
 
 
         //then
-        assertThrows(MemberNotFoundException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 scrapService.deleteScrapBox(deleteRequestDTO, 111111111L));
     }
 
@@ -239,7 +235,7 @@ public class ScrapServiceTest {
 
 
         //then
-        assertThrows(ScrapNotFoundException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 scrapService.deleteScrapBox(deleteRequestDTO, memberId));
     }
 
@@ -261,7 +257,7 @@ public class ScrapServiceTest {
 
 
         //then
-        assertThrows(ScrapMissMatchMemberException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 scrapService.deleteScrapBox(deleteRequestDTO, 2L));
     }
 
@@ -312,7 +308,7 @@ public class ScrapServiceTest {
 
 
         //then
-        assertThrows(MemberNotFoundException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 scrapService.updateScrapBox(updateRequest,111111111L));
     }
 
@@ -340,7 +336,7 @@ public class ScrapServiceTest {
 
 
         //then
-        assertThrows(ScrapNotFoundException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 scrapService.updateScrapBox(updateRequest,memberId));
     }
 
@@ -386,7 +382,7 @@ public class ScrapServiceTest {
 
 
         //then
-        assertThrows(MemberNotFoundException.class,() ->
+        assertThrows(GeneralException.class,() ->
                 scrapService.getScrapBoxList(11111111111L));
     }
 }
