@@ -24,11 +24,13 @@ public enum ErrorCode {
 
     UNAUTHORIZED(606, HttpStatus.UNAUTHORIZED),
 
-    INVALID_EMAIL_AND_PASSWORD_REQUEST(404,HttpStatus.BAD_REQUEST),
-
+    INVALID_EMAIL_AND_PASSWORD_REQUEST(404,HttpStatus.NOT_FOUND),
 
     //refresh token 유효하지 않음
-    INVALID_REFRESHTOKEN(400,HttpStatus.BAD_REQUEST),
+    NOTFOUND_REFRESHTOKEN(404,HttpStatus.NOT_FOUND),
+
+    //refresh token 유효하지 않음
+    INVALID_REFRESHTOKEN(401,HttpStatus.UNAUTHORIZED),
 
     //현재 멤버와 불일치
     NOTCURRENT_MEMBER(400,HttpStatus.BAD_REQUEST),

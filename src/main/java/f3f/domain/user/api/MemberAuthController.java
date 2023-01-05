@@ -62,8 +62,7 @@ public class MemberAuthController {
      */
     @PostMapping("/reissue")
     public ResultDataResponseDTO<TokenDTO.TokenResponseDTO> reissue(@RequestBody TokenDTO.TokenRequestDTO tokenRequestDto) {
-        TokenDTO tokenDTO = memberService.reissue(tokenRequestDto);
-        TokenDTO.TokenResponseDTO tokenResponseDTO = tokenDTO.toEntity();
+        TokenDTO.TokenResponseDTO tokenResponseDTO = memberService.reissue(tokenRequestDto);
         return ResultDataResponseDTO.of(tokenResponseDTO);
     }
 
