@@ -128,7 +128,7 @@ public class MemberService {
      * @return
      */
     @Transactional
-    public TokenDTO reissue(TokenDTO.TokenRequestDTO tokenRequestDto) {
+    public TokenDTO.TokenResponseDTO reissue(TokenDTO.TokenRequestDTO tokenRequestDto) {
 
 
         // 1. Access Token 에서 Member ID 가져오기
@@ -142,7 +142,7 @@ public class MemberService {
         // 3. cache 에서 member Id 를 기반으로 refresh token 확인
         String refreshToken = refreshTokenDao.getRefreshToken(Long.valueOf(authentication.getName()));
         if(refreshToken == null){
-            throw new GeneralException(ErrorCode.INVALID_REFRESHTOKEN, "로그아웃 된 사용자입니다.");
+            throw new GeneralException(ErrorCode.NOTFOUND_REFRESHTOKEN, "로그아웃 된 사용자입니다.");
         }
 
         // 4. Refresh Token 검증
@@ -157,7 +157,7 @@ public class MemberService {
         saveRefreshTokenInStorage(tokenDTO.getRefreshToken(),Long.valueOf(authentication.getName()));// 추후 디비에 저장
 
         // 토큰 발급
-        return tokenDTO;
+        return tokenDTO.toEntity();
     }
 
 
@@ -340,7 +340,6 @@ public class MemberService {
      */
     @Transactional(readOnly = true)
     public boolean emailDuplicateCheck(String email) {
-        System.out.println("email = " + email);
         return memberRepository.existsByEmail(email);
     }
 
