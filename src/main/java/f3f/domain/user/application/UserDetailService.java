@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,11 +24,11 @@ public class UserDetailService implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws GeneralException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Member findMember = memberRepository.findByEmail(username);
         if(findMember==null){
-            throw new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다.");
+            throw new UsernameNotFoundException("존재하지 않는 사용자입니다.");
         }
 
         return createUserDetails(findMember);

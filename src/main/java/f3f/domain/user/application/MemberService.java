@@ -73,13 +73,13 @@ public class MemberService {
 
         if(findMember.getEmail() != deleteRequest.getEmail()){
 
-            throw new GeneralException(ErrorCode.INVALID_EMAIL_REQUEST,"이메일이 일치하지 않습니다.");
+            throw new GeneralException(ErrorCode.INVALID_EMAIL_AND_PASSWORD_REQUEST,"아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
         String password = deleteRequest.getPassword();
         if(!passwordEncoder.matches(password, findMember.getPassword()))
         {
-            throw new GeneralException(ErrorCode.INVALID_PASSWORD_REQUEST,"비밀번호가 일치하지 않습니다.");
+            throw new GeneralException(ErrorCode.INVALID_EMAIL_AND_PASSWORD_REQUEST,"아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
         existsByIdAndPassword(memberId, findMember.getPassword());
@@ -340,6 +340,7 @@ public class MemberService {
      */
     @Transactional(readOnly = true)
     public boolean emailDuplicateCheck(String email) {
+        System.out.println("email = " + email);
         return memberRepository.existsByEmail(email);
     }
 

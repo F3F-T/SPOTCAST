@@ -27,15 +27,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e, e.getErrorCode(), request);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<Object> exception(Exception e, WebRequest request) {
-        return handleExceptionInternal(e, ErrorCode.INTERNAL_ERROR, request);
-    }
+//    @ExceptionHandler
+//    public ResponseEntity<Object> exception(Exception e, WebRequest request) {
+//        return handleExceptionInternal(e, ErrorCode.INTERNAL_ERROR, request);
+//    }
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body,
                                                              HttpHeaders headers, HttpStatus status, WebRequest request) {
-        return handleExceptionInternal(ex, ErrorCode.valueOf(status), headers, status, request);
+        return handleExceptionInternal(ex, ErrorCode.valueOf(status,ex), headers, status, request);
     }
 
 

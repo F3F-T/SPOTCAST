@@ -3,6 +3,8 @@ package f3f.global.response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -17,18 +19,12 @@ public enum ErrorCode {
     VALIDATION_ERROR(602, HttpStatus.BAD_REQUEST),
     NOT_FOUND(603, HttpStatus.NOT_FOUND),
 
-    INTERNAL_ERROR(604, HttpStatus.INTERNAL_SERVER_ERROR),
+    INTERNAL_ERROR(600, HttpStatus.INTERNAL_SERVER_ERROR),
     DATA_ACCESS_ERROR(605, HttpStatus.INTERNAL_SERVER_ERROR),
 
     UNAUTHORIZED(606, HttpStatus.UNAUTHORIZED),
 
-
-    //요청한 정보가 유효하지 않음
-    INVALID_EMAIL_REQUEST(400,HttpStatus.BAD_REQUEST),
-
-    INVALID_PASSWORD_REQUEST(400,HttpStatus.BAD_REQUEST),
-
-    INVALID_EMAIL_AND_PASSWORD_REQUEST(400,HttpStatus.BAD_REQUEST),
+    INVALID_EMAIL_AND_PASSWORD_REQUEST(404,HttpStatus.BAD_REQUEST),
 
 
     //refresh token 유효하지 않음
@@ -42,7 +38,7 @@ public enum ErrorCode {
 
 
     //멤버 없음
-    NOTFOUND_MEMBER(400,HttpStatus.BAD_REQUEST),
+    NOTFOUND_MEMBER(404,HttpStatus.NOT_FOUND),
 
     //게시글 없음
     NOTFOUND_BOARD(400,HttpStatus.BAD_REQUEST),
@@ -54,7 +50,7 @@ public enum ErrorCode {
     DUPLICATION_SIGNUP(400,HttpStatus.BAD_REQUEST),
 
     //이메일 중복
-    DUPLICATION_EMAIL(400,HttpStatus.BAD_REQUEST),
+    DUPLICATION_EMAIL(409,HttpStatus.CONFLICT),
 
     //authority 불일치
     AUTHORITY_FORBIDDEN(403,HttpStatus.FORBIDDEN),
@@ -80,7 +76,7 @@ public enum ErrorCode {
                 .orElse(message);
     }
 
-    public static ErrorCode valueOf(HttpStatus httpStatus) {
+    public static ErrorCode valueOf(HttpStatus httpStatus,Exception ex) {
         if (httpStatus == null) {
             throw new GeneralException("HttpStatus is null.");
         }
@@ -89,10 +85,19 @@ public enum ErrorCode {
                 .filter(errorCode -> errorCode.getHttpStatus() == httpStatus)
                 .findFirst()
                 .orElseGet(() -> {
+
                     if (httpStatus.is4xxClientError()) {
                         return ErrorCode.BAD_REQUEST;
                     } else if (httpStatus.is5xxServerError()) {
-                        return ErrorCode.INTERNAL_ERROR;
+                        System.out.println("ex = " + ex);
+                        if(ex instanceof InternalAuthenticationServiceException || ex instanceof BadCredentialsException){
+
+                            return ErrorCode.NOTFOUND_MEMBER;
+                        }
+                        else{
+                            return ErrorCode.INTERNAL_ERROR;
+                        }
+
                     } else {
                         return ErrorCode.OK;
                     }
