@@ -84,7 +84,7 @@ public class ScrapBoardService {
             throw new GeneralException(ErrorCode.NOTCURRENT_MEMBER,"스크랩과 유저 정보가 일치하지 않습니다.");
         }
 
-        scrapBoardRepository.deleteById(deleteRequest.getId());
+        scrapBoardRepository.deleteById(deleteRequest.getScrapBoardId());
     }
 
     /**
