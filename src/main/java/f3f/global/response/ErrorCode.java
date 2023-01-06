@@ -48,7 +48,7 @@ public enum ErrorCode {
     NOTFOUND_BOARD(400,HttpStatus.BAD_REQUEST),
 
     //스크랩 없음
-    NOTFOUND_SCRAPBOX(400,HttpStatus.BAD_REQUEST),
+    NOTFOUND_SCRAPBOX(404,HttpStatus.NOT_FOUND),
 
     //중복 회원가입
     DUPLICATION_SIGNUP(400,HttpStatus.BAD_REQUEST),
