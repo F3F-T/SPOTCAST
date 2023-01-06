@@ -38,6 +38,8 @@ public enum ErrorCode {
     //이메일 인증 불일치
     EMAIL_CERTIFICATION_MISMATCH(400,HttpStatus.BAD_REQUEST),
 
+    //잘못된 Login type
+    NOTGENERAL_LOGIN(400,HttpStatus.BAD_REQUEST),
 
     //멤버 없음
     NOTFOUND_MEMBER(404,HttpStatus.NOT_FOUND),

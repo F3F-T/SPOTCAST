@@ -84,8 +84,6 @@ public class MemberService {
             throw new GeneralException(ErrorCode.INVALID_EMAIL_AND_PASSWORD_REQUEST, "아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
-        existsByIdAndPassword(memberId, findMember.getPassword());
-
         memberRepository.deleteById(memberId);
     }
 
@@ -220,7 +218,6 @@ public class MemberService {
             throw new GeneralException(ErrorCode.INVALID_EMAIL_AND_PASSWORD_REQUEST, "아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
-        existsByIdAndPassword(memberId, findMember.getPassword());
 
         checkNotGeneralLoginUser(findMember);
 
@@ -284,7 +281,7 @@ public class MemberService {
      */
     private void checkNotGeneralLoginUser(Member member) {
         if (!member.getLoginType().equals(LoginType.GENERAL_LOGIN)) {
-            throw new GeneralException(ErrorCode.DUPLICATION_SIGNUP, member.getLoginType().getType() + " 로그인으로 회원가입 되어있습니다.");
+            throw new GeneralException(ErrorCode.NOTGENERAL_LOGIN, "일반 로그인 회원만 가능합니다.");
         }
     }
 
