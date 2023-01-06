@@ -144,6 +144,7 @@ public class MemberDTO {
     @NoArgsConstructor
     public static class MemberLoginServiceResponseDto {
 
+        private Long id;
         private String email;
 
         private Authority authority;
@@ -160,7 +161,8 @@ public class MemberDTO {
         private Long accessTokenExpiresIn;
 
         @Builder
-        public MemberLoginServiceResponseDto(String email, Authority authority, String name,  LoginMemberType loginMemberType, String grantType, String accessToken, Long accessTokenExpiresIn) {
+        public MemberLoginServiceResponseDto(Long id, String email, Authority authority, String name, LoginMemberType loginMemberType, String grantType, String accessToken, Long accessTokenExpiresIn) {
+            this.id = id;
             this.email = email;
             this.authority = authority;
             this.name = name;
@@ -169,8 +171,6 @@ public class MemberDTO {
             this.accessToken = accessToken;
             this.accessTokenExpiresIn = accessTokenExpiresIn;
         }
-
-
     }
 
 
