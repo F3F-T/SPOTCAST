@@ -5,6 +5,7 @@ import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.scrap.dto.ScrapDTO;
 import f3f.domain.scrapBoard.application.ScrapBoardService;
 import f3f.domain.scrapBoard.dto.ScrapBoardDTO;
+import f3f.global.response.ResultDataResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,10 +35,11 @@ public class ScrapBoardController {
      * @return
      */
     @GetMapping("/{memberId}/scrap/{scrapId}")
-    public ResponseEntity<List<BoardDTO.BoardInfoDTO>> getScrapList(@PathVariable Long memberId,@PathVariable Long scrapId) {
+    public ResultDataResponseDTO<List<BoardDTO.BoardInfoDTO>> getScrapList(@PathVariable Long memberId,@PathVariable Long scrapId) {
 
         List<BoardDTO.BoardInfoDTO> scrapList = scrapBoardService.getScrapList(scrapId, memberId);
-        return ResponseEntity.ok(scrapList);
+
+        return ResultDataResponseDTO.of(scrapList);
     }
 
     /**
@@ -48,9 +50,9 @@ public class ScrapBoardController {
      * @return
      */
     @PostMapping("/{memberId}/scrap/{scrapId}")
-    public ResponseEntity<Void> saveScrap(@RequestBody ScrapBoardDTO.SaveRequest saveRequest , @PathVariable Long memberId, @PathVariable Long scrapId) {
+    public ResultDataResponseDTO saveScrap(@RequestBody ScrapBoardDTO.SaveRequest saveRequest , @PathVariable Long memberId, @PathVariable Long scrapId) {
         scrapBoardService.saveScrap(memberId,scrapId,saveRequest);
-        return ResponseEntity.ok().build();
+        return ResultDataResponseDTO.empty();
     }
 
     /**
@@ -61,8 +63,8 @@ public class ScrapBoardController {
      * @return
      */
     @DeleteMapping("/{memberId}/scrap/{scrapId}")
-    public ResponseEntity<Void> deleteScrap(@RequestBody ScrapBoardDTO.DeleteRequest deleteRequest , @PathVariable Long memberId, @PathVariable Long scrapId) {
+    public ResultDataResponseDTO deleteScrap(@RequestBody ScrapBoardDTO.DeleteRequest deleteRequest , @PathVariable Long memberId, @PathVariable Long scrapId) {
         scrapBoardService.deleteScrap(memberId,scrapId,deleteRequest);
-        return ResponseEntity.ok().build();
+        return ResultDataResponseDTO.empty();
     }
 }
