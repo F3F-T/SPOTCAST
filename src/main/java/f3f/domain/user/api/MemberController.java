@@ -118,8 +118,7 @@ public class MemberController {
      */
     private static void CheckCurrentUser(Long memberId) {
         if(!memberId.equals(SecurityUtil.getCurrentMemberId())){
-            System.out.println("memberId = " + memberId);
-            System.out.println("SecurityUtil.getCurrentMemberId() = " + SecurityUtil.getCurrentMemberId());
+
             throw new GeneralException(ErrorCode.NOTCURRENT_MEMBER,"사용자 정보가 일치하지 않습니다.");
         }
     }
