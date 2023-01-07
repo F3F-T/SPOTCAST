@@ -7,6 +7,7 @@ import f3f.domain.likes.dao.LikesRepository;
 import f3f.domain.likes.domain.Likes;
 import f3f.domain.likes.dto.LikeDTO;
 import f3f.domain.likes.exception.ExistLikeAlreadyException;
+import f3f.domain.likes.exception.NotFoundLikesException;
 import f3f.domain.publicModel.BaseTimeEntity;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -50,6 +52,17 @@ public class LikeService extends BaseTimeEntity {
     //사용자가 이미 좋아요 한 게시물인지 체크
     private boolean isAlreadyLike(Optional<Member> member, Board board) {
         return !(likesRepository.findByMemberIdAndBoardId(member, board).isEmpty());
+    }
+
+    public String deleteLike(Long board_id, Long member_id) {
+
+
+        Likes byMemberIdAndBoardId = likesRepository.findByMemberIdAndBoardId(member_id, board_id);
+
+        likesRepository.deleteById(byMemberIdAndBoardId.getId());
+
+
+        return "DELETE";
     }
 
 }
