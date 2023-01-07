@@ -9,11 +9,13 @@ import f3f.domain.publicModel.BoardType;
 import f3f.domain.publicModel.Image;
 import f3f.domain.scrapBoard.domain.ScrapBoard;
 import f3f.domain.user.domain.Member;
+import f3f.domain.user.dto.MemberDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +49,8 @@ public class Board extends BaseTimeEntity {
     @Embedded
     private Image image;
 
+    private LocalDateTime regDate;
+
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     private List<ScrapBoard> scrapBoardList = new ArrayList<>();
 
@@ -76,7 +80,15 @@ public class Board extends BaseTimeEntity {
                 .viewCount(this.viewCount)
                 .boardType(this.boardType)
                 .category(this.category)
-                .member(this.member)
+                .member(changeMemberBoardInfoDTO(this.member))
+                .build();
+    }
+
+    private MemberDTO.MemberBoardInfoResponseDto changeMemberBoardInfoDTO(Member member) {
+        return MemberDTO.MemberBoardInfoResponseDto.builder()
+                .id(member.getId())
+                .email(member.getEmail())
+                .name(member.getName())
                 .build();
     }
 

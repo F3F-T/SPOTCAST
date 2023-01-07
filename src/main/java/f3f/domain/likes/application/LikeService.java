@@ -7,7 +7,6 @@ import f3f.domain.likes.dao.LikesRepository;
 import f3f.domain.likes.domain.Likes;
 import f3f.domain.likes.dto.LikeDTO;
 import f3f.domain.likes.exception.ExistLikeAlreadyException;
-import f3f.domain.likes.exception.NotFoundLikesException;
 import f3f.domain.publicModel.BaseTimeEntity;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
@@ -16,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -54,10 +52,10 @@ public class LikeService extends BaseTimeEntity {
         return !(likesRepository.findByMemberIdAndBoardId(member, board).isEmpty());
     }
 
-    public String deleteLike(Long board_id, Long member_id) {
+    public String deleteLike(Long boardId, Long memberId) {
 
 
-        Likes byMemberIdAndBoardId = likesRepository.findByMemberIdAndBoardId(member_id, board_id);
+        Likes byMemberIdAndBoardId = likesRepository.findByMemberIdAndBoardId(memberId, boardId);
 
         likesRepository.deleteById(byMemberIdAndBoardId.getId());
 
