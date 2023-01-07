@@ -5,6 +5,8 @@ import f3f.domain.board.domain.Board;
 import f3f.domain.portfolioBookmark.domain.PortfolioBookmark;
 import f3f.domain.user.domain.Member;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Portfolio {
@@ -36,4 +39,11 @@ public class Portfolio {
 
     private int order;
 
+    @Builder
+    public Portfolio(Long id, Board board, Member member, int order) {
+        this.id = id;
+        this.board = board;
+        this.member = member;
+        this.order = order;
+    }
 }

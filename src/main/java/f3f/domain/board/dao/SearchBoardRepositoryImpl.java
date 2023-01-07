@@ -5,6 +5,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import f3f.domain.board.dto.BoardDTO;
+import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,14 +24,15 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
     private JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<BoardDTO.BoardInfoDTO> getBoardListByCategoryId(long categoryId) {
-        List<BoardDTO.BoardInfoDTO> result = jpaQueryFactory
-                .select(Projections.constructor(BoardDTO.BoardInfoDTO.class,
+    public List<BoardInfoDTO> getBoardListByCategoryId(long categoryId) {
+        List<BoardInfoDTO> result = jpaQueryFactory
+                .select(Projections.fields(BoardInfoDTO.class,
                         board.title,
                         board.content,
                         board.viewCount,
                         board.boardType,
-                        board.category,
+                        board.category.id,
+                        board.category.name,
                         board.member))
                 .from(board)
                 .where(board.category.id.eq(categoryId))
@@ -39,14 +41,15 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
     }
 
     @Override
-    public List<BoardDTO.BoardInfoDTO> getBoardListByUserId(long memberId) {
-        List<BoardDTO.BoardInfoDTO> result = jpaQueryFactory
-                .select(Projections.constructor(BoardDTO.BoardInfoDTO.class,
+    public List<BoardInfoDTO> getBoardListByUserId(long memberId) {
+        List<BoardInfoDTO> result = jpaQueryFactory
+                .select(Projections.fields(BoardInfoDTO.class,
                         board.title,
                         board.content,
                         board.viewCount,
                         board.boardType,
-                        board.category,
+                        board.category.id,
+                        board.category.name,
                         board.member))
                 .from(board)
                 .where(board.category.id.eq(memberId))
@@ -55,9 +58,9 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
     }
 
     @Override
-    public Page<BoardDTO.BoardInfoDTO> findAllBySearchCondition(BoardDTO.SearchCondition condition, Pageable pageable) {
-        QueryResults<BoardDTO.BoardInfoDTO> results = jpaQueryFactory
-                .select(Projections.fields(BoardDTO.BoardInfoDTO.class,
+    public Page<BoardInfoDTO> findAllBySearchCondition(BoardDTO.SearchCondition condition, Pageable pageable) {
+        QueryResults<BoardInfoDTO> results = jpaQueryFactory
+                .select(Projections.fields(BoardInfoDTO.class,
                         board.title,
                         board.content,
                         board.viewCount,
@@ -70,10 +73,10 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
-        List<BoardDTO.BoardInfoDTO> products = results.getResults();
+        List<BoardInfoDTO> boardInfoDTOList = results.getResults();
         long total = results.getTotal();
 
-        return new PageImpl<>(products,pageable,total);
+        return new PageImpl<>(boardInfoDTOList,pageable,total);
     }
 
     private BooleanExpression containsKeyword(String keyword) {

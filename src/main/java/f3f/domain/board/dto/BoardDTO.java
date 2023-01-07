@@ -4,6 +4,7 @@ import f3f.domain.board.domain.Board;
 import f3f.domain.category.domain.Category;
 import f3f.domain.publicModel.BoardType;
 import f3f.domain.user.domain.Member;
+import f3f.domain.user.dto.MemberDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -65,10 +66,11 @@ public class BoardDTO {
 
         private Category category;
 
-        private Member member;
+        private MemberDTO.MemberBoardInfoResponseDto member;
 
         @Builder
-        public BoardInfoDTO(String title, String content, long viewCount, BoardType boardType, Category category, Member member) {
+        public BoardInfoDTO(String title, String content, long viewCount, BoardType boardType, Category category,
+                            MemberDTO.MemberBoardInfoResponseDto member) {
             this.title = title;
             this.content = content;
             this.viewCount = viewCount;
