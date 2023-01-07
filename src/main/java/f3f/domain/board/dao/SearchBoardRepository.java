@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface SearchBoardRepository {
     List<BoardDTO.BoardInfoDTO> getBoardListByCategoryId(long categoryId);
-    List<BoardDTO.BoardInfoDTO> getBoardListByUserId(long userId);
+    List<BoardDTO.BoardInfoDTO> getBoardListByUserId(long memberId);
     Page<BoardDTO.BoardInfoDTO> findAllBySearchCondition(BoardDTO.SearchCondition condition, Pageable pageable);
 }
