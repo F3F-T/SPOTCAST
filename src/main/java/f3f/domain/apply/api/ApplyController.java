@@ -41,6 +41,4 @@ public class ApplyController {
     public List<Apply> getVolunteerApplyList(@PathVariable long memberId) {
         return applyService.getVolunteerApplyList(memberId);
     }
-
-
 }

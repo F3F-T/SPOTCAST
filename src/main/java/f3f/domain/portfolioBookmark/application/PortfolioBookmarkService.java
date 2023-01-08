@@ -27,7 +27,7 @@ public class PortfolioBookmarkService {
     private final PortfolioRepository portfolioRepository;
 
     /**
-     * 스크랩 추가
+     * 북마크 추가
      *
      * @param memberId
      * @param bookmarkId

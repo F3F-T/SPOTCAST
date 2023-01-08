@@ -52,4 +52,15 @@ public class LikeService extends BaseTimeEntity {
         return !(likesRepository.findByMemberIdAndBoardId(member, board).isEmpty());
     }
 
+    public String deleteLike(Long boardId, Long memberId) {
+
+
+        Likes byMemberIdAndBoardId = likesRepository.findByMemberIdAndBoardId(memberId, boardId);
+
+        likesRepository.deleteById(byMemberIdAndBoardId.getId());
+
+
+        return "DELETE";
+    }
+
 }
