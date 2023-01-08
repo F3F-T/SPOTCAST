@@ -10,11 +10,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import static f3f.global.constants.SecurityConstants.JSESSIONID;
 import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
@@ -94,7 +96,7 @@ public class MemberAuthController {
      * @return
      */
     @PostMapping("/email-certification/sends")
-    public ResultDataResponseDTO sendEmailCertification(@RequestBody MemberDTO.EmailCertificationRequest request){
+    public ResultDataResponseDTO sendEmailCertification(@RequestBody MemberDTO.EmailCertificationRequest request) throws MessagingException, UnsupportedEncodingException {
         emailCertificationService.sendEmailForCertification(request.getEmail());
         return ResultDataResponseDTO.empty();
     }
