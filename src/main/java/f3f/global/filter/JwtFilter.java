@@ -46,11 +46,11 @@ public class JwtFilter extends OncePerRequestFilter {
     // Request Header 에서 토큰 정보를 꺼내오기
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken)
-                && bearerToken.startsWith(BEARER_PREFIX)
+        if (StringUtils.hasText(bearerToken)&& bearerToken.startsWith(BEARER_PREFIX)
         ) {
-            throw new GeneralException(ErrorCode.JWT_ACCESS_DENIED,"유효하지 않은 토큰입니다.");
+            return bearerToken.substring(7);
         }
-        return bearerToken.substring(7);
+        return null;
+
     }
 }
