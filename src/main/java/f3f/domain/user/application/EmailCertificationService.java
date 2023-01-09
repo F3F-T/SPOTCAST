@@ -31,24 +31,24 @@ public class EmailCertificationService {
     @Value("${spring.mail.from-mail}")
     private String from;
 
-//    인증번호 전송
+    //    인증번호 전송
     public void sendEmailForCertification(String email) throws MessagingException, UnsupportedEncodingException {
         String randomNumber = UUID.randomUUID().toString().substring(0, 6);
         String content = makeEmailContent(randomNumber);
 
         MimeMessage message = mailSender.createMimeMessage();
-        message.addRecipients(TO,email);
+        message.addRecipients(TO, email);
         message.setFrom(new InternetAddress(from, "SPOTCAST"));
         message.setSubject(TITLE);
         message.setText(content, "utf-8", "html");
         mailSender.send(message);
 
-        emailCertificationDao.createEmailCertification(email,randomNumber);
+        emailCertificationDao.createEmailCertification(email, randomNumber);
 
     }
 
-    public void verifyEmail(MemberDTO.EmailCertificationRequest request){
-        if(!isVerify(request)){
+    public void verifyEmail(MemberDTO.EmailCertificationRequest request) {
+        if (!isVerify(request)) {
             throw new GeneralException(ErrorCode.EMAIL_CERTIFICATION_MISMATCH, "인증번호가 일치하지 않습니다.");
         }
         emailCertificationDao.removeEmailCertification(request.getEmail());
@@ -58,21 +58,42 @@ public class EmailCertificationService {
         return emailCertificationDao.hasKey(request.getEmail())
                 &&
                 emailCertificationDao.getEmailCertification(request.getEmail())
-                .equals(request.getCertificationNumber());
+                        .equals(request.getCertificationNumber());
     }
 
     private String makeEmailContent(String certificationNumber) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<div style = 'margin:100px;'>");
-        sb.append("<h1> 안녕하세요 </h1>");
-        sb.append("<h1> SPOTCAST 입니다.</h1>");
-        sb.append("<br>");
-        sb.append("<div align='center' style = 'border:1px solid black; font-family:verdana';>");
-        sb.append("<h3 style = 'color:#020088;'>회원가입 인증 코드입니다.</h3>");
-        sb.append("<div style='font-style:130%'>");
-        sb.append("CODE: <strong>");
-        sb.append(certificationNumber + "</strong><div><br/>");
+//        sb.append("<div style = 'margin:100px;'>");
+//        sb.append("<h1> 안녕하세요 </h1>");
+//        sb.append("<h1> SPOTCAST 입니다.</h1>");
+//        sb.append("<br>");
+//        sb.append("<div align='center' style = 'border:1px solid black; font-family:verdana';>");
+//        sb.append("<h3 style = 'color:#020088;'>회원가입 인증 코드입니다.</h3>");
+//        sb.append("<div style='font-style:130%'>");
+//        sb.append("CODE: <strong>");
+//        sb.append(certificationNumber + "</strong><div><br/>");
+//        sb.append("</div>");
+
+        sb.append("<div style='background: #F7F8F9; margin: 0; padding: 15px; cursor: default; letter-spacing: -.03em; font-family: 'Apple SD Gothic Neo', Helvetica, arial, '나눔고딕', 'Nanum Gothic', '돋움', Dotum, Tahoma, Geneva, sans-serif;'>");
+        sb.append("<table cellspacing='0' cellpadding='0' style='max-width: 680px; width: 100%; margin: 0 auto; border-collapse: collapse;'>");
+        sb.append("<tbody>");
+        sb.append("<tr><td colspan='2' style='padding: 40px 10px; background: white; border: 1px solid #E5E8EB;'>");
+        sb.append("<div style='max-width: 490px; width: 100%; margin: 0 auto; font-size: 13px; color: #373a3c; line-height: 1.8em;''>");
+        sb.append("<h1 style='margin: 20px 0 0 0; padding: 0; text-align: center; font-size: 25px; color: #081928; font-weight: bold;'>이메일 주소 인증</h1>");
+        sb.append("<p style='margin: 25px 0 0 0; padding: 0; font-size: 14px; color: #626d75; text-align: center; line-height: 21px;'>안녕하세요. SPOTCAST입니다.<br>회원가입을 위해 이메일 주소를 인증해주세요.</p>");
+        sb.append("<p style='margin: 7px 0 0 0; padding: 0; font-size: 14px; color: #626d75; font-weight: bold; text-align: center; line-height: 21px;'>인증 번호 : <strong style='color: #0282da;'>"+certificationNumber+"</strong></p>");
+
         sb.append("</div>");
+        sb.append("</td></tr><tr><td colspan='2' style='text-align: left; padding: 29px 0 50px 0;'>");
+        sb.append("<p style='padding: 14px 0 0; margin: 0; line-height: 1.8em; color: #808991; font-size: 11px;'>");
+        sb.append("본 메일은 발신전용 메일로, 회신되지 않습니다.<br>");
+        sb.append("<br></p>");
+
+        sb.append("<p style='padding: 8px 0 0; margin: 0; color: #808991; font-size: 14px; font-family: Tahoma, helvetica; '>© SPOTCAST Corp.</p>");
+        sb.append("</td></tr></tbody>");
+        sb.append("</table>");
+        sb.append("</div>");
+
         return sb.toString();
     }
 }
