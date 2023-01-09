@@ -3,26 +3,46 @@ package f3f.domain.category.application;
 import f3f.domain.category.dao.CategoryRepository;
 import f3f.domain.category.domain.Category;
 import f3f.domain.category.dto.CategoryDTO;
+import f3f.domain.category.exception.DuplicateCategoryNameException;
+import f3f.domain.category.exception.NotFoundCategoryException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@ExtendWith(MockitoExtension.class)
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@SpringBootTest
 class CategoryServiceTest {
 
     @Autowired
     CategoryRepository categoryRepository;
 
-    @InjectMocks
+    @Autowired
     CategoryService categoryService;
 
-    private CategoryDTO.SaveRequest createCategory(){
+    private CategoryDTO.SaveRequest createCategory1(){
         CategoryDTO.SaveRequest  request = CategoryDTO.SaveRequest.builder()
                 .name("category1")
+                .parentCategoryName("ROOT")
+                .build();
+        return request;
+    }
+
+    private CategoryDTO.SaveRequest createCategory2(){
+        CategoryDTO.SaveRequest  request = CategoryDTO.SaveRequest.builder()
+                .name("category3")
+                .depth(1)
+                .parentCategoryName("ROOT")
+                .build();
+        return request;
+    }
+
+    private CategoryDTO.SaveRequest createCategory3(){
+        CategoryDTO.SaveRequest  request = CategoryDTO.SaveRequest.builder()
+                .name("category3-1")
+                .parentCategoryName("category3")
                 .build();
         return request;
     }
@@ -30,7 +50,7 @@ class CategoryServiceTest {
     @DisplayName("카테고리 저장_성공")
     void saveCategory_success()throws Exception{
         //given
-        long categoryId = categoryService.saveCategory(createCategory());
+        long categoryId = categoryService.saveCategory(createCategory2());
         //when
         Category category = categoryRepository.findById(categoryId).orElseThrow();
         //then
@@ -39,13 +59,10 @@ class CategoryServiceTest {
 
 
     @Test
-    @DisplayName("카테고리 저장_실패")
+    @DisplayName("카테고리 저장_실패_이름 중복 ")
     void saveCategory_fail()throws Exception{
-        //given
-
-        //when
-
-        //then
+        assertThrows(DuplicateCategoryNameException.class ,
+                ()-> categoryService.saveCategory(createCategory1()));
     }
 
     @Test
@@ -61,11 +78,12 @@ class CategoryServiceTest {
     @Test
     @DisplayName("카테고리 수정_성공")
     void updateCategory_success()throws Exception{
-        //given
-
         //when
-
+        Category updateCategory = categoryService.updateCategory(2, createCategory2());
+        Category category = categoryRepository.findById(Long.valueOf(2)).orElseThrow();
         //then
+        Assertions.assertThat(category.getId()).isEqualTo(2);
+        Assertions.assertThat(category.getName()).isEqualTo(updateCategory.getName());
     }
 
     @Test
@@ -90,18 +108,17 @@ class CategoryServiceTest {
     @Test
     @DisplayName("카테고리 삭제_성공")
     void deleteCategory_success()throws Exception{
-        //given
-
         //when
+        long deleteCategory = categoryService.deleteCategory(2);
 
-        //then
+        assertThrows(NotFoundCategoryException.class , () -> categoryService.getCategoryById(deleteCategory));
     }
 
     @Test
     @DisplayName("카테고리 삭제_실패")
     void deleteCategory_fail()throws Exception{
         //given
-
+        assertThrows(NotFoundCategoryException.class , () -> categoryService.deleteCategory(2));
         //when
 
         //then
@@ -139,10 +156,6 @@ class CategoryServiceTest {
     @Test
     @DisplayName("카테고리 정보 조회_실패")
     void getCategoryInfo_fail()throws Exception{
-        //given
-
-        //when
-
-        //then
+        assertThrows(NotFoundCategoryException.class , () -> categoryService.getCategoryById(2));
     }
 }

@@ -32,7 +32,6 @@ public class Likes {
 
     @Builder
     public Likes( Member member, Board board){
-
         this.member = member;
         this.board = board;
     }

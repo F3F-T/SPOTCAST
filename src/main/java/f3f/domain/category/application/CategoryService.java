@@ -4,9 +4,10 @@ import f3f.domain.category.dao.CategoryRepository;
 import f3f.domain.category.domain.Category;
 import f3f.domain.category.dto.CategoryDTO;
 import f3f.domain.category.exception.DuplicateCategoryNameException;
-import f3f.domain.category.exception.ExistCategoryByCoreBranchAndName;
 import f3f.domain.category.exception.MaxDepthCategoryException;
 import f3f.domain.category.exception.NotFoundCategoryException;
+import f3f.global.response.ErrorCode;
+import f3f.global.response.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +25,7 @@ public class CategoryService {
 
         if (category.getParentCategoryName() == null) {
             if (categoryRepository.existsByName(category.getName())) {
-                throw new DuplicateCategoryNameException("카테고리 이름은 같을수 없다 이놈아.");
-            }
-            if (categoryRepository.existsByName(category.getName())) {
-                throw new ExistCategoryByCoreBranchAndName("categoryName 중복이다 이놈아");
+                throw new GeneralException(ErrorCode.VALIDATION_ERROR,"카테고리 이름은 같을수 없다 이놈아.");
             }
 
             Category parentCategory = categoryRepository.findByName("ROOT")
@@ -50,8 +48,11 @@ public class CategoryService {
             String parentCategoryName = category.getParentCategoryName();
             //부모카테고리 찾기
             Category parentCategory = categoryRepository.findByName(parentCategoryName)
-                    .orElseThrow(() -> new IllegalArgumentException("부모 카테고리 없음 예외"));
+                    .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "부모 카테고리 없음 예외"));
 
+            if (categoryRepository.existsByName(category.getName())) {
+                throw new GeneralException(ErrorCode.VALIDATION_ERROR, "카테고리 이름은 같을수 없다 이놈아.");
+            }
             requestCategory = Category.builder()
                     .name(category.getName())
                     .parentCategory(parentCategory)
@@ -59,7 +60,7 @@ public class CategoryService {
                     .build();
 
             if (parentCategory.getDepth() + 1 > 3) {
-                throw new MaxDepthCategoryException();
+                throw new GeneralException(ErrorCode.VALIDATION_ERROR,"카테고리 뎁스가 3보다 클수없다.");
             }
 
             parentCategory.getChild().add(requestCategory);
@@ -72,13 +73,13 @@ public class CategoryService {
     @Transactional
     public Category updateCategory(long categoryId, CategoryDTO.SaveRequest requestCategory) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundCategoryException("존재하지 않는 카테고리 입니다."));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "존재하지 않는 카테고리 입니다."));
 
         Category parentCategory = categoryRepository.findByName(requestCategory.getParentCategoryName())
-                .orElseThrow(() -> new NotFoundCategoryException("존재하지 않는 부모 카테고리 입니다."));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "존재하지 않는 부모 카테고리 입니다."));
 
-        if( category.getDepth() !=  requestCategory.getDepth()){
-            throw new IllegalArgumentException("뎁스는 못바꾼다 이놈아");
+        if (category.getDepth() != requestCategory.getDepth()) {
+            throw new GeneralException(ErrorCode.VALIDATION_ERROR, "뎁스는 못바꾼다 이놈아");
         }
         Category newCategory = Category.builder()
                 .name(requestCategory.getName())
@@ -93,10 +94,9 @@ public class CategoryService {
     @Transactional
     public long deleteCategory(long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundCategoryException("존재하지 않는 카테고리 입니다."));
-        if(category.getParentCategory() != null){
-            throw new IllegalArgumentException("자식을 버리고 가면 안돼요!");
-        }
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "존재하지 않는 카테고리 입니다."));
+
+        //todo 자식이 남아있는지 체크하고 버려야함
 
         categoryRepository.deleteById(category.getId());
 
@@ -106,7 +106,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public Category getCategoryById(long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundCategoryException("존재하지 않는 카테고리 입니다."));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "존재하지 않는 카테고리 입니다."));
         return category;
     }
 }
