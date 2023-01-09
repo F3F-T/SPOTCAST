@@ -3,6 +3,8 @@ package f3f.domain.scrapBoard.domain;
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.scrap.domain.Scrap;
+import f3f.domain.user.domain.Member;
+import f3f.domain.user.dto.MemberDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
