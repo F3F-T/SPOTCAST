@@ -70,7 +70,7 @@ public class EmailCertificationService {
         sb.append("<tr><td colspan='2' style='padding: 40px 10px; background: white; border: 1px solid #E5E8EB;'>");
         sb.append("<div style='max-width: 490px; width: 100%; margin: 0 auto; font-size: 13px; color: #373a3c; line-height: 1.8em;''>");
         sb.append("<h1 style='margin: 20px 0 0 0; padding: 0; text-align: center; font-size: 25px; color: #081928; font-weight: bold;'>이메일 주소 인증</h1>");
-        sb.append("<p style='margin: 25px 0 0 0; padding: 0; font-size: 14px; color: #626d75; text-align: center; line-height: 21px;'>안녕하세요. SPOTCAST입니다.<br>회원가입을 위해 이메일 주소를 인증해주세요.</p>");
+        sb.append("<p style='margin: 25px 0 0 0; padding: 0; font-size: 14px; color: #626d75; text-align: center; line-height: 21px;'>안녕하세요. SPOTCAST입니다.<br>이메일 인증을 위해 아래의 인증번호를 입력해주세요.</p>");
         sb.append("<p style='margin: 7px 0 0 0; padding: 0; font-size: 14px; color: #626d75; font-weight: bold; text-align: center; line-height: 21px;'>인증 번호 : <strong style='color: #0282da;'>"+certificationNumber+"</strong></p>");
 
         sb.append("</div>");
