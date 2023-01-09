@@ -1,4 +1,4 @@
-package f3f.domain.scrap.application;
+package f3f.domain.scrapBoard.application;
 
 import f3f.domain.board.application.BoardService;
 import f3f.domain.board.dao.BoardRepository;
@@ -6,6 +6,7 @@ import f3f.domain.board.domain.Board;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.category.application.CategoryService;
 
+import f3f.domain.scrap.application.ScrapService;
 import f3f.domain.scrap.dao.ScrapRepository;
 import f3f.domain.scrap.domain.Scrap;
 
@@ -201,7 +202,7 @@ public class ScrapBoardServiceTest {
         ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest);
         Long scrapBoardId = scrapBoard.getId();
         ScrapBoardDTO.DeleteRequest deleteRequest = ScrapBoardDTO.DeleteRequest.builder()
-                .id(scrapBoardId)
+                .scrapBoardId(scrapBoardId)
                 .build();
         //when
         scrapBoardService.deleteScrap(memberId, scrapId, deleteRequest);
@@ -232,7 +233,7 @@ public class ScrapBoardServiceTest {
         ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest);
         Long scrapBoardId = scrapBoard.getId();
         ScrapBoardDTO.DeleteRequest deleteRequest = ScrapBoardDTO.DeleteRequest.builder()
-                .id(scrapBoardId)
+                .scrapBoardId(scrapBoardId)
                 .build();
         //when
 
@@ -262,7 +263,7 @@ public class ScrapBoardServiceTest {
         ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest);
         Long scrapBoardId = scrapBoard.getId();
         ScrapBoardDTO.DeleteRequest deleteRequest = ScrapBoardDTO.DeleteRequest.builder()
-                .id(scrapBoardId)
+                .scrapBoardId(scrapBoardId)
                 .build();
         //when
 
@@ -298,7 +299,7 @@ public class ScrapBoardServiceTest {
         ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest);
         Long scrapBoardId = scrapBoard.getId();
         ScrapBoardDTO.DeleteRequest deleteRequest = ScrapBoardDTO.DeleteRequest.builder()
-                .id(scrapBoardId)
+                .scrapBoardId(scrapBoardId)
                 .build();
         //when
 

@@ -12,6 +12,7 @@ import f3f.domain.publicModel.Authority;
 import f3f.domain.portfolio.domain.Portfolio;
 import f3f.domain.scrap.domain.Scrap;
 import f3f.domain.apply.domain.Apply;
+import f3f.domain.user.dto.MemberDTO;
 import f3f.domain.user.dto.MemberDTO.MemberInfoResponseDto;
 import lombok.*;
 
@@ -85,9 +86,15 @@ public class Member extends MemberBase {
                 .twitter(twitter)
                 .otherSns(otherSns)
                 .build();
-
     }
 
+    public MemberDTO.MemberBoardInfoResponseDto toMessageMemberDTO(){
+        return MemberDTO.MemberBoardInfoResponseDto.builder()
+                .id(this.getId())
+                .email(this.getEmail())
+                .name(this.getName())
+                .build();
+    }
 
     public void updatePassword(String password){
         this.password = password;

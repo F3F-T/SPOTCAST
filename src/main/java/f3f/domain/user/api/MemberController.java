@@ -64,7 +64,7 @@ public class MemberController {
      * @param updatePasswordRequest
      * @return
      */
-    @PostMapping("/find/password/{email}")
+    @PostMapping("/find/password")
     public ResultDataResponseDTO changePasswordByForgot(@RequestBody MemberUpdateForgotPasswordRequestDto updatePasswordRequest) {
 
         memberService.updatePasswordByForgot(updatePasswordRequest);
@@ -117,7 +117,8 @@ public class MemberController {
      * @param memberId
      */
     private static void CheckCurrentUser(Long memberId) {
-        if(memberId != SecurityUtil.getCurrentMemberId()){
+        if(!memberId.equals(SecurityUtil.getCurrentMemberId())){
+
             throw new GeneralException(ErrorCode.NOTCURRENT_MEMBER,"사용자 정보가 일치하지 않습니다.");
         }
     }

@@ -12,6 +12,7 @@ import f3f.global.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieReposi
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -98,45 +99,48 @@ public class SecurityConfig {
                 .accessDeniedHandler(jwtAccessDeniedHandler)
 
                 .and()
-                    .headers()
-                    .frameOptions()
-                    .sameOrigin()
+                .headers()
+                .frameOptions()
+                .sameOrigin()
 
                 // 시큐리티는 기본적으로 세션을 사용
                 // 여기서는 세션을 사용하지 않기 때문에 세션 설정을 Stateless 로 설정
                 .and()
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
 
                 // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
                 .and()
                 .authorizeRequests()
-                    .antMatchers("/auth/**").permitAll()
-                    .antMatchers("/oauth2/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "**").permitAll()
+                .antMatchers("/auth/**").permitAll()
+                .antMatchers("/oauth2/**").permitAll()
 //                .antMatchers("/admin/**").hasRole("ADMIN")
-                    .antMatchers("/member/**").hasRole("USER")
-                    //유저정보보기
-                    .antMatchers("/admin/**").permitAll()
+                .antMatchers("/member/**").hasRole("USER")
+                //유저정보보기
+                .antMatchers("/admin/**").permitAll()
+                .antMatchers("/message/**").permitAll()
+
 //                .antMatchers("/member/**").permitAll()
 //                .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
-                .anyRequest().permitAll()   // 나머지 API 는 전부 인증 필요
+                .anyRequest().permitAll()   //` 나머지 API 는 전부 인증 필요
 
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider))
 
                 .and()
-                    .oauth2Login()
-                    .authorizationEndpoint()
-                    .baseUri("/oauth2/authorization") //default
-                    .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
+                .oauth2Login()
+                .authorizationEndpoint()
+                .baseUri("/oauth2/authorization") //default
+                .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
                 .and()
-                    .redirectionEndpoint()
-                    .baseUri("/*/oauth2/code/*")
+                .redirectionEndpoint()
+                .baseUri("/*/oauth2/code/*")
                 .and()
-                    .userInfoEndpoint()
-                    .userService(customOAuth2UserService)
+                .userInfoEndpoint()
+                .userService(customOAuth2UserService)
                 .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler())
                 .failureHandler(oAuth2AuthenticationFailureHandler());

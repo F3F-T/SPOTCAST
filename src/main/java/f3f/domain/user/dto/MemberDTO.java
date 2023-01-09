@@ -144,6 +144,7 @@ public class MemberDTO {
     @NoArgsConstructor
     public static class MemberLoginServiceResponseDto {
 
+        private Long id;
         private String email;
 
         private Authority authority;
@@ -160,7 +161,8 @@ public class MemberDTO {
         private Long accessTokenExpiresIn;
 
         @Builder
-        public MemberLoginServiceResponseDto(String email, Authority authority, String name,  LoginMemberType loginMemberType, String grantType, String accessToken, Long accessTokenExpiresIn) {
+        public MemberLoginServiceResponseDto(Long id, String email, Authority authority, String name, LoginMemberType loginMemberType, String grantType, String accessToken, Long accessTokenExpiresIn) {
+            this.id = id;
             this.email = email;
             this.authority = authority;
             this.name = name;
@@ -169,8 +171,6 @@ public class MemberDTO {
             this.accessToken = accessToken;
             this.accessTokenExpiresIn = accessTokenExpiresIn;
         }
-
-
     }
 
 
@@ -227,20 +227,6 @@ public class MemberDTO {
         }
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class MemberUpdateNicknameRequestDto {
-
-        @NotBlank
-        @Length(min = 3, max = 20)
-        @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9-_]{3,20}$")
-        private String nickname;
-
-        @Builder
-        public MemberUpdateNicknameRequestDto(String nickname) {
-            this.nickname = nickname;
-        }
-    }
 
 
     @Getter
@@ -256,19 +242,6 @@ public class MemberDTO {
         }
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class MemberUpdatePhoneRequestDto {
-
-        @NotBlank
-        @Length(min = 10, max = 11)
-        private String phone;
-        @Builder
-
-        public MemberUpdatePhoneRequestDto(String phone) {
-            this.phone = phone;
-        }
-    }
 
 
     @Getter
@@ -333,6 +306,7 @@ public class MemberDTO {
             this.otherSns = otherSns;
         }
     }
+
 
 
 

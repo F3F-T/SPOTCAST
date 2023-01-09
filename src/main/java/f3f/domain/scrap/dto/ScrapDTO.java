@@ -4,11 +4,13 @@ import f3f.domain.scrap.domain.Scrap;
 import f3f.domain.user.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class ScrapDTO {
 
 
     @Getter
+    @NoArgsConstructor
     public static class SaveRequest {
 
         private String name;
@@ -31,6 +33,7 @@ public class ScrapDTO {
         }
     }
     @Getter
+    @NoArgsConstructor
     public static class UpdateRequest {
 
         private String name;
@@ -44,6 +47,7 @@ public class ScrapDTO {
         }
     }
     @Getter
+    @NoArgsConstructor
     public static class ScrapInfoDTO{
         private Long scrapId;
         private String name;
@@ -56,6 +60,7 @@ public class ScrapDTO {
     }
 
     @Getter
+    @NoArgsConstructor
     public static class ScrapDeleteRequestDTO {
         private Long scrapId;
 

@@ -2,6 +2,7 @@ package f3f.domain.scrap.api;
 
 import f3f.domain.scrap.application.ScrapService;
 import f3f.domain.scrap.dto.ScrapDTO;
+import f3f.global.response.ResultDataResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +30,11 @@ public class ScrapController {
      * @return
      */
     @GetMapping("/{memberId}/scrap")
-    public ResponseEntity<List<ScrapDTO.ScrapInfoDTO>> getScrapBoxList(@PathVariable Long memberId) {
+    public ResultDataResponseDTO<List<ScrapDTO.ScrapInfoDTO>> getScrapBoxList(@PathVariable Long memberId) {
 
         List<ScrapDTO.ScrapInfoDTO> scrapBoxList = scrapService.getScrapBoxList(memberId);
-        return ResponseEntity.ok(scrapBoxList);
+
+        return ResultDataResponseDTO.of(scrapBoxList);
     }
 
     /**
@@ -41,9 +43,10 @@ public class ScrapController {
      * @return
      */
     @DeleteMapping("/{memberId}/scrap")
-    public ResponseEntity<Void> deleteScrapBox(@RequestBody ScrapDTO.ScrapDeleteRequestDTO deleteRequest,@PathVariable Long memberId) {
+    public ResultDataResponseDTO deleteScrapBox(@RequestBody ScrapDTO.ScrapDeleteRequestDTO deleteRequest,@PathVariable Long memberId) {
         scrapService.deleteScrapBox(deleteRequest,memberId);
-        return ResponseEntity.ok().build();
+
+        return ResultDataResponseDTO.empty();
     }
 
     /**
@@ -53,16 +56,16 @@ public class ScrapController {
      * @return
      */
     @PostMapping("/{memberId}/scrap")
-    public ResponseEntity<Void> saveScrapBox(@RequestBody ScrapDTO.SaveRequest saveRequest,@PathVariable Long memberId) {
+    public ResultDataResponseDTO saveScrapBox(@RequestBody ScrapDTO.SaveRequest saveRequest,@PathVariable Long memberId) {
 
         scrapService.saveScrapBox(saveRequest,memberId);
-        return ResponseEntity.ok().build();
+        return ResultDataResponseDTO.empty();
     }
 
     @PatchMapping("/{memberId}/scrap")
-    public ResponseEntity<List<ScrapDTO.ScrapInfoDTO>> updateScrapBox(@RequestBody ScrapDTO.UpdateRequest updateRequest,@PathVariable Long memberId) {
+    public ResultDataResponseDTO updateScrapBox(@RequestBody ScrapDTO.UpdateRequest updateRequest,@PathVariable Long memberId) {
 
         scrapService.updateScrapBox(updateRequest,memberId);
-        return ResponseEntity.ok().build();
+        return ResultDataResponseDTO.empty();
     }
 }

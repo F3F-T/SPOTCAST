@@ -26,6 +26,7 @@ public class TokenDTO {
 
     public MemberDTO.MemberLoginServiceResponseDto toLoginEntity(Member member){
         return MemberDTO.MemberLoginServiceResponseDto.builder()
+                .id(member.getId())
                 .email(member.getEmail())
                 .name(member.getName())
                 .loginMemberType(member.getLoginMemberType())

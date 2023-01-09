@@ -2,6 +2,8 @@ package f3f.domain.message.api;
 
 import f3f.domain.message.application.MessageService;
 import f3f.domain.message.domain.Message;
+import f3f.domain.message.dto.MessageDTO;
+import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,47 +11,59 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/message")
 @RequiredArgsConstructor
-@RestController(value = "/message")
 @Slf4j
+/**
+ * 구현기능
+ * 1. 메세지 전송
+ * 2. 메세지 삭제(보이는 상태만 바꾸는 것)
+ * 3. 메세지 내용 조회
+ * 4. 메세지 보낸 목록 조회
+ * 5. 메세지 받은 목록 조회
+ */
 public class MessageController {
 
     private final MessageService messageService;
 
     @PostMapping(value = "/send")
-    public void sendMessage(@RequestBody Message message){
+    public ResultDataResponseDTO sendMessage(@RequestBody MessageDTO.MessageRequestDto requestDto){
 
+        log.info(requestDto.toString());
         Long memberId = SecurityUtil.getCurrentMemberId();
-        messageService.sendMessage(message,memberId);
+        messageService.sendMessage(requestDto,memberId);
+
+        return ResultDataResponseDTO.empty();
     }
 
-    @DeleteMapping(value = "/{messageId}")
-    public void cancelMessage(@PathVariable long messageId){
+    @PatchMapping(value = "/{messageId}")
+    public ResultDataResponseDTO concealMessageDisplay(@PathVariable long messageId){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        messageService.deleteMessage(memberId,messageId);
-    }
+        messageService.updateDisplayStatus(memberId,messageId);
 
-    @PutMapping(value = "/{messageId}/update")
-    public Message updateMessage(@PathVariable long messageId, @RequestBody Message message){
-        Long memberId = SecurityUtil.getCurrentMemberId();
-        return messageService.updateMessage(messageId,memberId,message);
+        return ResultDataResponseDTO.empty();
     }
 
     @GetMapping(value = "/{messageId}")
-    public Message getMessageInfo(@PathVariable long messageId){
+    public ResultDataResponseDTO<MessageDTO.MessageResponseDto> getMessageInfo(@PathVariable long messageId){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        return messageService.getMessageInfo(messageId , memberId);
+        MessageDTO.MessageResponseDto messageInfo = messageService.getMessageInfo(messageId, memberId);
+        return ResultDataResponseDTO.of(messageInfo);
     }
 
     @GetMapping(value = "/sender")
-    public List<Message> getSendMessageListByUserId(){
+    public ResultDataResponseDTO<List<MessageDTO.MessageResponseDto>> getSendMessageListByUserId(){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        return messageService.getSendMessageListByUserId(memberId);
+        List<MessageDTO.MessageResponseDto> sendMessageList = messageService.getSendMessageListByUserId(memberId);
+        return ResultDataResponseDTO.of(sendMessageList);
     }
 
+
     @GetMapping(value = "/recipient")
-    public List<Message> getRecipientMessageListByUserId(){
+    public ResultDataResponseDTO<List<MessageDTO.MessageResponseDto>> getRecipientMessageListByUserId(){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        return messageService.getRecipientMessageListByUserId(memberId);
+        List<MessageDTO.MessageResponseDto> recipientMessageList = messageService.getRecipientMessageListByUserId(memberId);
+        return ResultDataResponseDTO.of(recipientMessageList);
     }
 }

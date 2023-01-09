@@ -620,7 +620,7 @@ class MemberServiceTest {
 
         
         //when
-        TokenDTO tokenDTO = memberService.reissue(tokenRequestDTO);
+        TokenDTO.TokenResponseDTO tokenDTO = memberService.reissue(tokenRequestDTO);
 
         //then
         assertThat(loginServiceResponseDto.getAccessToken()).isNotEqualTo(tokenDTO.getAccessToken());

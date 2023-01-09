@@ -37,13 +37,13 @@ public class Portfolio {
     @OneToMany(mappedBy = "portfolio",fetch = FetchType.LAZY)
     private List<PortfolioBookmark> bookmarkList = new ArrayList<>();
 
-    private int order;
+    private int orders;
 
     @Builder
-    public Portfolio(Long id, Board board, Member member, int order) {
+    public Portfolio(Long id, Board board, Member member, int orders) {
         this.id = id;
         this.board = board;
         this.member = member;
-        this.order = order;
+        this.orders = orders;
     }
 }
