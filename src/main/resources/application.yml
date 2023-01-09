@@ -17,8 +17,8 @@ spring:
     port: 6379
   mail:
     host: smtp.naver.com
-    username: idh1007@naver.com
-    password: "@Ehdgur5690"
+    username: spotcast@naver.com
+    password: "@Spotcast1007"
     default-encoding: UTF-8
     port: 465
     socketFactory-class: javax.net.ssl.SSLSocketFactory
@@ -30,14 +30,14 @@ spring:
       mail.smtp.ssl.trust: smtp.naver.com
     # Security OAuth
   security:
-     oauth2.client:
-       registration:
-         google:
-            clientId: '828566562780-uo5narg2p7lgsl3ne2rgcnr7ioruao13.apps.googleusercontent.com'
-            clientSecret: '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'
-            scope:
-              - email
-              - profile
+    oauth2.client:
+      registration:
+        google:
+          clientId: '828566562780-uo5narg2p7lgsl3ne2rgcnr7ioruao13.apps.googleusercontent.com'
+          clientSecret: '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'
+          scope:
+            - email
+            - profile
 #          naver:
 #            clientId: '{네이버 client-id}'
 #            clientSecret: '{네이버 client-secret}'
@@ -79,4 +79,6 @@ logging:
         type:
           descriptor:
             sql:
-              BasicBinder: TRACE
+              BasicBinder:
+jwt:
+  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
