@@ -55,7 +55,7 @@ public class MessageService {
     }
 
     @Transactional
-    public Message updateDisplayStatus(long messageId, long memberId){
+    public void updateDisplayStatus(long messageId, long memberId){
         if(!memberRepository.existsById(memberId)) {
              throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다.");
         }
@@ -66,7 +66,6 @@ public class MessageService {
 
         message.updateDisplayStatus(memberId);
 
-        return message;
     }
 
 

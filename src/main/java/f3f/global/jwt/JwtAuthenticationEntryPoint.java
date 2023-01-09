@@ -32,14 +32,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private void sendResponse(HttpServletResponse response, AuthenticationException authException) throws IOException {
 
-        String result;
-        if (authException instanceof BadCredentialsException) {
-            result = objectMapper.writeValueAsString(ResponseDTO.of(false,ErrorCode.INVALID_EMAIL_AND_PASSWORD_REQUEST,"아이디 또2는 비밀번호가 일치하지 않습니다."));
-            response.setStatus(response.SC_NOT_FOUND);
-        } else {
-            result = objectMapper.writeValueAsString(ResponseDTO.of(false,ErrorCode.JWT_ACCESS_DENIED,"유효하지 않은 토큰입니다."));
-            response.setStatus(response.SC_UNAUTHORIZED);
-        }
+        String result = objectMapper.writeValueAsString(ResponseDTO.of(false,ErrorCode.JWT_ACCESS_DENIED,"유효하지 않은 토큰입니다."));
+        response.setStatus(response.SC_UNAUTHORIZED);
+
 
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
