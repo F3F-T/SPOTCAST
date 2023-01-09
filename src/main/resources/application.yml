@@ -23,7 +23,7 @@ spring:
     port: 465
     socketFactory-class: javax.net.ssl.SSLSocketFactory
     supplier: naver.com
-    from-mail: idh1007@naver.com
+    from-mail: spotcast@naver.com
     properties:
       mail.smtp.auth: true
       mail.smtp.ssl.enable: true
