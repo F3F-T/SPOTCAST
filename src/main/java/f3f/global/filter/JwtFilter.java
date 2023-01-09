@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static f3f.global.constants.JwtConstants.AUTHORIZATION_HEADER;
+import static f3f.global.constants.JwtConstants.BEARER_PREFIX;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -44,10 +45,10 @@ public class JwtFilter extends OncePerRequestFilter {
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(bearerToken)
-//                && bearerToken.startsWith(BEARER_PREFIX)
+                && bearerToken.startsWith(BEARER_PREFIX)
         ) {
-//            return bearerToken.substring(7);
-            return bearerToken;
+            return bearerToken.substring(7);
+//            return bearerToken;
         }
         return null;
     }
