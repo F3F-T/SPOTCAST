@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/message")
 @RequiredArgsConstructor
-@RestController(value = "/message")
 @Slf4j
 /**
  * 구현기능
@@ -29,6 +30,7 @@ public class MessageController {
     @PostMapping(value = "/send")
     public ResultDataResponseDTO sendMessage(@RequestBody MessageDTO.MessageRequestDto requestDto){
 
+        log.info(requestDto.toString());
         Long memberId = SecurityUtil.getCurrentMemberId();
         messageService.sendMessage(requestDto,memberId);
 

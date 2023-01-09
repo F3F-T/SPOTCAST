@@ -308,21 +308,6 @@ public class MemberDTO {
     }
 
 
-    @Getter
-    @NoArgsConstructor
-    public static class MemberDataResponseDto{
-        private Long id;
-        private String email;
-
-        private String name;
-
-        @Builder
-        public MemberDataResponseDto(Long id, String email, String name) {
-            this.id = id;
-            this.email = email;
-            this.name = name;
-        }
-    }
 
 
 }

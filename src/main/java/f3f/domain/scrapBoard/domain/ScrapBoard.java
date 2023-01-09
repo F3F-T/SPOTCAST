@@ -42,7 +42,7 @@ public class ScrapBoard {
                 .viewCount(this.board.getViewCount())
                 .boardType(this.board.getBoardType())
                 .category(this.board.getCategory())
-                .member(this.board.getMember())
+                .member(this.board.getMember().toMessageMemberDTO())
                 .build();
     }
 

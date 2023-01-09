@@ -120,6 +120,7 @@ public class SecurityConfig {
                 .antMatchers("/member/**").hasRole("USER")
                 //유저정보보기
                 .antMatchers("/admin/**").permitAll()
+                .antMatchers("/message/**").permitAll()
 
 //                .antMatchers("/member/**").permitAll()
 //                .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요

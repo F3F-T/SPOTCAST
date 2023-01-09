@@ -88,8 +88,8 @@ public class Member extends MemberBase {
                 .build();
     }
 
-    public MemberDTO.MemberDataResponseDto toMessageMemberDTO(){
-        return MemberDTO.MemberDataResponseDto.builder()
+    public MemberDTO.MemberBoardInfoResponseDto toMessageMemberDTO(){
+        return MemberDTO.MemberBoardInfoResponseDto.builder()
                 .id(this.getId())
                 .email(this.getEmail())
                 .name(this.getName())

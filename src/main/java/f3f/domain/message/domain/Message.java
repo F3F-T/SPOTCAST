@@ -24,13 +24,13 @@ public class Message  extends BaseTimeEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id",insertable = false,updatable = false)
+    @JoinColumn(name = "sender_id",insertable = false,updatable = false ,referencedColumnName = "member_id")
     private Member sender;
 
     private Boolean senderDisplayStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id",insertable = false,updatable = false)
+    @JoinColumn(name = "recipient_id",insertable = false,updatable = false ,referencedColumnName = "member_id")
     private Member recipient;
 
     private Boolean recipientDisplayStatus;

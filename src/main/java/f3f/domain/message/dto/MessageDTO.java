@@ -14,11 +14,11 @@ public class MessageDTO {
     public static class MessageResponseDto{
         private Long id;
         private String content;
-        private MemberDTO.MemberDataResponseDto sender;
-        private MemberDTO.MemberDataResponseDto recipient;
+        private MemberDTO.MemberBoardInfoResponseDto sender;
+        private MemberDTO.MemberBoardInfoResponseDto recipient;
 
         @Builder
-        public MessageResponseDto(long id, String content, MemberDTO.MemberDataResponseDto sender, MemberDTO.MemberDataResponseDto recipient) {
+        public MessageResponseDto(long id, String content, MemberDTO.MemberBoardInfoResponseDto sender, MemberDTO.MemberBoardInfoResponseDto recipient) {
             this.id = id;
             this.content = content;
             this.sender = sender;
