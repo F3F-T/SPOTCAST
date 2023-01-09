@@ -31,79 +31,62 @@ public class MessageService {
         //발신자 검증
         Member sender = memberRepository.findById(message.getSender().getId())
                 .orElseThrow(MemberNotFoundException::new);
-        //수신자 검증
-        memberRepository.findById(message.getRecipient().getId())
-                .orElseThrow(MemberNotFoundException::new);
 
         //로그인된 정보에서 넘어온 맴버 아이디와 다를 경우 예외
         if (sender.getId() == memberId){
             throw new SenderMissMatchException();
         }
+
+        //수신자 검증
+        memberRepository.findById(message.getRecipient().getId())
+                .orElseThrow(MemberNotFoundException::new);
+
         messageRepository.save(message);
     }
 
-    @Transactional
-    public void deleteMessage(long memberId , long messageId){
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException());
-
-        List<Message> sendMessageList = member.getSendMessageList();
-
-        for (Message message : sendMessageList) {
-            if (message.getId() == messageId){
-                messageRepository.deleteById(messageId);
-                return;
-            }
-        }
-    }
-
-    @Transactional
-    public Message updateSenderDisplayStatus(long messageId, long memberId,Boolean displayStatus){
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException());
-
-        Message message = messageRepository.findById(messageId)
-                .orElseThrow(() -> new MessageNotFoundException());
-
-        if(message.getSender().getId() != member.getId()){
-            throw new SenderMissMatchException();
-        }else{
-            message.updateSenderDisplayStatus(displayStatus);
-        }
-
-        return message;
-    }
+//    @Transactional
+//    public void deleteMessage(long memberId , long messageId){
+//        Member member = memberRepository.findById(memberId)
+//                .orElseThrow(() -> new MemberNotFoundException());
+//
+//        List<Message> sendMessageList = member.getSendMessageList();
+//
+//        for (Message message : sendMessageList) {
+//            if (message.getId() == messageId){
+//                messageRepository.deleteById(messageId);
+//                return;
+//            }
+//        }
+//    }
 
     @Transactional
-    public Message updateRecipientDisplayStatus(long messageId, long memberId,Boolean displayStatus){
+    public Message updateDisplayStatus(long messageId, long memberId){
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException());
 
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new MessageNotFoundException());
 
-        if(message.getRecipient().getId() != member.getId()){
-            throw new RecipientMissMatchException();
-        }else{
-            message.updateRecipientDisplayStatus(displayStatus);
-        }
+
+        message.updateDisplayStatus(memberId);
 
         return message;
     }
 
-    @Transactional
-    public Message updateMessage(long messageId,long memberId ,Message message){
-        Message targetMessage = messageRepository.findById(messageId)
-                .orElseThrow();
 
-        if(targetMessage.getSender().getId() != messageId){
-            throw new SenderMissMatchException();
-        }
-
-        targetMessage.updateMessage(message);
-
-        return targetMessage;
-    }
+//    @Transactional
+//    public Message updateMessage(long messageId,long memberId ,Message message){
+//        Message targetMessage = messageRepository.findById(messageId)
+//                .orElseThrow();
+//
+//        if(targetMessage.getSender().getId() != messageId){
+//            throw new SenderMissMatchException();
+//        }
+//
+//        targetMessage.updateMessage(message);
+//
+//        return targetMessage;
+//    }
 
     @Transactional(readOnly = true)
     public Message getMessageInfo(long messageId, Long memberId){
