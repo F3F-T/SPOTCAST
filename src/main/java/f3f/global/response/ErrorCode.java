@@ -44,6 +44,11 @@ public enum ErrorCode {
     //멤버 없음
     NOTFOUND_MEMBER(404,HttpStatus.NOT_FOUND),
 
+
+    //메세지 없음
+    NOTFOUND_MESSAGE(404,HttpStatus.NOT_FOUND),
+
+
     //게시글 없음
     NOTFOUND_BOARD(400,HttpStatus.BAD_REQUEST),
 
@@ -58,8 +63,13 @@ public enum ErrorCode {
 
     //authority 불일치
     AUTHORITY_FORBIDDEN(403,HttpStatus.FORBIDDEN),
+
+    //메세지 전송자와 요청자 불일치
+    MISMATCH_SENDER(400,HttpStatus.BAD_REQUEST),
+
     //토큰 없음
     JWT_ACCESS_DENIED(401,HttpStatus.UNAUTHORIZED);
+
 
     private final Integer code;
     private final HttpStatus httpStatus;
