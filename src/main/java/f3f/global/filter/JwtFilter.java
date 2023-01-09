@@ -1,6 +1,8 @@
 package f3f.global.filter;
 
 import f3f.global.jwt.TokenProvider;
+import f3f.global.response.ErrorCode;
+import f3f.global.response.GeneralException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -47,8 +49,8 @@ public class JwtFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(bearerToken)
                 && bearerToken.startsWith(BEARER_PREFIX)
         ) {
-            return bearerToken.substring(7);
+            throw new GeneralException(ErrorCode.JWT_ACCESS_DENIED,"유효하지 않은 토큰입니다.");
         }
-        return null;
+        return bearerToken.substring(7);
     }
 }
