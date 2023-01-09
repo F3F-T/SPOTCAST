@@ -5,7 +5,9 @@ import com.sun.xml.bind.v2.TODO;
 import f3f.domain.board.dao.BoardRepository;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.message.dao.MessageRepository;
+import f3f.domain.message.dao.SearchMessageRepository;
 import f3f.domain.message.domain.Message;
+import f3f.domain.message.dto.MessageDTO;
 import f3f.domain.message.exception.MessageNotFoundException;
 import f3f.domain.message.exception.RecipientMissMatchException;
 import f3f.domain.message.exception.SenderMissMatchException;
@@ -31,6 +33,7 @@ public class MessageService {
     private final MemberRepository memberRepository;
     private final MessageRepository messageRepository;
 
+    private final SearchMessageRepository searchMessageRepository;
 
     @Transactional
     public void sendMessage(Message message,long memberId){
@@ -80,7 +83,7 @@ public class MessageService {
 //    }
 
     @Transactional(readOnly = true)
-    public Message getMessageInfo(long messageId, Long memberId){
+    public MessageDTO.MessageResponseDto getMessageInfo(long messageId, Long memberId){
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() ->new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다."));
 
@@ -88,23 +91,26 @@ public class MessageService {
             throw new GeneralException(ErrorCode.MISMATCH_SENDER,"잘못된 발신 요청입니다.");
         }
 
-        return message;
+        return message.toMessageDto();
     }
 
     //TODO 리스트 가져오는 쿼리 작성
     @Transactional(readOnly = true)
-    public List<Message> getSendMessageListByUserId(long memberId){
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() ->new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다."));
+    public List<MessageDTO.MessageResponseDto> getSendMessageListByUserId(long memberId){
+        if(!memberRepository.existsById(memberId)){
+            throw new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다.");
+        }
+        List<MessageDTO.MessageResponseDto> sendListByCategoryId = searchMessageRepository.getSendListByCategoryId(memberId);
 
-        return member.getSendMessageList();
+        return sendListByCategoryId;
     }
 
     @Transactional(readOnly = true)
-    public List<Message> getRecipientMessageListByUserId(long memberId){
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() ->new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다."));
-
-        return member.getReceptionMessageList();
+    public List<MessageDTO.MessageResponseDto> getRecipientMessageListByUserId(long memberId){
+        if(!memberRepository.existsById(memberId)){
+            throw new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다.");
+        }
+        List<MessageDTO.MessageResponseDto> recipientListByUserId = searchMessageRepository.getRecipientListByUserId(memberId);
+        return recipientListByUserId;
     }
 }

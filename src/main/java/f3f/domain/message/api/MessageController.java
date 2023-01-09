@@ -2,6 +2,7 @@ package f3f.domain.message.api;
 
 import f3f.domain.message.application.MessageService;
 import f3f.domain.message.domain.Message;
+import f3f.domain.message.dto.MessageDTO;
 import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -43,24 +44,24 @@ public class MessageController {
     }
 
     @GetMapping(value = "/{messageId}")
-    public ResultDataResponseDTO<Message> getMessageInfo(@PathVariable long messageId){
+    public ResultDataResponseDTO<MessageDTO.MessageResponseDto> getMessageInfo(@PathVariable long messageId){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        Message messageInfo = messageService.getMessageInfo(messageId, memberId);
+        MessageDTO.MessageResponseDto messageInfo = messageService.getMessageInfo(messageId, memberId);
         return ResultDataResponseDTO.of(messageInfo);
     }
 
     @GetMapping(value = "/sender")
-    public ResultDataResponseDTO<List<Message>> getSendMessageListByUserId(){
+    public ResultDataResponseDTO<List<MessageDTO.MessageResponseDto>> getSendMessageListByUserId(){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        List<Message> sendMessageList = messageService.getSendMessageListByUserId(memberId);
+        List<MessageDTO.MessageResponseDto> sendMessageList = messageService.getSendMessageListByUserId(memberId);
         return ResultDataResponseDTO.of(sendMessageList);
     }
 
 
     @GetMapping(value = "/recipient")
-    public ResultDataResponseDTO<List<Message>> getRecipientMessageListByUserId(){
+    public ResultDataResponseDTO<List<MessageDTO.MessageResponseDto>> getRecipientMessageListByUserId(){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        List<Message> recipientMessageList = messageService.getRecipientMessageListByUserId(memberId);
+        List<MessageDTO.MessageResponseDto> recipientMessageList = messageService.getRecipientMessageListByUserId(memberId);
         return ResultDataResponseDTO.of(recipientMessageList);
     }
 }

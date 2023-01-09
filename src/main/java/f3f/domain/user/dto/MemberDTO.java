@@ -227,20 +227,6 @@ public class MemberDTO {
         }
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class MemberUpdateNicknameRequestDto {
-
-        @NotBlank
-        @Length(min = 3, max = 20)
-        @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9-_]{3,20}$")
-        private String nickname;
-
-        @Builder
-        public MemberUpdateNicknameRequestDto(String nickname) {
-            this.nickname = nickname;
-        }
-    }
 
 
     @Getter
@@ -256,19 +242,6 @@ public class MemberDTO {
         }
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class MemberUpdatePhoneRequestDto {
-
-        @NotBlank
-        @Length(min = 10, max = 11)
-        private String phone;
-        @Builder
-
-        public MemberUpdatePhoneRequestDto(String phone) {
-            this.phone = phone;
-        }
-    }
 
 
     @Getter
@@ -334,6 +307,22 @@ public class MemberDTO {
         }
     }
 
+
+    @Getter
+    @NoArgsConstructor
+    public static class MemberDataResponseDto{
+        private Long id;
+        private String email;
+
+        private String name;
+
+        @Builder
+        public MemberDataResponseDto(Long id, String email, String name) {
+            this.id = id;
+            this.email = email;
+            this.name = name;
+        }
+    }
 
 
 }
