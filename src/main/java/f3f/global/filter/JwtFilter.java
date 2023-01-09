@@ -48,7 +48,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 && bearerToken.startsWith(BEARER_PREFIX)
         ) {
             return bearerToken.substring(7);
-//            return bearerToken;
+            return bearerToken;
         }
         return null;
     }
