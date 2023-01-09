@@ -36,9 +36,9 @@ public class MessageService {
     private final SearchMessageRepository searchMessageRepository;
 
     @Transactional
-    public void sendMessage(Message message,long memberId){
+    public void sendMessage(MessageDTO.MessageRequestDto requestDto, long memberId){
         //발신자 검증
-        Member sender = memberRepository.findById(message.getSender().getId())
+        Member sender = memberRepository.findById(requestDto.getSender().getId())
                 .orElseThrow(() ->new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다."));
 
         //로그인된 정보에서 넘어온 맴버 아이디와 다를 경우 예외
@@ -47,16 +47,18 @@ public class MessageService {
         }
 
         //수신자 검증
-        memberRepository.findById(message.getRecipient().getId())
+        memberRepository.findById(requestDto.getRecipient().getId())
                 .orElseThrow(() ->new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다."));
 
-        messageRepository.save(message);
+
+        messageRepository.save(requestDto.toEntity());
     }
 
     @Transactional
     public Message updateDisplayStatus(long messageId, long memberId){
-        memberRepository.findById(memberId)
-                .orElseThrow(() ->new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다."));
+        if(!memberRepository.existsById(memberId)) {
+             throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다.");
+        }
 
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MESSAGE,"존재하지 않는 메세지입니다."));
@@ -67,20 +69,6 @@ public class MessageService {
         return message;
     }
 
-
-//    @Transactional
-//    public Message updateMessage(long messageId,long memberId ,Message message){
-//        Message targetMessage = messageRepository.findById(messageId)
-//                .orElseThrow();
-//
-//        if(targetMessage.getSender().getId() != messageId){
-//            throw new SenderMissMatchException();
-//        }
-//
-//        targetMessage.updateMessage(message);
-//
-//        return targetMessage;
-//    }
 
     @Transactional(readOnly = true)
     public MessageDTO.MessageResponseDto getMessageInfo(long messageId, Long memberId){

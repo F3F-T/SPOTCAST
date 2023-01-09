@@ -36,12 +36,16 @@ public class Message  extends BaseTimeEntity {
     private Boolean recipientDisplayStatus;
 
     @Builder
-    public Message(Long id, String content, Member sender, Member recipient) {
+    public Message(Long id, String content, Member sender, Boolean senderDisplayStatus, Member recipient, Boolean recipientDisplayStatus) {
         this.id = id;
         this.content = content;
         this.sender = sender;
+        this.senderDisplayStatus = senderDisplayStatus;
         this.recipient = recipient;
+        this.recipientDisplayStatus = recipientDisplayStatus;
     }
+
+
 
     public void updateMessage(Message message){
         this.content = message.getContent();

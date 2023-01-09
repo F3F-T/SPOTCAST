@@ -27,10 +27,10 @@ public class MessageController {
     private final MessageService messageService;
 
     @PostMapping(value = "/send")
-    public ResultDataResponseDTO sendMessage(@RequestBody Message message){
+    public ResultDataResponseDTO sendMessage(@RequestBody MessageDTO.MessageRequestDto requestDto){
 
         Long memberId = SecurityUtil.getCurrentMemberId();
-        messageService.sendMessage(message,memberId);
+        messageService.sendMessage(requestDto,memberId);
 
         return ResultDataResponseDTO.empty();
     }
