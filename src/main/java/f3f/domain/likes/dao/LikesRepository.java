@@ -12,7 +12,4 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
     Optional<Likes> findByMemberIdAndBoardId(Optional<Member> member, Board board);
 
     Likes findByMemberIdAndBoardId(Long member_id, Long board_id);
-
-    List<Likes> findByUser(Member member);
-    List<Likes> findByBoard (Board board);
 }

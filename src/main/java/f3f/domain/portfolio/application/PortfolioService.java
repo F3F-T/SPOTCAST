@@ -35,7 +35,7 @@ public class PortfolioService {
         Portfolio portfolio = Portfolio.builder()
                 .board(board)
                 .member(member)
-                .order(request.getOrder())
+                .orders(request.getOrder())
                 .build();
 
         portfolioRepository.save(portfolio);

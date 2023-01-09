@@ -3,6 +3,8 @@ package f3f.domain.scrapBoard.domain;
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.scrap.domain.Scrap;
+import f3f.domain.user.domain.Member;
+import f3f.domain.user.dto.MemberDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,7 +44,15 @@ public class ScrapBoard {
                 .viewCount(this.board.getViewCount())
                 .boardType(this.board.getBoardType())
                 .category(this.board.getCategory())
-                .member(this.board.getMember())
+                .member(changeMemberBoardInfoDTO(this.board.getMember()))
+                .build();
+    }
+
+    private MemberDTO.MemberBoardInfoResponseDto changeMemberBoardInfoDTO(Member member) {
+        return MemberDTO.MemberBoardInfoResponseDto.builder()
+                .id(member.getId())
+                .email(member.getEmail())
+                .name(member.getName())
                 .build();
     }
 
