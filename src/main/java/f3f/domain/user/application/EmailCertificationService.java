@@ -63,16 +63,6 @@ public class EmailCertificationService {
 
     private String makeEmailContent(String certificationNumber) {
         StringBuilder sb = new StringBuilder();
-//        sb.append("<div style = 'margin:100px;'>");
-//        sb.append("<h1> 안녕하세요 </h1>");
-//        sb.append("<h1> SPOTCAST 입니다.</h1>");
-//        sb.append("<br>");
-//        sb.append("<div align='center' style = 'border:1px solid black; font-family:verdana';>");
-//        sb.append("<h3 style = 'color:#020088;'>회원가입 인증 코드입니다.</h3>");
-//        sb.append("<div style='font-style:130%'>");
-//        sb.append("CODE: <strong>");
-//        sb.append(certificationNumber + "</strong><div><br/>");
-//        sb.append("</div>");
 
         sb.append("<div style='background: #F7F8F9; margin: 0; padding: 15px; cursor: default; letter-spacing: -.03em; font-family: 'Apple SD Gothic Neo', Helvetica, arial, '나눔고딕', 'Nanum Gothic', '돋움', Dotum, Tahoma, Geneva, sans-serif;'>");
         sb.append("<table cellspacing='0' cellpadding='0' style='max-width: 680px; width: 100%; margin: 0 auto; border-collapse: collapse;'>");
@@ -84,8 +74,8 @@ public class EmailCertificationService {
         sb.append("<p style='margin: 7px 0 0 0; padding: 0; font-size: 14px; color: #626d75; font-weight: bold; text-align: center; line-height: 21px;'>인증 번호 : <strong style='color: #0282da;'>"+certificationNumber+"</strong></p>");
 
         sb.append("</div>");
-        sb.append("</td></tr><tr><td colspan='2' style='text-align: left; padding: 29px 0 50px 0;'>");
-        sb.append("<p style='padding: 14px 0 0; margin: 0; line-height: 1.8em; color: #808991; font-size: 11px;'>");
+        sb.append("</td></tr><tr><td colspan='2' style='text-align: left; padding: 19px 0 15px 0;'>");
+        sb.append("<p style='padding: 4px 0 0; margin: 0; line-height: 1.8em; color: #808991; font-size: 11px;'>");
         sb.append("본 메일은 발신전용 메일로, 회신되지 않습니다.<br>");
         sb.append("<br></p>");
 
