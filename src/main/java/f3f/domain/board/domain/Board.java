@@ -1,5 +1,6 @@
 package f3f.domain.board.domain;
 
+import f3f.domain.BoardImage.domain.BoardImage;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.category.domain.Category;
 import f3f.domain.comment.domain.Comment;
@@ -50,6 +51,9 @@ public class Board extends BaseTimeEntity {
     private Image image;
 
     private LocalDateTime regDate;
+
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
+    private List<BoardImage> boardImageList = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     private List<ScrapBoard> scrapBoardList = new ArrayList<>();
