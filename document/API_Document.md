@@ -1,23 +1,25 @@
 | ACTION | Method | EndPoint | Query String | Request Body | header |
 | --- | --- | --- | --- | --- | --- |
-| 회원가입 | POST | /auth/signup |  | email, password, phone, name, nickname, loginMemberType, loginType, authority, information |  |
-| 회원 탈퇴 | DELETE | /member/{memberId} |  | email, password | accessToken |
+| 회원가입 | POST | /auth/signup |  | email, password,  name,  loginMemberType, loginType, authority, information |  |
+| 회원 탈퇴 | DELETE | /member/{memberId} | memberId | email, password | accessToken |
 | 회원정보수정 | PATCH | /member/{memberId} |  |  | accessToken |
-| 회원정보 조회 | GET | /member/{memberId} |  |  | accessToken |
-| 내 정보 조회 | GET | /member/{memberId}/myInfo |  |  | accessToken |
+| 회원정보 조회 | GET | /member/{memberId} | memberId |  | accessToken |
+| 내 정보 조회 | GET | /member/{memberId}/myInfo | memberId |  | accessToken |
 | 로그인 | POST | /auth/login |  | email, password |  |
 | 로그아웃 | DELETE | /authlogout |  |  | accessToken |
-| 토큰 재발행 | POST | /auth/reissue |  | accessToken |  |
+| 토큰 재발행 | POST | /auth/reissue |  | accessToken | accessToken |
+| 소셜 로그인 정보 | GET | /auth/myInfo |  |  | accessToken |
 | 이메일 인증번호 전송 | POST | /auth/email-certification/sends |  | email |  |
 | 이메일 인증번호 확인 | POST | /auth/email-certification/confirms |  | email, certificationNumber |  |
-| 비밀번호 변경(로그인 X) | POST | /member/password/{email} |  | email, afterPassword |  |
-| 비밀번호 변경(로그인 O) | POST | /member/{memberId}/change/password |  | email, beforePassword, afterPassword | accessToken |
-| 닉네임 변경 | POST | /member/{memberId}/change/nickname |  | nickname | accessToken |
-| 휴대폰 번호 변경 | POST | /member/{memberId}/change/phone |  | phone | accessToken |
-| 정보 변경 | POST | /member/{memberId}/change/information |  | information | accessToken |
-| 이메일 중복 검사 | GET | /auth/member-emails/{email}/exists |  | email |  |
-| 닉네임 중복 검사 | GET | /auth/member-nicknames/{nickname}/exists |  | nickname |  |
-| 휴대폰 번호 중복 검사 | GET | /auth/member-phones/{phone}/exists |  | phone |  |
+| 비밀번호 변경(로그인 X) | POST | /member/find/password |  | email, afterPassword |  |
+| 비밀번호 변경(로그인 O) | POST | /member/{memberId}/change/password | memberId | email, beforePassword, afterPassword | accessToken |
+| 정보 변경 | POST | /member/{memberId}/change/information | memberId | information | accessToken |
+| 이메일 중복 검사 | GET | /auth/member-emails/{email}/exists | email |  |  |
+| 메세지 전송 | POST | /message/send |  | content, sender,recipient | accessToken |
+| 메세지 삭제(숨기기) | PATCH | /message/{messageId} | messageId |  | accessToken |
+| 메세지 정보 조회 | GET | /message/{messageId} | messageId |  | accessToken |
+| 발신 메세지 리스트 조회 | GET | /message/sender |  |  | accessToken |
+| 수신 메세지 리스트 조회 | GET | /message/recipient |  |  | accessToken |
 | 즐겨찾기 추가 | POST | /user/favorite/{user1_id}/{user2_id} |  |  |  |
 | 즐겨찾기 삭제 | DELETE | /user/favorite/{user1_id}/{user2_id} |  |  |  |
 | 즐겨찾기 리스트 조회 | GET | /user/{user_id}/favorite |  |  |  |
