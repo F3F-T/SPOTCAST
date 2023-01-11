@@ -47,9 +47,10 @@ public class Message extends BaseTimeEntity {
 
 
     public void updateDisplayStatus(Long memberId) {
-        if (memberId == sender.getId()) {
+
+        if (memberId.equals(sender.getId())) {
             this.senderDisplayStatus = false;
-        } else if (memberId == recipient.getId()) {
+        } else if (memberId.equals(recipient.getId())) {
             this.recipientDisplayStatus = false;
         }
 

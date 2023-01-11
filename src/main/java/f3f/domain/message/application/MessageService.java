@@ -27,10 +27,9 @@ public class MessageService {
 
     private final SearchMessageRepository searchMessageRepository;
 
+
     @Transactional
-    public void sendMessage(MessageDTO.MessageRequestDto requestDto, long memberId) {
-        System.out.println("requestDto = " + requestDto.getSender().getId());
-        System.out.println("requestDto = " + requestDto.getRecipient().getId());
+    public Message sendMessage(MessageDTO.MessageRequestDto requestDto, long memberId) {
         //발신자 검증
         Member sender = memberRepository.findById(requestDto.getSender().getId())
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다."));
@@ -45,7 +44,8 @@ public class MessageService {
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다."));
 
         Message message = requestDto.toEntity();
-        messageRepository.save(message);
+        Message savedMessage = messageRepository.save(message);
+        return savedMessage;
     }
 
     @Transactional
@@ -66,10 +66,11 @@ public class MessageService {
     @Transactional(readOnly = true)
     public MessageDTO.MessageResponseDto getMessageInfo(long messageId, Long memberId) {
         Message message = messageRepository.findById(messageId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MESSAGE, "존재하지 않는 메세지입니다."));
 
-        if (!message.getSender().getId().equals(memberId)) {
-            throw new GeneralException(ErrorCode.MISMATCH_SENDER, "잘못된 발신 요청입니다.");
+        if (!(message.getSender().getId().equals(memberId)
+                ||message.getRecipient().getId().equals(memberId))) {
+            throw new GeneralException(ErrorCode.MISMATCH_SENDER, "잘못된 조회 요청입니다.");
         }
 
         return message.toMessageDto();
