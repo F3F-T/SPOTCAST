@@ -5,6 +5,7 @@ import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dto.MemberDTO;
 import f3f.domain.user.dto.TokenDTO;
 import f3f.global.response.ResultDataResponseDTO;
+import f3f.global.util.CookieUtil;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +54,8 @@ public class MemberAuthController {
                                                                               loginRequestDto, HttpServletResponse response) {
 
         MemberDTO.MemberLoginServiceResponseDto loginResponseDto = memberService.login(loginRequestDto);
+
+        CookieUtil.addCookie(response,"test","testData",200);
 
         return ResultDataResponseDTO.of(loginResponseDto);
     }
