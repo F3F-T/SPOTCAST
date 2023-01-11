@@ -31,5 +31,9 @@ public class LikeController {
         return ResponseEntity.ok(boardId);
     }
 
-
+    @GetMapping("/board/{boardId}")
+    public ResponseEntity getLikeList(@PathVariable Long boardId) {
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        return ResponseEntity.ok(boardId);
+    }
 }

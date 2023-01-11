@@ -52,10 +52,10 @@ public class Board extends BaseTimeEntity {
 
     private LocalDateTime regDate;
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
+    @OneToMany( fetch = FetchType.LAZY , mappedBy = "board")
     private List<BoardImage> boardImageList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
+    @OneToMany( fetch = FetchType.LAZY, mappedBy = "board")
     private List<ScrapBoard> scrapBoardList = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY , mappedBy = "board")
