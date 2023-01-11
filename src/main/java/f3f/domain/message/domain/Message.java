@@ -24,13 +24,13 @@ public class Message extends BaseTimeEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id", insertable = false, updatable = false, referencedColumnName = "member_id")
+    @JoinColumn(name = "sender_id", updatable = false, referencedColumnName = "member_id")
     private Member sender;
 
     private Boolean senderDisplayStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipient_id", insertable = false, updatable = false, referencedColumnName = "member_id")
+    @JoinColumn(name = "recipient_id", updatable = false, referencedColumnName = "member_id")
     private Member recipient;
 
     private Boolean recipientDisplayStatus;
@@ -62,6 +62,17 @@ public class Message extends BaseTimeEntity {
                 .recipient(this.recipient.toMessageMemberDTO())
                 .sender(this.sender.toMessageMemberDTO())
                 .build();
+    }
 
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", sender=" + sender +
+                ", senderDisplayStatus=" + senderDisplayStatus +
+                ", recipient=" + recipient +
+                ", recipientDisplayStatus=" + recipientDisplayStatus +
+                '}';
     }
 }
