@@ -47,12 +47,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
     // Request Header 에서 토큰 정보를 꺼내오기
     private String resolveToken(HttpServletRequest request) {
-        Cookie bearerToken = CookieUtil.getCookie(request, "accessToken").get();
-        System.out.println("bearerToken.getValue() = " + bearerToken.getValue());
+        Cookie bearerToken = CookieUtil.getCookie(request, "accessToken").orElse(null);
 //        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken.getValue())
+        if (bearerToken!=null)
 //                && bearerToken.startsWith(BEARER_PREFIX)
-        ) {
+         {
             return bearerToken.getValue();
         }
         return null;
