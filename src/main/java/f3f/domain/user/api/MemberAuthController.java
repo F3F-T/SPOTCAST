@@ -55,7 +55,7 @@ public class MemberAuthController {
 
         MemberDTO.MemberLoginServiceResponseDto loginResponseDto = memberService.login(loginRequestDto);
 
-        CookieUtil.addCookie(response,"test","testData",200);
+        CookieUtil.addCookie(response,"accessToken",loginResponseDto.getAccessToken(),300);
 
         return ResultDataResponseDTO.of(loginResponseDto);
     }
@@ -82,6 +82,7 @@ public class MemberAuthController {
         memberService.logout(SecurityUtil.getCurrentMemberId());
         deleteCookie(response,JSESSIONID);
         deleteCookie(response,REMEMBER_ME);
+        deleteCookie(response,"accessToken");
         return ResultDataResponseDTO.empty();
     }
     /**
