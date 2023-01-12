@@ -3,6 +3,7 @@ package f3f.global.filter;
 import f3f.global.jwt.TokenProvider;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
+import f3f.global.util.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -45,11 +47,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
     // Request Header 에서 토큰 정보를 꺼내오기
     private String resolveToken(HttpServletRequest request) {
-
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken)&& bearerToken.startsWith(BEARER_PREFIX)
+        Cookie bearerToken = CookieUtil.getCookie(request, "accessToken").get();
+        System.out.println("bearerToken.getValue() = " + bearerToken.getValue());
+//        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        if (StringUtils.hasText(bearerToken.getValue())
+//                && bearerToken.startsWith(BEARER_PREFIX)
         ) {
-            return bearerToken.substring(7);
+            return bearerToken.getValue();
         }
         return null;
 
