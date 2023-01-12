@@ -74,20 +74,20 @@ public class MemberAuthController {
         return ResultDataResponseDTO.of(tokenResponseDTO);
     }
 
-    /**
-     * 로그아웃
-     * @param response
-     * @return
-     */
-    @PostMapping("/logout")
-    public ResultDataResponseDTO logout(HttpServletResponse response) {
-
-        memberService.logout(SecurityUtil.getCurrentMemberId());
-        deleteCookie(response,JSESSIONID);
-        deleteCookie(response,REMEMBER_ME);
-        deleteCookie(response, ACCESSTOKEN);
-        return ResultDataResponseDTO.empty();
-    }
+//    /**
+//     * 로그아웃
+//     * @param response
+//     * @return
+//     */
+//    @PostMapping("/logout")
+//    public ResultDataResponseDTO logout(HttpServletResponse response) {
+//
+//        memberService.logout(SecurityUtil.getCurrentMemberId());
+//        deleteCookie(response,JSESSIONID);
+//        deleteCookie(response,REMEMBER_ME);
+//        deleteCookie(response, ACCESSTOKEN);
+//        return ResultDataResponseDTO.empty();
+//    }
     /**
      * 소셜 로그인 시 정보 return
      * @return
