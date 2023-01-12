@@ -1,5 +1,6 @@
 package f3f.domain.user.api;
 
+import com.nimbusds.oauth2.sdk.token.AccessToken;
 import f3f.domain.user.application.EmailCertificationService;
 import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dto.MemberDTO;
@@ -19,6 +20,8 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import static f3f.global.constants.JwtConstants.ACCESSTOKEN;
+import static f3f.global.constants.JwtConstants.ACCESS_TOKEN_COOKIE_EXPIRE_TIME;
 import static f3f.global.constants.SecurityConstants.JSESSIONID;
 import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 
@@ -55,7 +58,7 @@ public class MemberAuthController {
 
         MemberDTO.MemberLoginServiceResponseDto loginResponseDto = memberService.login(loginRequestDto);
 
-        CookieUtil.addCookie(response,"accessToken",loginResponseDto.getAccessToken(),300);
+        CookieUtil.addCookie(response,ACCESSTOKEN,loginResponseDto.getAccessToken(),  ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
 
         return ResultDataResponseDTO.of(loginResponseDto);
     }
@@ -82,7 +85,7 @@ public class MemberAuthController {
         memberService.logout(SecurityUtil.getCurrentMemberId());
         deleteCookie(response,JSESSIONID);
         deleteCookie(response,REMEMBER_ME);
-        deleteCookie(response,"accessToken");
+        deleteCookie(response, ACCESSTOKEN);
         return ResultDataResponseDTO.empty();
     }
     /**
@@ -134,6 +137,8 @@ public class MemberAuthController {
     private void deleteCookie(HttpServletResponse response,String cookieName) {
         Cookie cookie = new Cookie(cookieName, null); // choiceCookieName(쿠키 이름)에 대한 값을 null로 지정
         cookie.setMaxAge(0); // 유효시간을 0으로 설정
+        cookie.setPath("/");
         response.addCookie(cookie);
+        System.out.println("delete cookie "+cookieName);
     }
 }
