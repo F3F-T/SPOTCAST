@@ -187,7 +187,6 @@ public class MemberService {
         deleteCookie(response,JSESSIONID);
         deleteCookie(response,REMEMBER_ME);
         deleteCookie(response, ACCESSTOKEN);
-        response.sendRedirect("/");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated()) {
             new SecurityContextLogoutHandler().logout(request, response, auth);

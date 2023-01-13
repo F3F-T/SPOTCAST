@@ -28,7 +28,6 @@ public class SecurityUtil {
             throw new GeneralException(ErrorCode.INVALID_REQUEST,"로그인이 필요한 서비스입니다.");
         } else {
             return Long.parseLong(authentication.getName());
-
         }
     }
 
