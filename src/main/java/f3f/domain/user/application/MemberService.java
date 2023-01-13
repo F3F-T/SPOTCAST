@@ -16,12 +16,23 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+
 import static f3f.domain.user.dto.MemberDTO.*;
+import static f3f.global.constants.JwtConstants.ACCESSTOKEN;
+import static f3f.global.constants.SecurityConstants.JSESSIONID;
+import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 
 @Service
 @Slf4j
@@ -171,8 +182,16 @@ public class MemberService {
      * 로그아웃
      */
     @Transactional
-    public void logout(Long memberId) {
+    public void logout(Long memberId, HttpServletResponse response, HttpServletRequest request) throws IOException {
         refreshTokenDao.removeRefreshToken(memberId);
+        deleteCookie(response,JSESSIONID);
+        deleteCookie(response,REMEMBER_ME);
+        deleteCookie(response, ACCESSTOKEN);
+        response.sendRedirect("/");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
     }
 
     /**
@@ -350,5 +369,16 @@ public class MemberService {
         return memberRepository.existsByEmail(email);
     }
 
-
+    /**
+     * 쿠키 제거
+     * @param response
+     * @param cookieName
+     */
+    private void deleteCookie(HttpServletResponse response,String cookieName) {
+        Cookie cookie = new Cookie(cookieName, null); // choiceCookieName(쿠키 이름)에 대한 값을 null로 지정
+        cookie.setMaxAge(0); // 유효시간을 0으로 설정
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        System.out.println("delete cookie "+cookieName);
+    }
 }

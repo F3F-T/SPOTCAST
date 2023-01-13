@@ -8,12 +8,14 @@ import f3f.domain.user.dto.TokenDTO;
 import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.CookieUtil;
 import f3f.global.util.SecurityUtil;
+import jdk.jfr.Frequency;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -74,20 +76,18 @@ public class MemberAuthController {
         return ResultDataResponseDTO.of(tokenResponseDTO);
     }
 
-//    /**
-//     * 로그아웃
-//     * @param response
-//     * @return
-//     */
-//    @PostMapping("/logout")
-//    public ResultDataResponseDTO logout(HttpServletResponse response) {
-//
-//        memberService.logout(SecurityUtil.getCurrentMemberId());
-//        deleteCookie(response,JSESSIONID);
-//        deleteCookie(response,REMEMBER_ME);
-//        deleteCookie(response, ACCESSTOKEN);
-//        return ResultDataResponseDTO.empty();
-//    }
+    /**
+     * 로그아웃
+     * @param response
+     * @return
+     */
+    @PostMapping("/logout")
+    public ResultDataResponseDTO logout(HttpServletResponse response, HttpServletRequest request) throws IOException {
+
+        memberService.logout(SecurityUtil.getCurrentMemberId(),response, request);
+
+        return ResultDataResponseDTO.empty();
+    }
     /**
      * 소셜 로그인 시 정보 return
      * @return
@@ -129,16 +129,5 @@ public class MemberAuthController {
         return ResultDataResponseDTO.of(memberService.emailDuplicateCheck(email));
     }
 
-    /**
-     * 쿠키 제거
-     * @param response
-     * @param cookieName
-     */
-    private void deleteCookie(HttpServletResponse response,String cookieName) {
-        Cookie cookie = new Cookie(cookieName, null); // choiceCookieName(쿠키 이름)에 대한 값을 null로 지정
-        cookie.setMaxAge(0); // 유효시간을 0으로 설정
-        cookie.setPath("/");
-        response.addCookie(cookie);
-        System.out.println("delete cookie "+cookieName);
-    }
+
 }
