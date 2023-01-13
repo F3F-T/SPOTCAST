@@ -2,13 +2,19 @@ package f3f.domain.comment.dto;
 
 import f3f.domain.comment.domain.Comment;
 import lombok.Builder;
+import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
 public class CommentResponseDto {
 
     private Long id;
     private String content;
     private String name;
     private Long boardId;
+    private List<CommentResponseDto>childCommentsList = new ArrayList<>();
 
     /*댓글정보를 return할 응단 클래스
     -> Entity 클래스를 생성자 파라미터로 받아 데이터를 Dto로 변환하여 응답
