@@ -192,13 +192,22 @@ public class MemberService {
      * 로그아웃
      */
     @Transactional
-    public void logout(Long memberId, HttpServletResponse response, HttpServletRequest request) throws IOException {
-        refreshTokenDao.removeRefreshToken(memberId);
-        deleteCookie(response,JSESSIONID);
-        deleteCookie(response,REMEMBER_ME);
-        deleteCookie(response, ACCESSTOKEN);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    public void logout(HttpServletResponse response, HttpServletRequest request) throws IOException {
+
+        Cookie cookie = CookieUtil.getCookie(request, ACCESSTOKEN).orElse(null);
+        String accessToken;
+        if(cookie==null){
+            throw new GeneralException(ErrorCode.INVALID_REQUEST,"로그인이 필요한 서비스입니다.");
+        } else{
+            accessToken = cookie.getValue();
+        }
+        Authentication auth = tokenProvider.getAuthentication(accessToken);
+
         if (auth != null && auth.isAuthenticated()) {
+            refreshTokenDao.removeRefreshToken(Long.valueOf(auth.getName()));
+            deleteCookie(response,JSESSIONID);
+            deleteCookie(response,REMEMBER_ME);
+            deleteCookie(response, ACCESSTOKEN);
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
     }

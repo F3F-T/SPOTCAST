@@ -71,8 +71,7 @@ public class MemberAuthController {
      */
     @PostMapping("/logout")
     public ResultDataResponseDTO logout(HttpServletResponse response, HttpServletRequest request) throws IOException {
-            memberService.logout(SecurityUtil.getCurrentMemberId(),response, request);
-
+        memberService.logout(response, request);
 
         return ResultDataResponseDTO.empty();
     }

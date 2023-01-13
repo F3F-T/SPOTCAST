@@ -25,6 +25,7 @@ public class SecurityUtil {
             throw new RuntimeException("Security Context 에 인증 정보가 없습니다.");
         }
         if (authentication.getName().equals("anonymousUser")) {
+
             throw new GeneralException(ErrorCode.INVALID_REQUEST,"로그인이 필요한 서비스입니다.");
         } else {
             return Long.parseLong(authentication.getName());

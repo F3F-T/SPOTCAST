@@ -52,12 +52,12 @@ public class MemberController {
     @GetMapping("/myInfo")
     public ResultDataResponseDTO<MemberInfoResponseDto> findMyInfoById() {
         //memberId 검증
-
         return ResultDataResponseDTO.of(memberService.findMyInfo(SecurityUtil.getCurrentMemberId()));
     }
 
     /**
      * 비밀번호 변경 - 로그인 X
+     *
      * @param updatePasswordRequest
      * @return
      */

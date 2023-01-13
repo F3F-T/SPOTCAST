@@ -98,7 +98,9 @@ public class SecurityConfig {
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/oauth2/**").permitAll()
 //                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/member/**").hasRole("USER")
+                .antMatchers(HttpMethod.DELETE,"/member/{memberId}").access("hasRole('ADMIN') or hasRole('USER')")
+                .antMatchers("/member/myInfo","/member/{memberId}/change/**").access("hasRole('ADMIN') or hasRole('USER')")
+                .antMatchers("/member/**").permitAll()
                 //유저정보보기
                 .antMatchers("/admin/**").permitAll()
                 .antMatchers("/message/**").permitAll()
