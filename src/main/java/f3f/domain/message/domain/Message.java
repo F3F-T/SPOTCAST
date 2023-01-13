@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Message  extends BaseTimeEntity {
+public class Message extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
@@ -24,13 +24,13 @@ public class Message  extends BaseTimeEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id",insertable = false,updatable = false ,referencedColumnName = "member_id")
+    @JoinColumn(name = "sender_id", updatable = false, referencedColumnName = "member_id")
     private Member sender;
 
     private Boolean senderDisplayStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipient_id",insertable = false,updatable = false ,referencedColumnName = "member_id")
+    @JoinColumn(name = "recipient_id", updatable = false, referencedColumnName = "member_id")
     private Member recipient;
 
     private Boolean recipientDisplayStatus;
@@ -46,27 +46,34 @@ public class Message  extends BaseTimeEntity {
     }
 
 
+    public void updateDisplayStatus(Long memberId) {
 
-    public void updateMessage(Message message){
-        this.content = message.getContent();
-    }
-    public void updateDisplayStatus(Long memberId){
-        if(memberId == sender.getId()){
+        if (memberId.equals(sender.getId())) {
             this.senderDisplayStatus = false;
-        }
-        else if (memberId == recipient.getId()){
+        } else if (memberId.equals(recipient.getId())) {
             this.recipientDisplayStatus = false;
         }
 
     }
 
-    public MessageDTO.MessageResponseDto toMessageDto(){
+    public MessageDTO.MessageResponseDto toMessageDto() {
         return MessageDTO.MessageResponseDto.builder()
                 .id(this.getId())
                 .content(this.content)
                 .recipient(this.recipient.toMessageMemberDTO())
                 .sender(this.sender.toMessageMemberDTO())
                 .build();
+    }
 
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", sender=" + sender +
+                ", senderDisplayStatus=" + senderDisplayStatus +
+                ", recipient=" + recipient +
+                ", recipientDisplayStatus=" + recipientDisplayStatus +
+                '}';
     }
 }

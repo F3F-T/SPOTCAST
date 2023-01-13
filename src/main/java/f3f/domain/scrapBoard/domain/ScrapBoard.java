@@ -18,7 +18,7 @@ public class ScrapBoard {
 
     @Id
     @GeneratedValue
-    @Column(name = "scrapPost_id")
+    @Column(name = "scrapBoard_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,7 +37,7 @@ public class ScrapBoard {
         this.board = board;
     }
 
-    public BoardDTO.BoardInfoDTO toBoardInfoDTO(){
+    public BoardDTO.BoardInfoDTO toBoardInfoByScrapBoxDTO(){
         return BoardDTO.BoardInfoDTO.builder()
                 .title(this.board.getTitle())
                 .content(this.board.getContent())

@@ -47,20 +47,17 @@ public class MemberController {
 
     /**
      * 내 정보 찾기
-     * @param memberId
      * @return
      */
-    @GetMapping("/{memberId}/myInfo")
-    public ResultDataResponseDTO<MemberInfoResponseDto> findMyInfoById(@PathVariable Long memberId) {
+    @GetMapping("/myInfo")
+    public ResultDataResponseDTO<MemberInfoResponseDto> findMyInfoById() {
         //memberId 검증
-        CheckCurrentUser(memberId);
-
-
-        return ResultDataResponseDTO.of(memberService.findMyInfo(memberId));
+        return ResultDataResponseDTO.of(memberService.findMyInfo(SecurityUtil.getCurrentMemberId()));
     }
 
     /**
      * 비밀번호 변경 - 로그인 X
+     *
      * @param updatePasswordRequest
      * @return
      */
