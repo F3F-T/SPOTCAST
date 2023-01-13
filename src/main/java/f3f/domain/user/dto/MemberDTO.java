@@ -153,23 +153,14 @@ public class MemberDTO {
 
         private LoginMemberType loginMemberType;
 
-        private String grantType;
-
-        private String accessToken;
-
-
-        private Long accessTokenExpiresIn;
 
         @Builder
-        public MemberLoginServiceResponseDto(Long id, String email, Authority authority, String name, LoginMemberType loginMemberType, String grantType, String accessToken, Long accessTokenExpiresIn) {
+        public MemberLoginServiceResponseDto(Long id, String email, Authority authority, String name, LoginMemberType loginMemberType) {
             this.id = id;
             this.email = email;
             this.authority = authority;
             this.name = name;
             this.loginMemberType = loginMemberType;
-            this.grantType = grantType;
-            this.accessToken = accessToken;
-            this.accessTokenExpiresIn = accessTokenExpiresIn;
         }
     }
 
@@ -233,12 +224,20 @@ public class MemberDTO {
     @NoArgsConstructor
     public static class MemberUpdateInformationRequestDto {
 
-        @NotBlank
         private String information;
 
+        private String twitter;
+
+        private String instagram;
+
+        private String otherSns;
+
         @Builder
-        public MemberUpdateInformationRequestDto(String information) {
+        public MemberUpdateInformationRequestDto(String information, String twitter, String instagram, String otherSns) {
             this.information = information;
+            this.twitter = twitter;
+            this.instagram = instagram;
+            this.otherSns = otherSns;
         }
     }
 

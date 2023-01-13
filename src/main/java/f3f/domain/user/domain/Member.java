@@ -100,8 +100,11 @@ public class Member extends MemberBase {
         this.password = password;
     }
 
-    public void updateInformation(String information){
-        this.information = information;
+    public void updateInformation(MemberDTO.MemberUpdateInformationRequestDto updateInformationRequest){
+        this.information = updateInformationRequest.getInformation();
+        this.instagram = updateInformationRequest.getInstagram();
+        this.twitter = updateInformationRequest.getTwitter();
+        this.otherSns = updateInformationRequest.getOtherSns();
     }
 
 

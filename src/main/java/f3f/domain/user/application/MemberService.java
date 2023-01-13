@@ -10,6 +10,7 @@ import f3f.domain.user.exception.*;
 import f3f.global.jwt.TokenProvider;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
+import f3f.global.util.CookieUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -31,6 +32,7 @@ import java.io.IOException;
 
 import static f3f.domain.user.dto.MemberDTO.*;
 import static f3f.global.constants.JwtConstants.ACCESSTOKEN;
+import static f3f.global.constants.JwtConstants.ACCESS_TOKEN_COOKIE_EXPIRE_TIME;
 import static f3f.global.constants.SecurityConstants.JSESSIONID;
 import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 
@@ -106,7 +108,7 @@ public class MemberService {
      * @return
      */
     @Transactional(readOnly = true)
-    public MemberLoginServiceResponseDto login(MemberLoginRequestDto loginRequest) {
+    public MemberLoginServiceResponseDto login(MemberLoginRequestDto loginRequest,HttpServletResponse response) {
 
         // 로그인 정보로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
@@ -128,6 +130,7 @@ public class MemberService {
             String refreshToken = tokenDto.getRefreshToken();
             saveRefreshTokenInStorage(refreshToken, Long.valueOf(authentication.getName())); // 추후 DB 나 어딘가 저장 예정
 
+            CookieUtil.addCookie(response,ACCESSTOKEN,tokenDto.getAccessToken(),  ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
 
             return memberLoginResponse;
         } catch (BadCredentialsException e) {
@@ -141,15 +144,22 @@ public class MemberService {
     /**
      * 토큰 재발급
      *
-     * @param tokenRequestDto
      * @return
      */
     @Transactional
-    public TokenDTO.TokenResponseDTO reissue(TokenDTO.TokenRequestDTO tokenRequestDto) {
+    public void reissue(HttpServletRequest request, HttpServletResponse response) {
 
+
+        Cookie cookie = CookieUtil.getCookie(request, ACCESSTOKEN).orElse(null);
+        String accessToken ;
+        if(cookie==null){
+            throw new GeneralException(ErrorCode.INVALID_REQUEST,"로그인이 필요한 서비스입니다.");
+        } else{
+            accessToken = cookie.getValue();
+        }
 
         // 1. Access Token 에서 Member ID 가져오기
-        Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
+        Authentication authentication = tokenProvider.getAuthentication(accessToken);
 
         // 2. 저장소에서 Member ID 를 기반으로 유저 확인
         if (!memberRepository.existsById(Long.valueOf(authentication.getName()))) {
@@ -174,7 +184,7 @@ public class MemberService {
         saveRefreshTokenInStorage(tokenDTO.getRefreshToken(), Long.valueOf(authentication.getName()));// 추후 디비에 저장
 
         // 토큰 발급
-        return tokenDTO.toEntity();
+        CookieUtil.addCookie(response,ACCESSTOKEN,tokenDTO.getAccessToken(),  ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
     }
 
 
@@ -273,11 +283,10 @@ public class MemberService {
     @Transactional
     public void updateInformation(MemberUpdateInformationRequestDto updateInformationRequest, Long memberId) {
 
-        String information = updateInformationRequest.getInformation();
 
         Member member = findMemberByMemberId(memberId);
 
-        member.updateInformation(information);
+        member.updateInformation(updateInformationRequest);
     }
 
 

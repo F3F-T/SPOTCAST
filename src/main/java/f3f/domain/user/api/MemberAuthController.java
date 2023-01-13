@@ -1,20 +1,14 @@
 package f3f.domain.user.api;
 
-import com.nimbusds.oauth2.sdk.token.AccessToken;
 import f3f.domain.user.application.EmailCertificationService;
 import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dto.MemberDTO;
-import f3f.domain.user.dto.TokenDTO;
 import f3f.global.response.ResultDataResponseDTO;
-import f3f.global.util.CookieUtil;
 import f3f.global.util.SecurityUtil;
-import jdk.jfr.Frequency;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -22,10 +16,6 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import static f3f.global.constants.JwtConstants.ACCESSTOKEN;
-import static f3f.global.constants.JwtConstants.ACCESS_TOKEN_COOKIE_EXPIRE_TIME;
-import static f3f.global.constants.SecurityConstants.JSESSIONID;
-import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 
 @RestController
 @RequestMapping("/auth")
@@ -58,22 +48,20 @@ public class MemberAuthController {
     public ResultDataResponseDTO<MemberDTO.MemberLoginServiceResponseDto> login(@RequestBody MemberDTO.MemberLoginRequestDto
                                                                               loginRequestDto, HttpServletResponse response) {
 
-        MemberDTO.MemberLoginServiceResponseDto loginResponseDto = memberService.login(loginRequestDto);
-
-        CookieUtil.addCookie(response,ACCESSTOKEN,loginResponseDto.getAccessToken(),  ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
+        MemberDTO.MemberLoginServiceResponseDto loginResponseDto = memberService.login(loginRequestDto,response);
 
         return ResultDataResponseDTO.of(loginResponseDto);
     }
 
     /**
      * JWT 토큰 재발급
-     * @param tokenRequestDto
      * @return
      */
     @PostMapping("/reissue")
-    public ResultDataResponseDTO<TokenDTO.TokenResponseDTO> reissue(@RequestBody TokenDTO.TokenRequestDTO tokenRequestDto) {
-        TokenDTO.TokenResponseDTO tokenResponseDTO = memberService.reissue(tokenRequestDto);
-        return ResultDataResponseDTO.of(tokenResponseDTO);
+    public ResultDataResponseDTO reissue(HttpServletRequest request,HttpServletResponse response) {
+
+        memberService.reissue(request,response);
+        return ResultDataResponseDTO.empty();
     }
 
     /**
