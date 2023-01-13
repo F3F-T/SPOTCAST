@@ -46,9 +46,9 @@ public class MemberAuthController {
      */
     @PostMapping("/login")
     public ResultDataResponseDTO<MemberDTO.MemberLoginServiceResponseDto> login(@RequestBody MemberDTO.MemberLoginRequestDto
-                                                                              loginRequestDto, HttpServletResponse response) {
+                                                                              loginRequestDto, HttpServletResponse response,HttpServletRequest request) {
 
-        MemberDTO.MemberLoginServiceResponseDto loginResponseDto = memberService.login(loginRequestDto,response);
+        MemberDTO.MemberLoginServiceResponseDto loginResponseDto = memberService.login(loginRequestDto,response,request);
 
         return ResultDataResponseDTO.of(loginResponseDto);
     }

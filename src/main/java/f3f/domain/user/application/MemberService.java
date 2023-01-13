@@ -108,7 +108,7 @@ public class MemberService {
      * @return
      */
     @Transactional(readOnly = true)
-    public MemberLoginServiceResponseDto login(MemberLoginRequestDto loginRequest,HttpServletResponse response) {
+    public MemberLoginServiceResponseDto login(MemberLoginRequestDto loginRequest,HttpServletResponse response,HttpServletRequest request) {
 
         // 로그인 정보로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
@@ -129,7 +129,7 @@ public class MemberService {
 
             String refreshToken = tokenDto.getRefreshToken();
             saveRefreshTokenInStorage(refreshToken, Long.valueOf(authentication.getName())); // 추후 DB 나 어딘가 저장 예정
-
+            CookieUtil.deleteCookie(request,response,ACCESSTOKEN);
             CookieUtil.addCookie(response,ACCESSTOKEN,tokenDto.getAccessToken(),  ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
 
             return memberLoginResponse;

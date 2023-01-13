@@ -97,15 +97,12 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.OPTIONS, "**").permitAll()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/oauth2/**").permitAll()
-//                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE,"/member/{memberId}").access("hasRole('ADMIN') or hasRole('USER')")
                 .antMatchers("/member/myInfo","/member/{memberId}/change/**").access("hasRole('ADMIN') or hasRole('USER')")
                 .antMatchers("/member/**").permitAll()
-                //유저정보보기
-                .antMatchers("/admin/**").permitAll()
                 .antMatchers("/message/**").permitAll()
 
-//                .antMatchers("/member/**").permitAll()
 //                .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
                 .anyRequest().permitAll()   //` 나머지 API 는 전부 인증 필요
 
@@ -128,11 +125,6 @@ public class SecurityConfig {
                 .successHandler(oAuth2AuthenticationSuccessHandler())
                 .failureHandler(oAuth2AuthenticationFailureHandler());
 
-//                .and()
-//                .logout() // 로그아웃 기능 작동함
-//                .logoutUrl("/auth/logout") // 로그아웃 처리 URL, default: /logout, 원칙적으로 post 방식만 지원
-//                .logoutSuccessUrl("/") // 로그아웃 성공 후 이동페이지
-//                .deleteCookies(JSESSIONID,REMEMBER_ME,ACCESSTOKEN); // 로그아웃 후 쿠키 삭제
         return http.build();
     }
 
