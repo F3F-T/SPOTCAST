@@ -379,6 +379,5 @@ public class MemberService {
         cookie.setMaxAge(0); // 유효시간을 0으로 설정
         cookie.setPath("/");
         response.addCookie(cookie);
-        System.out.println("delete cookie "+cookieName);
     }
 }
