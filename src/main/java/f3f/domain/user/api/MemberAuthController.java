@@ -76,15 +76,6 @@ public class MemberAuthController {
         return ResultDataResponseDTO.empty();
     }
     /**
-     * 소셜 로그인 시 정보 return
-     * @return
-     */
-    @GetMapping("/myInfo")
-    public ResultDataResponseDTO<MemberDTO.MemberInfoResponseDto> findMyInfoById() {
-
-        return ResultDataResponseDTO.of(memberService.findMyInfo(SecurityUtil.getCurrentMemberId()));
-    }
-    /**
      * 이메일 인증 번호 전송
      * @param request
      * @return
