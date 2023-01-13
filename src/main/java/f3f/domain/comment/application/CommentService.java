@@ -14,6 +14,7 @@ import f3f.domain.board.domain.Board;
 import f3f.domain.comment.dao.CommentRepository;
 import f3f.domain.comment.domain.Comment;
 import f3f.domain.comment.dto.CommentDTO;
+import f3f.domain.comment.dto.CommentResponseDto;
 import f3f.domain.comment.exception.MaxDepthException;
 import f3f.domain.comment.exception.NotFoundBoardByIdException;
 import f3f.domain.comment.exception.NotFoundParentException;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -76,12 +78,17 @@ public class CommentService {
     }
     /*READ*/
     @Transactional(readOnly = true)
-    public List<Comment> findCommentsByBoardId(Long boardId){
+    public List<CommentResponseDto> findCommentsByBoardId(Long boardId){
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new NotFoundBoardByIdException());
-
-        return board.getComments();
+        List<Comment> commentList = commentRepository.findByBoardId(board.getId());
+        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+        for (Comment comment : commentList) {
+            CommentResponseDto commentResponseDto = new CommentResponseDto(comment);
+            commentResponseDtoList.add(commentResponseDto);
+        }
+        return commentResponseDtoList;
 
 //         //태희
 //        if (boardRepository.existsById(board.getId())) {

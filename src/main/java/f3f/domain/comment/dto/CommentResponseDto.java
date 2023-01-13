@@ -1,6 +1,7 @@
 package f3f.domain.comment.dto;
 
 import f3f.domain.comment.domain.Comment;
+import lombok.Builder;
 
 public class CommentResponseDto {
 
@@ -14,6 +15,7 @@ public class CommentResponseDto {
      별도의 전달 객체를 활용해 연관관계를 맺은 엔티티간의 무한참조를 방지 */
 
     /* Entity -> Dto*/
+    @Builder
     public CommentResponseDto(Comment comment) {
         this.id = comment.getId();
         this.content = comment.getContent();
