@@ -36,6 +36,8 @@ import java.util.Enumeration;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static f3f.global.constants.JwtConstants.ACCESSTOKEN;
+import static f3f.global.constants.JwtConstants.ACCESS_TOKEN_COOKIE_EXPIRE_TIME;
 import static f3f.global.constants.SecurityConstants.REDIRECT_URI_PARAM_COOKIE_NAME;
 
 @Slf4j
@@ -56,7 +58,6 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String targetUrl = determineTargetUrl(request, response, authentication);
         if (response.isCommitted()) {
-            logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
             return;
         }
 
@@ -74,8 +75,9 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
 
         saveRefreshTokenInStorage(tokenDTO.getRefreshToken(), Long.valueOf(authentication.getName()));
 
+        CookieUtil.addCookie(response,ACCESSTOKEN,tokenDTO.getAccessToken(),  ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
         String uriString = UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", tokenDTO.getAccessToken())
+//                .queryParam("token", tokenDTO.getAccessToken())
                 .build().toUriString();
         return uriString;
     }
