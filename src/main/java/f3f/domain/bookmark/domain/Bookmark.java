@@ -1,36 +1,37 @@
 package f3f.domain.bookmark.domain;
 
-import f3f.domain.portfolioBookmark.domain.PortfolioBookmark;
+import f3f.domain.publicModel.BaseTimeEntity;
 import f3f.domain.user.domain.Member;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
-public class Bookmark {
+public class Bookmark extends BaseTimeEntity {
     @Id
     @GeneratedValue
     @Column(name = "bookmark_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id")
-    private Member member;
+    private String content;
 
-    @OneToMany(mappedBy="bookmark", fetch = FetchType.LAZY)
-    private List<PortfolioBookmark> portfolioBookmarkList = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "follower_id", updatable = false, referencedColumnName = "member_id")
+    private Member follower;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "following_id", updatable = false, referencedColumnName = "member_id")
+    private Member following;
 
     @Builder
-    public Bookmark( Long id, Member member){
+    public Bookmark(Long id, String content, Member follower, Member following) {
         this.id = id;
-        this.member = member;
+        this.content = content;
+        this.follower = follower;
+        this.following = following;
     }
 }

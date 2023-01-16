@@ -65,15 +65,4 @@ public class Message extends BaseTimeEntity {
                 .build();
     }
 
-    @Override
-    public String toString() {
-        return "Message{" +
-                "id=" + id +
-                ", content='" + content + '\'' +
-                ", sender=" + sender +
-                ", senderDisplayStatus=" + senderDisplayStatus +
-                ", recipient=" + recipient +
-                ", recipientDisplayStatus=" + recipientDisplayStatus +
-                '}';
-    }
 }

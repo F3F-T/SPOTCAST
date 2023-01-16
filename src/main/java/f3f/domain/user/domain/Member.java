@@ -53,8 +53,12 @@ public class Member extends MemberBase {
     @OneToMany(mappedBy = "recruiter")
     private List<Apply> recruiterList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
-    private List<Bookmark> bookmarkList = new ArrayList<>();
+    @OneToMany(mappedBy = "follower")
+    private List<Bookmark> followerList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "following")
+    private List<Bookmark> followingList = new ArrayList<>();
+
 
     @OneToOne(fetch = FetchType.LAZY , mappedBy = "member")
     @JoinColumn(name = "portfolio_id" )
