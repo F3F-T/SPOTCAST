@@ -44,7 +44,4 @@ public class CommentController {
         List<CommentResponseDto> commentsByBoardId = commentService.findCommentsByBoardId(boardId);
         return ResultDataResponseDTO.of(commentsByBoardId);
     }
-
-
-
 }

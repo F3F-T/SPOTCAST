@@ -42,7 +42,7 @@ public class BoardController {
         return board.getId();
     }
 
-    @GetMapping(value = "/board/list/{categoryId}/{boardType}/{sortType}")
+    @GetMapping(value = "/board/list/{boardType}/{categoryId}/{sortType}")
     public List<BoardDTO.BoardInfoDTO> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType,@PathVariable SortType sortType){
         return boardService.getBoardListByCategoryId(categoryId,boardType,sortType);
     }
@@ -56,6 +56,11 @@ public class BoardController {
     @GetMapping(value = "/board/{boardId}")
     public BoardDTO.BoardInfoDTO getBoardInfo(@PathVariable long boardId, @PathVariable long memberId){
         return boardService.getBoardInfo(boardId,memberId);
+    }
+
+    @GetMapping(value = "/board/list")
+    public List<BoardDTO.BoardInfoDTO> getBoardInfoList(){
+        return null;
     }
 
 }

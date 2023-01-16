@@ -7,7 +7,6 @@ import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +21,8 @@ public class LikeController {
 
     /*게시글 좋아요 추가*/
     @PostMapping("/board/{boardId}/like")
-    public ResponseEntity addLike(@PathVariable Long boardId,@RequestBody LikeDTO.SaveRequest request ){
-        return ResponseEntity.ok(likeService.addLike(request));
+    public ResultDataResponseDTO addLike(@PathVariable Long boardId,@RequestBody LikeDTO.SaveRequest request ){
+        return ResultDataResponseDTO.of(likeService.addLike(request));
     }
 
     /*게시글 좋아요 삭제*/
