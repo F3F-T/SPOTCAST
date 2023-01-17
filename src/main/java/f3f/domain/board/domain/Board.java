@@ -103,4 +103,8 @@ public class Board extends BaseTimeEntity {
         this.boardType = request.getBoardType();
         this.category = request.getCategory();
     }
+
+    public void updateViewCount(Board board){
+        board.viewCount += 1;
+    }
 }

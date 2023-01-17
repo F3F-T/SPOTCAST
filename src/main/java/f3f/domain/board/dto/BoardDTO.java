@@ -62,6 +62,8 @@ public class BoardDTO {
 
         private long viewCount;
 
+        private long commentCount;
+
         private long likeCount;
 
         @Enumerated(EnumType.STRING)
@@ -72,10 +74,14 @@ public class BoardDTO {
         private MemberDTO.MemberBoardInfoResponseDto member;
 
         @Builder
-        public BoardInfoDTO(String title, String content, long viewCount, long likeCount, BoardType boardType, Category category, MemberDTO.MemberBoardInfoResponseDto member) {
+
+        public BoardInfoDTO(long id, String title, String content, long viewCount, long commentCount, long likeCount, BoardType boardType,
+                            Category category, MemberDTO.MemberBoardInfoResponseDto member) {
+            this.id = id;
             this.title = title;
             this.content = content;
             this.viewCount = viewCount;
+            this.commentCount = commentCount;
             this.likeCount = likeCount;
             this.boardType = boardType;
             this.category = category;
@@ -86,6 +92,7 @@ public class BoardDTO {
     public static class BoardDetailInfoDTO {
 
         private long id;
+
         private String title;
 
         private String content;

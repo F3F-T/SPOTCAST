@@ -108,7 +108,7 @@ public class BoardService {
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(NotFoundBoardException::new);
-
+        board.updateViewCount(board);
         if (member.getId() != board.getMember().getId()){
             throw new BoardMissMatchUserException();
         }
