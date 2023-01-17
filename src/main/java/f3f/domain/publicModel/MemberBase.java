@@ -32,6 +32,8 @@ public class MemberBase extends BaseTimeEntity {
     private Authority authority;
 
 
-    protected String information;
+    private String field;
+
+
 
 }

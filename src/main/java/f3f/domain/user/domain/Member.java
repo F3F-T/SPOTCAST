@@ -32,7 +32,8 @@ public class Member extends MemberBase {
 
     private String otherSns;
 
-    private String field;
+    private String information;
+
 
     private String egName;
 
@@ -73,12 +74,12 @@ public class Member extends MemberBase {
     @OneToMany(mappedBy = "recipient")
     private List<Message> receptionMessageList = new ArrayList<>();
 
-
     @Builder
-    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information,  List<Board> boardList, List<Likes> likesList, List<Comment> commentList, List<Apply> volunteerList, List<Apply> recruiterList, List<Bookmark> bookmarkList, Portfolio portfolio) {
-        super(id, email, name, password, loginMemberType, loginType, authority, information);
-
+    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String field) {
+        super(id, email, name, password, loginMemberType, loginType, authority, field);
     }
+
+
 
     public MemberInfoResponseDto toFindMemberDto(){
         return MemberInfoResponseDto.builder()
@@ -92,6 +93,8 @@ public class Member extends MemberBase {
                 .instagram(instagram)
                 .twitter(twitter)
                 .otherSns(otherSns)
+                .field(this.getField())
+                .egName(this.getEgName())
                 .build();
     }
 
