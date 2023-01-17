@@ -22,13 +22,16 @@ public class BookmarkDTO {
     @Getter
     @NoArgsConstructor
     public static class BookmarkListResponseDto{
-        private Long id;
+        private Long boockmarkId;
+        private Long memberId;
         private String name;
         private String email;
 
         @Builder
-        public BookmarkListResponseDto(Long id, String name, String email) {
-            this.id = id;
+
+        public BookmarkListResponseDto(Long boockmarkId, Long memberId, String name, String email) {
+            this.boockmarkId = boockmarkId;
+            this.memberId = memberId;
             this.name = name;
             this.email = email;
         }

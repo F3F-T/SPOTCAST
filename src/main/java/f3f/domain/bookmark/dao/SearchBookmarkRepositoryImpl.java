@@ -20,8 +20,8 @@ public class SearchBookmarkRepositoryImpl implements SearchBookmarkRepository {
     @Override
     public List<BookmarkDTO.BookmarkListResponseDto> getFollowerListByMemberId(Long member_id) {
         List<BookmarkDTO.BookmarkListResponseDto> followerList = jpaQueryFactory
-                .select(Projections.fields(
-                        BookmarkDTO.BookmarkListResponseDto.class, member.id, member.email, member.name))
+                .select(Projections.constructor(
+                        BookmarkDTO.BookmarkListResponseDto.class,bookmark.id, member.id, member.email, member.name))
                 .from(member).leftJoin(bookmark).fetchJoin()
                 .on(bookmark.follower.id.eq(member.id))
                 .where(bookmark.following.id.eq(member_id))
@@ -32,8 +32,8 @@ public class SearchBookmarkRepositoryImpl implements SearchBookmarkRepository {
     @Override
     public List<BookmarkDTO.BookmarkListResponseDto> getFollowingListByMemberId(Long member_id) {
         List<BookmarkDTO.BookmarkListResponseDto> followerList = jpaQueryFactory
-                .select(Projections.fields(
-                        BookmarkDTO.BookmarkListResponseDto.class, member.id, member.email, member.name))
+                .select(Projections.constructor(
+                        BookmarkDTO.BookmarkListResponseDto.class, bookmark.id,member.id, member.email, member.name))
                 .from(member).join(bookmark).fetchJoin()
                 .on(bookmark.following.id.eq(member.id))
                 .where(bookmark.follower.id.eq(member_id))
