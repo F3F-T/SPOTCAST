@@ -32,6 +32,9 @@ public class Member extends MemberBase {
 
     private String otherSns;
 
+    private String field;
+
+    private String egName;
 
     @OneToMany(mappedBy = "member")
     private List<Scrap> scrapList = new ArrayList<>();

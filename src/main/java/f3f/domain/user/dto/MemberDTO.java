@@ -232,12 +232,18 @@ public class MemberDTO {
 
         private String otherSns;
 
+        private String field;
+
+        private String egName;
+
         @Builder
-        public MemberUpdateInformationRequestDto(String information, String twitter, String instagram, String otherSns) {
+        public MemberUpdateInformationRequestDto(String information, String twitter, String instagram, String otherSns, String field, String egName) {
             this.information = information;
             this.twitter = twitter;
             this.instagram = instagram;
             this.otherSns = otherSns;
+            this.field = field;
+            this.egName = egName;
         }
     }
 
