@@ -9,13 +9,13 @@ public class BookmarkDTO {
     @Getter
     @NoArgsConstructor
     public static class BookmarkRequestDto{
-        private Long follower_id;
-        private Long following_id;
+        private Long followerId;
+        private Long followingId;
 
         @Builder
-        public BookmarkRequestDto(Long follower_id, Long following_id) {
-            this.follower_id = follower_id;
-            this.following_id = following_id;
+        public BookmarkRequestDto(Long followerId, Long followingId) {
+            this.followerId = followerId;
+            this.followingId = followingId;
         }
     }
 

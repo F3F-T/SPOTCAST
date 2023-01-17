@@ -4,7 +4,6 @@ import f3f.domain.bookmark.dao.BookmarkRepository;
 import f3f.domain.bookmark.dao.SearchBookmarkRepository;
 import f3f.domain.bookmark.dto.BookmarkDTO;
 import f3f.domain.publicModel.BaseTimeEntity;
-import f3f.domain.portfolio.dao.PortfolioRepository;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
@@ -36,16 +35,16 @@ public class BookmarkService extends BaseTimeEntity {
     // 북마크 요청
     @Transactional
     public void followRequest(BookmarkDTO.BookmarkRequestDto requestDto){
-        if(requestDto.getFollower_id().equals(requestDto.getFollowing_id())){
+        if(requestDto.getFollowerId().equals(requestDto.getFollowingId())){
             throw new GeneralException(ErrorCode.MISMATCH_FOLLOW, "본인을 팔로우할 수 없습니다.");
         }
-        if(!memberRepository.existsById(requestDto.getFollower_id())){
+        if(!memberRepository.existsById(requestDto.getFollowerId())){
             throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자의 요청입니다.");
         }
-        if(!memberRepository.existsById(requestDto.getFollowing_id())){
+        if(!memberRepository.existsById(requestDto.getFollowingId())){
             throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다.");
         }
-        bookmarkRepository.saveFollowRequest(requestDto.getFollower_id(),requestDto.getFollowing_id());
+        bookmarkRepository.saveFollowRequest(requestDto.getFollowerId(),requestDto.getFollowingId());
     }
 
     //북마크 취소 요청
