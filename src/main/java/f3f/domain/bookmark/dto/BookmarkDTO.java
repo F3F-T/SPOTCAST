@@ -18,4 +18,19 @@ public class BookmarkDTO {
             this.following_id = following_id;
         }
     }
+
+    @Getter
+    @NoArgsConstructor
+    public static class BookmarkListResponseDto{
+        private Long id;
+        private String name;
+        private String email;
+
+        @Builder
+        public BookmarkListResponseDto(Long id, String name, String email) {
+            this.id = id;
+            this.name = name;
+            this.email = email;
+        }
+    }
 }
