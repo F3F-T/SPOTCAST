@@ -115,6 +115,8 @@ public class Member extends MemberBase {
         this.instagram = updateInformationRequest.getInstagram();
         this.twitter = updateInformationRequest.getTwitter();
         this.otherSns = updateInformationRequest.getOtherSns();
+        this.field = updateInformationRequest.getField();
+        this.egName = updateInformationRequest.getEgName();
     }
 
 
