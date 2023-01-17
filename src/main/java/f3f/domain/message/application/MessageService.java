@@ -78,28 +78,24 @@ public class MessageService {
 
     //TODO 리스트 가져오는 쿼리 작성
     @Transactional(readOnly = true)
-    public List<MessageDTO.MessageResponseDto> getSendMessageListByUserId(long memberId) {
+    public List<MessageDTO.MessageListResponseDto> getSendMessageListByUserId(long memberId) {
         if (!memberRepository.existsById(memberId)) {
             throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다.");
         }
 
-        List<Message> sendListByUserId = searchMessageRepository.getSendListByUserId(memberId);
-        List<MessageDTO.MessageResponseDto> messageResponseDtoList = sendListByUserId.stream()
-                .map(Message::toMessageDto).collect(Collectors.toList());
-        return messageResponseDtoList;
+        List<MessageDTO.MessageListResponseDto> sendListByUserId = searchMessageRepository.getSendListByUserId(memberId);
+        return sendListByUserId;
     }
 
     @Transactional(readOnly = true)
-    public List<MessageDTO.MessageResponseDto> getRecipientMessageListByUserId(long memberId) {
+    public List<MessageDTO.MessageListResponseDto> getRecipientMessageListByUserId(long memberId) {
         if(!memberRepository.existsById(memberId)){
             throw new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다.");
         }
-        List<Message> recipientListByUserId = searchMessageRepository.getRecipientListByUserId(memberId);
+        List<MessageDTO.MessageListResponseDto> recipientListByUserId = searchMessageRepository.getRecipientListByUserId(memberId);
 
-        List<MessageDTO.MessageResponseDto> messageResponseDtoList = recipientListByUserId.stream()
-                .map(Message::toMessageDto).collect(Collectors.toList());
 
-        return messageResponseDtoList;
+        return recipientListByUserId;
 
     }
 }

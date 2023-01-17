@@ -1,5 +1,6 @@
 package f3f.domain.message.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import f3f.domain.message.domain.Message;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO;
@@ -23,6 +24,37 @@ public class MessageDTO {
             this.content = content;
             this.sender = sender;
             this.recipient = recipient;
+        }
+
+        @QueryProjection
+        public MessageResponseDto(long id, String content, Member sender, Member recipient) {
+            this.id = id;
+            this.content = content;
+            this.sender = sender.toMessageMemberDTO();
+            this.recipient = recipient.toMessageMemberDTO();
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class MessageListResponseDto{
+        private Long id;
+        private String content;
+
+        private Long memberId;
+        private String memberEmail;
+
+        private String memberName;
+
+
+
+        @Builder
+        public MessageListResponseDto(Long id, String content, Long memberId, String memberEmail, String memberName) {
+            this.id = id;
+            this.content = content;
+            this.memberId = memberId;
+            this.memberEmail = memberEmail;
+            this.memberName = memberName;
         }
     }
 

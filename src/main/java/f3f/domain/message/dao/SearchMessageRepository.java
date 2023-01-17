@@ -14,9 +14,8 @@ public interface SearchMessageRepository {
     // 표시여부에 따라 검색
     // 메시지 최신순으로 검색
 
-    List<Message> getSendListByUserId(long sender_id);
+    List<MessageDTO.MessageListResponseDto> getSendListByUserId(long sender_id);
 
-//    @Query(value = "select * from message m where m.recipient_id = :recipient_id",nativeQuery = true)
-    List<Message> getRecipientListByUserId(long recipient_id);
+    List<MessageDTO.MessageListResponseDto> getRecipientListByUserId(long recipient_id);
     Page<MessageDTO.MessageResponseDto> findAllBySearchCondition(BoardDTO.SearchCondition condition, Pageable pageable);
 }

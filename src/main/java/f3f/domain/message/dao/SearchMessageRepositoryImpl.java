@@ -7,6 +7,7 @@ import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.message.domain.Message;
 import f3f.domain.message.domain.QMessage;
 import f3f.domain.message.dto.MessageDTO;
+import f3f.domain.message.dto.QMessageDTO_MessageResponseDto;
 import f3f.domain.user.domain.QMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,30 +28,36 @@ public class SearchMessageRepositoryImpl implements SearchMessageRepository {
 
 
     @Override
-    public List<Message> getSendListByUserId(long memberId) {
+    public List<MessageDTO.MessageListResponseDto> getSendListByUserId(long memberId) {
 
-        List<Message> result = jpaQueryFactory
-                .select(Projections.fields(Message.class,
+        List<MessageDTO.MessageListResponseDto> result = jpaQueryFactory
+                .select(Projections.constructor(MessageDTO.MessageListResponseDto.class,
                         message.id,
                         message.content,
-                        message.recipient,
-                        message.sender))
-                .from(message)
+                        member.id,
+                        member.email,
+                        member.name))
+                .from(member).leftJoin(message).fetchJoin()
+                .on(message.recipient.id.eq(member.id))
                 .where(message.sender.id.eq(memberId))
                 .fetch();
+
+
         return result;
     }
 
     @Override
-    public List<Message> getRecipientListByUserId(long memberId) {
+    public List<MessageDTO.MessageListResponseDto> getRecipientListByUserId(long memberId) {
 
-        List<Message> result = jpaQueryFactory
-                .select(Projections.fields(Message.class,
+        List<MessageDTO.MessageListResponseDto> result = jpaQueryFactory
+                .select(Projections.constructor(MessageDTO.MessageListResponseDto.class,
                         message.id,
                         message.content,
-                        message.recipient,
-                        message.sender))
-                .from(message)
+                        member.id,
+                        member.email,
+                        member.name))
+                .from(member).leftJoin(message).fetchJoin()
+                .on(message.sender.id.eq(member.id))
                 .where(message.recipient.id.eq(memberId))
                 .fetch();
         return result;

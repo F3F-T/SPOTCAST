@@ -53,17 +53,17 @@ public class MessageController {
     }
 
     @GetMapping(value = "/sender")
-    public ResultDataResponseDTO<List<MessageDTO.MessageResponseDto>> getSendMessageListByUserId(){
+    public ResultDataResponseDTO<List<MessageDTO.MessageListResponseDto>> getSendMessageListByUserId(){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        List<MessageDTO.MessageResponseDto> sendMessageList = messageService.getSendMessageListByUserId(memberId);
+        List<MessageDTO.MessageListResponseDto> sendMessageList = messageService.getSendMessageListByUserId(memberId);
         return ResultDataResponseDTO.of(sendMessageList);
     }
 
 
     @GetMapping(value = "/recipient")
-    public ResultDataResponseDTO<List<MessageDTO.MessageResponseDto>> getRecipientMessageListByUserId(){
+    public ResultDataResponseDTO<List<MessageDTO.MessageListResponseDto>> getRecipientMessageListByUserId(){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        List<MessageDTO.MessageResponseDto> recipientMessageList = messageService.getRecipientMessageListByUserId(memberId);
+        List<MessageDTO.MessageListResponseDto> recipientMessageList = messageService.getRecipientMessageListByUserId(memberId);
         return ResultDataResponseDTO.of(recipientMessageList);
     }
 }
