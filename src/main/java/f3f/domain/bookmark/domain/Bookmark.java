@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Getter
 public class Bookmark extends BaseTimeEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bookmark_id")
     private Long id;
 

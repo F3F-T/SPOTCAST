@@ -4,7 +4,6 @@ package f3f.domain.message.domain;
 import f3f.domain.message.dto.MessageDTO;
 import f3f.domain.publicModel.BaseTimeEntity;
 import f3f.domain.user.domain.Member;
-import f3f.domain.user.dto.MemberDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

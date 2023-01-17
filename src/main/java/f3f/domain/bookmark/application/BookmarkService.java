@@ -1,6 +1,7 @@
 package f3f.domain.bookmark.application;
 
 import f3f.domain.bookmark.dao.BookmarkRepository;
+import f3f.domain.bookmark.dto.BookmarkDTO;
 import f3f.domain.publicModel.BaseTimeEntity;
 import f3f.domain.portfolio.dao.PortfolioRepository;
 import f3f.domain.user.dao.MemberRepository;
@@ -29,13 +30,17 @@ public class BookmarkService extends BaseTimeEntity {
 
 
     @Transactional
-    public void followRequest(Long followerId, Long followingId){
-        if(!memberRepository.existsById(followerId)){
+    public void followRequest(BookmarkDTO.BookmarkRequestDto requestDto){
+        if(requestDto.getFollower_id().equals(requestDto.getFollowing_id())){
+            throw new GeneralException(ErrorCode.MISMATCH_FOLLOW, "본인을 팔로우할 수 없습니다.");
+        }
+        if(!memberRepository.existsById(requestDto.getFollower_id())){
             throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다.");
         }
-        if(!memberRepository.existsById(followingId)){
+        if(!memberRepository.existsById(requestDto.getFollowing_id())){
             throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다.");
         }
+        bookmarkRepository.saveFollowRequest(requestDto.getFollower_id(),requestDto.getFollowing_id());
 
     }
 

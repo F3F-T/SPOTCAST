@@ -57,7 +57,7 @@ public enum ErrorCode {
     NOTFOUND_SCRAPBOX(404,HttpStatus.NOT_FOUND),
 
     //중복 회원가입
-    DUPLICATION_SIGNUP(400,HttpStatus.BAD_REQUEST),
+    DUPLICATION_SIGNUP(409,HttpStatus.CONFLICT),
 
     //이메일 중복
     DUPLICATION_EMAIL(409,HttpStatus.CONFLICT),
@@ -67,6 +67,10 @@ public enum ErrorCode {
 
     //메세지 전송자와 요청자 불일치
     MISMATCH_SENDER(400,HttpStatus.BAD_REQUEST),
+
+    //팔로우와 팔로잉이 같은사람인 경우
+    MISMATCH_FOLLOW(400,HttpStatus.BAD_REQUEST),
+
 
     //토큰 없음
     JWT_ACCESS_DENIED(401,HttpStatus.UNAUTHORIZED);
