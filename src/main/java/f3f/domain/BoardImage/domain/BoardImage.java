@@ -14,7 +14,7 @@ public class BoardImage {
 
     @Id
     @GeneratedValue
-    private String id;
+    private Long id;
 
     private String s3Url;
 

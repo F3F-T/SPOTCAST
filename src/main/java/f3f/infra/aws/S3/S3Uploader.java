@@ -3,6 +3,8 @@ package f3f.infra.aws.S3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import f3f.global.response.ErrorCode;
+import f3f.global.response.GeneralException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +33,16 @@ public class S3Uploader {
         File uploadFile = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 전환 실패"));
         return upload(uploadFile, dirName);
+    }
+
+    public String deleteImage(String bucket, String key){
+        try{
+            amazonS3Client.deleteObject(bucket,key);
+            return "SUCCESS";
+        }catch (Exception e){
+            throw new GeneralException(ErrorCode.S3_ERROR,"S3 파일 삭제");
+        }
+
     }
 
     private String upload(File uploadFile, String dirName) {
