@@ -2,6 +2,7 @@ package f3f.domain.bookmark.dao;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sun.xml.bind.v2.TODO;
 import f3f.domain.bookmark.dto.BookmarkDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,7 @@ public class SearchBookmarkRepositoryImpl implements SearchBookmarkRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    // TODO 쿼리 튜닝 해야함
     @Override
     public List<BookmarkDTO.BookmarkListResponseDto> getFollowerListByMemberId(Long member_id) {
         List<BookmarkDTO.BookmarkListResponseDto> followerList = jpaQueryFactory
