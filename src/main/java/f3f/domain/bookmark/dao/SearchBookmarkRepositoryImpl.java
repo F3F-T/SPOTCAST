@@ -50,7 +50,7 @@ public class SearchBookmarkRepositoryImpl implements SearchBookmarkRepository {
 
     @Override
     public Slice<BookmarkDTO.BookmarkListResponseDto> getFollowingListByMemberId(Long member_id, Pageable pageable) {
-        List<BookmarkDTO.BookmarkListResponseDto> followerList = jpaQueryFactory
+        List<BookmarkDTO.BookmarkListResponseDto> followingList = jpaQueryFactory
                 .select(Projections.constructor(
                         BookmarkDTO.BookmarkListResponseDto.class, bookmark.id,member.id, member.email, member.name))
                 .from(member).join(bookmark).fetchJoin()
@@ -61,13 +61,13 @@ public class SearchBookmarkRepositoryImpl implements SearchBookmarkRepository {
                 .fetch();
 
         List<BookmarkDTO.BookmarkListResponseDto> content = new ArrayList<>();
-        for (BookmarkDTO.BookmarkListResponseDto eachFollower : followerList) {
+        for (BookmarkDTO.BookmarkListResponseDto eachFollowing : followingList) {
 
-            content.add(eachFollower);
+            content.add(eachFollowing);
         }
 
         boolean hasNext = false;
-        if (followerList.size() > pageable.getPageSize()) {
+        if (followingList.size() > pageable.getPageSize()) {
             content.remove(pageable.getPageSize());
             hasNext = true;
         }

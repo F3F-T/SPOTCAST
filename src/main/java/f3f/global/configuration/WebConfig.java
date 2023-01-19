@@ -1,8 +1,11 @@
 package f3f.global.configuration;
 
+import com.nimbusds.oauth2.sdk.token.AccessToken;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import static f3f.global.constants.JwtConstants.ACCESSTOKEN;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -12,6 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:3000","http://localhost:3001")
                 .allowedMethods("*")
                 .allowedHeaders("*")
+                .exposedHeaders(ACCESSTOKEN)
                 .allowCredentials(true);
     }
 }
