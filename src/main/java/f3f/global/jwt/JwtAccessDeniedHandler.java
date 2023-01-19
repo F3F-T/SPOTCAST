@@ -26,16 +26,21 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
         // 필요한 권한이 없이 접근하려 할때 403
         // 즉 ADMIN 페이지에 USER 가 접근하려고 할 때
-        sendResponse(response, accessDeniedException);
+        sendResponse(request,response, accessDeniedException);
 
     }
 
-    private void sendResponse(HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
+    private void sendResponse(HttpServletRequest request,HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         String result = objectMapper.writeValueAsString(ResponseDTO.of(false,ErrorCode.AUTHORITY_FORBIDDEN,"접근 권한이 없습니다."));
 
 
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
+        response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE,PATCH");
+        response.setHeader("Access-Control-Max-Age", "3600");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me,token");
         response.getWriter().write(result);
         response.setStatus(response.SC_FORBIDDEN);
     }
