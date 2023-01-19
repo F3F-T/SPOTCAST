@@ -14,8 +14,8 @@ public interface SearchMessageRepository {
     // 표시여부에 따라 검색
     // 메시지 최신순으로 검색
 
-    List<MessageDTO.MessageListResponseDto> getSendListByUserId(long sender_id);
+    Page<MessageDTO.MessageListResponseDto> getSendListByUserId(long sender_id, Pageable pageable);
 
-    List<MessageDTO.MessageListResponseDto> getRecipientListByUserId(long recipient_id);
-    Page<MessageDTO.MessageResponseDto> findAllBySearchCondition(BoardDTO.SearchCondition condition, Pageable pageable);
+    Page<MessageDTO.MessageListResponseDto> getRecipientListByUserId(long recipient_id, Pageable pageable);
+//    Page<MessageDTO.MessageResponseDto> findAllBySearchCondition(BoardDTO.SearchCondition condition, Pageable pageable);
 }

@@ -18,7 +18,6 @@ public class SearchBookmarkRepositoryImpl implements SearchBookmarkRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    // TODO 쿼리 튜닝 해야함
     @Override
     public List<BookmarkDTO.BookmarkListResponseDto> getFollowerListByMemberId(Long member_id) {
         List<BookmarkDTO.BookmarkListResponseDto> followerList = jpaQueryFactory

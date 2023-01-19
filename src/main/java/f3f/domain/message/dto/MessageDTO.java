@@ -46,8 +46,6 @@ public class MessageDTO {
 
         private String memberName;
 
-
-
         @Builder
         public MessageListResponseDto(Long id, String content, Long memberId, String memberEmail, String memberName) {
             this.id = id;

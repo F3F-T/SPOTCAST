@@ -7,6 +7,8 @@ import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,17 +55,17 @@ public class MessageController {
     }
 
     @GetMapping(value = "/sender")
-    public ResultDataResponseDTO<List<MessageDTO.MessageListResponseDto>> getSendMessageListByUserId(){
+    public ResultDataResponseDTO<Page<MessageDTO.MessageListResponseDto>> getSendMessageListByUserId(Pageable pageable){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        List<MessageDTO.MessageListResponseDto> sendMessageList = messageService.getSendMessageListByUserId(memberId);
+        Page<MessageDTO.MessageListResponseDto> sendMessageList = messageService.getSendMessageListByUserId(memberId,pageable);
         return ResultDataResponseDTO.of(sendMessageList);
     }
 
 
     @GetMapping(value = "/recipient")
-    public ResultDataResponseDTO<List<MessageDTO.MessageListResponseDto>> getRecipientMessageListByUserId(){
+    public ResultDataResponseDTO<Page<MessageDTO.MessageListResponseDto>> getRecipientMessageListByUserId(Pageable pageable){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        List<MessageDTO.MessageListResponseDto> recipientMessageList = messageService.getRecipientMessageListByUserId(memberId);
+        Page<MessageDTO.MessageListResponseDto> recipientMessageList = messageService.getRecipientMessageListByUserId(memberId,pageable);
         return ResultDataResponseDTO.of(recipientMessageList);
     }
 }
