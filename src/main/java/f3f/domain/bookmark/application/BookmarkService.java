@@ -9,6 +9,8 @@ import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,15 +57,16 @@ public class BookmarkService extends BaseTimeEntity {
 
     //나를 팔로우하는 사람들 리스트
     @Transactional
-    public List<BookmarkDTO.BookmarkListResponseDto> getFollowerList(Long memberId){
-        List<BookmarkDTO.BookmarkListResponseDto> followerList = searchBookmarkRepository.getFollowerListByMemberId(memberId);
+    public Slice<BookmarkDTO.BookmarkListResponseDto> getFollowerList(Long memberId, Pageable pageable){
+        Slice<BookmarkDTO.BookmarkListResponseDto> followerList = searchBookmarkRepository.getFollowerListByMemberId(memberId, pageable);
+//        List<BookmarkDTO.BookmarkListResponseDto> followerList =
         return followerList;
     }
 
     //내가 팔로우하는 사람들 리스트
     @Transactional
-    public List<BookmarkDTO.BookmarkListResponseDto> getFollowingList(Long memberId){
-        List<BookmarkDTO.BookmarkListResponseDto> followingList = searchBookmarkRepository.getFollowingListByMemberId(memberId);
+    public Slice<BookmarkDTO.BookmarkListResponseDto> getFollowingList(Long memberId,Pageable pageable){
+        Slice<BookmarkDTO.BookmarkListResponseDto> followingList = searchBookmarkRepository.getFollowingListByMemberId(memberId,pageable);
         return followingList;
     }
 }

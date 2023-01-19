@@ -7,6 +7,8 @@ import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,19 +45,19 @@ public class BookmarkController {
     }
 
     @GetMapping(value = "/bookmark/follower")
-    public ResultDataResponseDTO<List<BookmarkDTO.BookmarkListResponseDto>> getBookmarkFollowerList(){
+    public ResultDataResponseDTO<Slice<BookmarkDTO.BookmarkListResponseDto>> getBookmarkFollowerList(Pageable pageable){
 
         Long memberId = SecurityUtil.getCurrentMemberId();
-        List<BookmarkDTO.BookmarkListResponseDto> followerList = bookmarkService.getFollowerList(memberId);
+        Slice<BookmarkDTO.BookmarkListResponseDto> followerList = bookmarkService.getFollowerList(memberId,pageable);
 
         return ResultDataResponseDTO.of(followerList);
     }
 
     @GetMapping(value = "/bookmark/following")
-    public ResultDataResponseDTO<List<BookmarkDTO.BookmarkListResponseDto>> getBookmarkFollowingList(){
+    public ResultDataResponseDTO<Slice<BookmarkDTO.BookmarkListResponseDto>> getBookmarkFollowingList(Pageable pageable){
 
         Long memberId = SecurityUtil.getCurrentMemberId();
-        List<BookmarkDTO.BookmarkListResponseDto> followingList = bookmarkService.getFollowingList(memberId);
+        Slice<BookmarkDTO.BookmarkListResponseDto> followingList = bookmarkService.getFollowingList(memberId,pageable);
 
         return ResultDataResponseDTO.of(followingList);
     }
