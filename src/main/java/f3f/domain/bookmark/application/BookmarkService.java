@@ -37,7 +37,7 @@ public class BookmarkService extends BaseTimeEntity {
 
     // 북마크 요청
     @Transactional
-    public Long followRequest(BookmarkDTO.BookmarkRequestDto requestDto){
+    public void followRequest(BookmarkDTO.BookmarkRequestDto requestDto){
         if(requestDto.getFollowerId().equals(requestDto.getFollowingId())){
             throw new GeneralException(ErrorCode.MISMATCH_FOLLOW, "본인을 팔로우할 수 없습니다.");
         }
@@ -48,8 +48,7 @@ public class BookmarkService extends BaseTimeEntity {
             throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다.");
         }
         bookmarkRepository.saveFollowRequest(requestDto.getFollowerId(), requestDto.getFollowingId());
-        Bookmark bookmark = bookmarkRepository.findByFollowerIdAndFollowingId(requestDto.getFollowerId(), requestDto.getFollowingId()).orElse(null);
-        return bookmark.getId();
+
     }
 
     //북마크 취소 요청
