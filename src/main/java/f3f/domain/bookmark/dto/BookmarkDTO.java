@@ -21,6 +21,19 @@ public class BookmarkDTO {
 
     @Getter
     @NoArgsConstructor
+    public static class BookmarkCancelRequestDto{
+        private Long bookmarkId;
+        private Long memberId;
+
+        @Builder
+        public BookmarkCancelRequestDto(Long bookmarkId, Long memberId) {
+            this.bookmarkId = bookmarkId;
+            this.memberId = memberId;
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor
     public static class BookmarkListResponseDto{
         private Long bookmarkId;
         private Long memberId;

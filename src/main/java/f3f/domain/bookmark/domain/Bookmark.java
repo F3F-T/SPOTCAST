@@ -19,10 +19,12 @@ public class Bookmark extends BaseTimeEntity {
 
     private String content;
 
+    //팔로우 하는 사람
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "follower_id", updatable = false, referencedColumnName = "member_id")
     private Member follower;
 
+    //팔로우 당하는 사람
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "following_id", updatable = false, referencedColumnName = "member_id")
     private Member following;
