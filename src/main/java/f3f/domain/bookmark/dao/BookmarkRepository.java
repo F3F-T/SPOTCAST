@@ -9,9 +9,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface BookmarkRepository  extends JpaRepository<Scrap, Long> {
+public interface BookmarkRepository  extends JpaRepository<Bookmark, Long> {
 
     @Modifying
     @Query(value = "INSERT INTO bookmark(follower_id, following_id)\n" +
@@ -23,5 +24,7 @@ public interface BookmarkRepository  extends JpaRepository<Scrap, Long> {
     void saveFollowRequest(@Param("follower_id")Long follower_id, @Param("following_id")Long following_id);
 
     void deleteById(Long id);
+
+    Optional<Bookmark> findByFollowerIdAndFollowingId(Long follower_id, Long following_id);
 
 }

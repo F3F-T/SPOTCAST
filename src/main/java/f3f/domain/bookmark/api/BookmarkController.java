@@ -29,11 +29,11 @@ public class BookmarkController {
     private final BookmarkService bookmarkService;
 
     @PostMapping(value = "/bookmark")
-    public ResultDataResponseDTO saveBookmark(@RequestBody BookmarkDTO.BookmarkRequestDto requestDto){
+    public ResultDataResponseDTO<Long> saveBookmark(@RequestBody BookmarkDTO.BookmarkRequestDto requestDto){
 
-        bookmarkService.followRequest(requestDto);
-
-        return ResultDataResponseDTO.empty();
+        Long bookmarkId = bookmarkService.followRequest(requestDto);
+        System.out.println("bookmarkId = " + bookmarkId);
+        return ResultDataResponseDTO.of(bookmarkId);
     }
 
     @DeleteMapping(value = "/bookmark")
