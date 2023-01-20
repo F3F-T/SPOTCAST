@@ -54,12 +54,12 @@ public class BookmarkService extends BaseTimeEntity {
 
     //북마크 취소 요청
     @Transactional
-    public void followCancel(BookmarkDTO.BookmarkCancelRequestDto cancelRequestDto, Long currentMemberId){
-        if(!cancelRequestDto.getMemberId().equals(currentMemberId)){
+    public void followCancel(BookmarkDTO.BookmarkRequestDto requestDto, Long currentMemberId){
+        if(!requestDto.getFollowerId().equals(currentMemberId)){
             throw new GeneralException(ErrorCode.MISMATCH_FOLLOW, "본인만 팔로우를 취소할 수 있습니다.");
         }
 
-        bookmarkRepository.deleteById(cancelRequestDto.getBookmarkId());
+        bookmarkRepository.deleteByFollowerIdAndFollowingId(requestDto.getFollowerId(),requestDto.getFollowingId());
     }
 
     //나를 팔로우하는 사람들 리스트

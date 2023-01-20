@@ -23,7 +23,7 @@ public interface BookmarkRepository  extends JpaRepository<Bookmark, Long> {
             " and bm.following_id = :following_id) LIMIT 1;",nativeQuery = true)
     void saveFollowRequest(@Param("follower_id")Long follower_id, @Param("following_id")Long following_id);
 
-    void deleteById(Long id);
+    void deleteByFollowerIdAndFollowingId(Long follower_id, Long following_id);
 
     Optional<Bookmark> findByFollowerIdAndFollowingId(Long follower_id, Long following_id);
 

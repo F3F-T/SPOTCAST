@@ -37,10 +37,10 @@ public class BookmarkController {
     }
 
     @DeleteMapping(value = "/bookmark")
-    public ResultDataResponseDTO deleteBookmark(@RequestBody BookmarkDTO.BookmarkCancelRequestDto cancelRequestDto){
+    public ResultDataResponseDTO deleteBookmark(@RequestBody BookmarkDTO.BookmarkRequestDto requestDto){
 
         Long currentMemberId = SecurityUtil.getCurrentMemberId();
-        bookmarkService.followCancel(cancelRequestDto,currentMemberId);
+        bookmarkService.followCancel(requestDto,currentMemberId);
 
         return ResultDataResponseDTO.empty();
     }
