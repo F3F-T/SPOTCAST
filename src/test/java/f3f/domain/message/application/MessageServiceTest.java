@@ -20,10 +20,13 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -59,7 +62,6 @@ class MessageServiceTest {
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information(INFORMATION)
                 .name(NAME)
                 .build();
         return memberSaveRequestDto;
@@ -73,7 +75,6 @@ class MessageServiceTest {
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information(INFORMATION)
                 .name("NAME")
                 .build();
         return memberSaveRequestDto;
@@ -87,7 +88,6 @@ class MessageServiceTest {
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information(INFORMATION)
                 .name("NAME")
                 .build();
 
@@ -370,10 +370,11 @@ class MessageServiceTest {
         Message message = messageService.sendMessage(messageRequestDTO, sender.getId());
 
         //when
-        List<MessageDTO.MessageResponseDto> sendMessageListByUserId = messageService.getSendMessageListByUserId(senderId);
+        PageRequest pagable = PageRequest.of(0, 2);
+        Page<MessageDTO.MessageListResponseDto> sendMessageListByUserId = messageService.getSendMessageListByUserId(senderId,pagable);
 
         //then
-        Assertions.assertThat(sendMessageListByUserId.size()).isEqualTo(1);
+        Assertions.assertThat(sendMessageListByUserId.getTotalElements()).isEqualTo(1L);
     }
 
     @Test
@@ -393,10 +394,10 @@ class MessageServiceTest {
 
         //when
 
+        PageRequest pagable = PageRequest.of(0, 2);
         //then
-
         assertThrows(GeneralException.class, () ->
-                messageService.getSendMessageListByUserId(123141241L));
+                messageService.getSendMessageListByUserId(123141241L,pagable));
     }
 
 
@@ -416,10 +417,11 @@ class MessageServiceTest {
         Message message = messageService.sendMessage(messageRequestDTO, sender.getId());
 
         //when
-        List<MessageDTO.MessageResponseDto> sendMessageListByUserId = messageService.getRecipientMessageListByUserId(recipientId);
+        PageRequest pagable = PageRequest.of(0, 2);
+        Page<MessageDTO.MessageListResponseDto> sendMessageListByUserId = messageService.getRecipientMessageListByUserId(recipientId,pagable);
 
         //then
-        Assertions.assertThat(sendMessageListByUserId.size()).isEqualTo(1);
+        Assertions.assertThat(sendMessageListByUserId.getTotalElements()).isEqualTo(1L);
     }
 
     @Test
@@ -439,10 +441,11 @@ class MessageServiceTest {
 
         //when
 
-        //then
+        PageRequest pagable = PageRequest.of(0, 2);
 
+        //then
         assertThrows(GeneralException.class, () ->
-                messageService.getRecipientMessageListByUserId(123141241L));
+                messageService.getRecipientMessageListByUserId(123141241L,pagable));
     }
 
 }

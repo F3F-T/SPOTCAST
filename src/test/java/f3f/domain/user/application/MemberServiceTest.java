@@ -16,7 +16,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,7 +71,6 @@ class MemberServiceTest {
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information(INFORMATION)
                 .name(NAME)
                 .build();
         return memberSaveRequestDto;
@@ -83,7 +83,6 @@ class MemberServiceTest {
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GOOGLE_LOGIN)
-                .information("test")
                 .name("lim")
                 .build();
         return memberSaveRequestDto;
@@ -96,7 +95,6 @@ class MemberServiceTest {
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information("test")
                 .name("lim")
                 .build();
         return memberSaveRequestDto;
@@ -109,7 +107,6 @@ class MemberServiceTest {
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information("test")
                 .name("lim")
                 .build();
         return memberSaveRequestDto;
@@ -122,7 +119,6 @@ class MemberServiceTest {
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information("")
                 .name("lim")
                 .build();
         return memberSaveRequestDto;
@@ -135,7 +131,6 @@ class MemberServiceTest {
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information("")
                 .build();
         return memberSaveRequestDto;
     }
@@ -147,7 +142,6 @@ class MemberServiceTest {
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information("")
                 .name("lim")
                 .build();
         return memberSaveRequestDto;
@@ -160,7 +154,6 @@ class MemberServiceTest {
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information("test")
                 .name("lim")
                 .build();
         return memberSaveRequestDto;
@@ -544,7 +537,9 @@ class MemberServiceTest {
                 .email(EMAIL)
                 .password(PASSWORD)
                 .build();
-        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest,response,request);
 
         //then
         assertThat(loginServiceResponseDto.getEmail()).isEqualTo(findMember.getEmail());
@@ -562,9 +557,10 @@ class MemberServiceTest {
                 .password(PASSWORD)
                 .build();
 
-
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
         //then
-        assertThrows(InternalAuthenticationServiceException.class, () -> memberService.login(memberLoginRequest));
+        assertThrows(GeneralException.class, () -> memberService.login(memberLoginRequest,response,request));
     }
 
     @Test
@@ -579,9 +575,10 @@ class MemberServiceTest {
                 .password("PASSWORD")
                 .build();
 
-
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
         //then
-        assertThrows(BadCredentialsException.class, () -> memberService.login(memberLoginRequest));
+        assertThrows(GeneralException.class, () -> memberService.login(memberLoginRequest,response,request));
     }
 
     @Test
@@ -596,59 +593,12 @@ class MemberServiceTest {
                 .password(null)
                 .build();
 
-
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
         //then
-        assertThrows(InternalAuthenticationServiceException.class, () -> memberService.login(memberLoginRequest));
+        assertThrows(GeneralException.class, () -> memberService.login(memberLoginRequest,response,request));
     }
 
-    @Test
-    @DisplayName("토큰 재발급 성공")
-    public void success_Reissue() throws Exception {
-        //given
-        memberService.saveMember(createMemberDto());
-
-        //when
-        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
-                .email(EMAIL)
-                .password(PASSWORD)
-                .build();
-
-        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
-        TokenDTO.TokenRequestDTO tokenRequestDTO = TokenDTO.TokenRequestDTO.builder()
-                .accessToken(loginServiceResponseDto.getAccessToken())
-                .build();
-
-        
-        //when
-        TokenDTO.TokenResponseDTO tokenDTO = memberService.reissue(tokenRequestDTO);
-
-        //then
-        assertThat(loginServiceResponseDto.getAccessToken()).isNotEqualTo(tokenDTO.getAccessToken());
-    }
-
-    @Test
-    @DisplayName("토큰 재발급 실패 - 유효하지 않은 access token")
-    public void fail_Reissue_InvalidAccessToken() throws Exception {
-        //given
-        memberService.saveMember(createMemberDto());
-
-        //when
-        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
-                .email(EMAIL)
-                .password(PASSWORD)
-                .build();
-
-        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
-
-
-        //when
-        TokenDTO.TokenRequestDTO tokenRequestDTO = TokenDTO.TokenRequestDTO.builder()
-                .accessToken("")
-                .build();
-
-        //then
-        assertThrows(RuntimeException.class, () -> memberService.reissue(tokenRequestDTO));//MalformedJwtException 라는 exception 이 발생하는데 테스트코드에서 확인 불가능..
-    }
 
 
     @Test

@@ -293,7 +293,7 @@ public class ScrapBoardServiceTest {
         ScrapDTO.SaveRequest newSaveRequest = ScrapDTO.SaveRequest.builder()
                 .name("test1")
                 .build();
-        Scrap scrap2 = scrapService.saveScrapBox(newSaveRequest, 118L);
+        Scrap scrap2 = scrapService.saveScrapBox(newSaveRequest, 2L);
         Long scrapId2 = scrap2.getId();
 
         ScrapBoard scrapBoard = scrapBoardService.saveScrap(memberId, scrapId, boardSaveRequest);

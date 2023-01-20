@@ -88,7 +88,6 @@ public class ScrapServiceTest {
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information(INFORMATION)
                 .name(NAME)
                 .build();
         return memberSaveRequestDto;
