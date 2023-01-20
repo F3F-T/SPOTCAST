@@ -37,7 +37,10 @@ public class BookmarkService extends BaseTimeEntity {
 
     // 북마크 요청
     @Transactional
-    public void followRequest(BookmarkDTO.BookmarkRequestDto requestDto){
+    public void followRequest(BookmarkDTO.BookmarkRequestDto requestDto, Long currentMemberId){
+        if(!requestDto.getFollowerId().equals(currentMemberId)){
+            throw new GeneralException(ErrorCode.MISMATCH_FOLLOW, "본인만 팔로우를 할 수 있습니다.");
+        }
         if(requestDto.getFollowerId().equals(requestDto.getFollowingId())){
             throw new GeneralException(ErrorCode.MISMATCH_FOLLOW, "본인을 팔로우할 수 없습니다.");
         }

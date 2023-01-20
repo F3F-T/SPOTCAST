@@ -30,8 +30,8 @@ public class BookmarkController {
 
     @PostMapping(value = "/bookmark")
     public ResultDataResponseDTO saveBookmark(@RequestBody BookmarkDTO.BookmarkRequestDto requestDto){
-
-        bookmarkService.followRequest(requestDto);
+        Long currentMemberId = SecurityUtil.getCurrentMemberId();
+        bookmarkService.followRequest(requestDto,currentMemberId);
         return ResultDataResponseDTO.empty();
     }
 
