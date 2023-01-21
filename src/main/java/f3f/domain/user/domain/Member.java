@@ -96,6 +96,13 @@ public class Member extends MemberBase {
                 .build();
     }
 
+    public MemberDTO.MemberBoardInfoResponseDto toBoardMemberDTO(){
+        return MemberDTO.MemberBoardInfoResponseDto.builder()
+                .id(this.getId())
+                .email(this.getEmail())
+                .name(this.getName())
+                .build();
+    }
     public void updatePassword(String password){
         this.password = password;
     }

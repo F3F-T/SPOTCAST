@@ -13,6 +13,14 @@ public class ApplyDTO {
         private MemberDTO.MemberBoardInfoResponseDto recruiter;
         private MemberDTO.MemberBoardInfoResponseDto volunteer;
         private BoardDTO.BoardInfoDTO board;
+
+        @Builder
+        public ApplyInfo(long applyId, MemberDTO.MemberBoardInfoResponseDto recruiter, MemberDTO.MemberBoardInfoResponseDto volunteer, BoardDTO.BoardInfoDTO board) {
+            this.applyId = applyId;
+            this.recruiter = recruiter;
+            this.volunteer = volunteer;
+            this.board = board;
+        }
     }
 
     @Getter

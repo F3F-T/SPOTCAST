@@ -5,6 +5,7 @@ import f3f.domain.board.domain.Board;
 import f3f.domain.publicModel.BaseTimeEntity;
 import f3f.domain.user.domain.Member;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,4 +32,12 @@ public class Apply extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member volunteer;
+
+    @Builder
+    public Apply(String application, Board board, Member recruiter, Member volunteer) {
+        this.application = application;
+        this.board = board;
+        this.recruiter = recruiter;
+        this.volunteer = volunteer;
+    }
 }
