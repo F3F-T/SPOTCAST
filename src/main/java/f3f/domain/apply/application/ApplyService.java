@@ -94,19 +94,21 @@ public class ApplyService {
         }
     }
 
+    //리턴타입 수정
     @Transactional(readOnly = true)
-    public List<Apply> getRecruiterApplyList(long memberId){
-        Member member = memberRepository.findById(memberId)
+    public List<ApplyDTO.ApplyInfo> getRecruiterApplyList(long recruiterId){
+        Member member = memberRepository.findById(recruiterId)
                 .orElseThrow(() -> new MemberNotFoundException());
-
-        return member.getRecruiterList();
+        List<ApplyDTO.ApplyInfo> applyInfoList = applyRepository.findByRecruiterId(member.getId());
+        return applyInfoList;
     }
 
+    //리턴타입 수정
     @Transactional(readOnly = true)
-    public List<Apply> getVolunteerApplyList(long memberId){
-        Member member = memberRepository.findById(memberId)
+    public List<ApplyDTO.ApplyInfo> getVolunteerApplyList(long volunteerId){
+        Member member = memberRepository.findById(volunteerId)
                 .orElseThrow(() -> new MemberNotFoundException());
-
-        return member.getVolunteerList();
+        List<ApplyDTO.ApplyInfo> applyInfoList = applyRepository.findByRecruiterId(member.getId());
+        return applyInfoList;
     }
 }

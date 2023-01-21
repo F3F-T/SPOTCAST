@@ -33,14 +33,14 @@ public class ApplyController {
     }
 
 
-    @GetMapping(value ="/apply/recruiter/{memberId}")
-    public ResultDataResponseDTO<List<Apply>> getRecruiterApplyList(@PathVariable long memberId) {
-        return ResultDataResponseDTO.of(applyService.getRecruiterApplyList(memberId));
+    @GetMapping(value ="/apply/recruiter/{recruiterId}")
+    public ResultDataResponseDTO<List<ApplyDTO.ApplyInfo>> getRecruiterApplyList(@PathVariable long recruiterId) {
+        return ResultDataResponseDTO.of(applyService.getRecruiterApplyList(recruiterId));
     }
 
 
-    @GetMapping(value ="/apply/volunteer/{memberId}")
-    public ResultDataResponseDTO<List<Apply>> getVolunteerApplyList(@PathVariable long memberId) {
-        return ResultDataResponseDTO.of(applyService.getVolunteerApplyList(memberId));
+    @GetMapping(value ="/apply/volunteer/{volunteerId}")
+    public ResultDataResponseDTO<List<ApplyDTO.ApplyInfo>> getVolunteerApplyList(@PathVariable long volunteerId) {
+        return ResultDataResponseDTO.of(applyService.getVolunteerApplyList(volunteerId));
     }
 }
