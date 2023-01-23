@@ -39,6 +39,8 @@ public class MessageDTO {
     @NoArgsConstructor
     public static class MessageListResponseDto{
         private Long id;
+
+        private String title;
         private String content;
 
         private Long memberId;
@@ -47,8 +49,9 @@ public class MessageDTO {
         private String memberName;
 
         @Builder
-        public MessageListResponseDto(Long id, String content, Long memberId, String memberEmail, String memberName) {
+        public MessageListResponseDto(Long id, String title, String content, Long memberId, String memberEmail, String memberName) {
             this.id = id;
+            this.title = title;
             this.content = content;
             this.memberId = memberId;
             this.memberEmail = memberEmail;
@@ -59,19 +62,28 @@ public class MessageDTO {
     @Getter
     @NoArgsConstructor
     public static class MessageRequestDto {
+
+        private String title;
+
         private String content;
         private Member sender;
         private Member recipient;
 
         @Builder
-        public MessageRequestDto(String content, Member sender, Member recipient) {
+        public MessageRequestDto(String title, String content, Member sender, Member recipient) {
+            this.title = title;
             this.content = content;
             this.sender = sender;
             this.recipient = recipient;
         }
 
+
+
+
+
         public Message toEntity(){
             return Message.builder()
+                    .title(this.title)
                     .content(this.content)
                     .recipient(this.recipient)
                     .sender(this.sender)

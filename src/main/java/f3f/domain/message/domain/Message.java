@@ -20,6 +20,9 @@ public class Message extends BaseTimeEntity {
     @Column(name = "message_id")
     private Long id;
 
+
+    private String title;
+
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,9 +37,11 @@ public class Message extends BaseTimeEntity {
 
     private Boolean recipientDisplayStatus;
 
+
     @Builder
-    public Message(Long id, String content, Member sender, Boolean senderDisplayStatus, Member recipient, Boolean recipientDisplayStatus) {
+    public Message(Long id, String title, String content, Member sender, Boolean senderDisplayStatus, Member recipient, Boolean recipientDisplayStatus) {
         this.id = id;
+        this.title = title;
         this.content = content;
         this.sender = sender;
         this.senderDisplayStatus = senderDisplayStatus;

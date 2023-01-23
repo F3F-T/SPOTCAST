@@ -42,6 +42,7 @@ public class SearchMessageRepositoryImpl extends QuerydslRepositorySupport imple
         JPQLQuery<MessageDTO.MessageListResponseDto> query = querydsl().applyPagination(pageable,jpaQueryFactory
                 .select(Projections.constructor(MessageDTO.MessageListResponseDto.class,
                         message.id,
+                        message.title,
                         message.content,
                         member.id,
                         member.email,
@@ -63,6 +64,7 @@ public class SearchMessageRepositoryImpl extends QuerydslRepositorySupport imple
         JPQLQuery<MessageDTO.MessageListResponseDto> query = querydsl().applyPagination(pageable, jpaQueryFactory
                 .select(Projections.constructor(MessageDTO.MessageListResponseDto.class,
                         message.id,
+                        message.title,
                         message.content,
                         member.id,
                         member.email,
