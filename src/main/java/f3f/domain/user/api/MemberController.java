@@ -61,7 +61,7 @@ public class MemberController {
      * @param updatePasswordRequest
      * @return
      */
-    @PostMapping("/find/password")
+    @PatchMapping("/find/password")
     public ResultDataResponseDTO changePasswordByForgot(@RequestBody MemberUpdateForgotPasswordRequestDto updatePasswordRequest) {
 
         memberService.updatePasswordByForgot(updatePasswordRequest);
@@ -75,7 +75,7 @@ public class MemberController {
      * @param memberId
      * @return
      */
-    @PostMapping("/{memberId}/change/password")
+    @PatchMapping("/{memberId}/change/password")
     public ResultDataResponseDTO changePasswordByLogin(@RequestBody MemberUpdateLoginPasswordRequestDto updatePasswordRequest,
             @PathVariable Long memberId) {
 
@@ -94,7 +94,7 @@ public class MemberController {
      * @param memberId
      * @return
      */
-    @PostMapping("/{memberId}/change/information")
+    @PatchMapping("/{memberId}/change/information")
     public ResultDataResponseDTO updateInformation(@RequestBody MemberUpdateInformationRequestDto updateInformationRequest,
                                                @PathVariable Long memberId) {
 

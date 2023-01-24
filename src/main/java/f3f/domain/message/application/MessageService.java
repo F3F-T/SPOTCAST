@@ -11,6 +11,8 @@ import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,28 +80,23 @@ public class MessageService {
 
     //TODO 리스트 가져오는 쿼리 작성
     @Transactional(readOnly = true)
-    public List<MessageDTO.MessageResponseDto> getSendMessageListByUserId(long memberId) {
+    public Page<MessageDTO.MessageListResponseDto> getSendMessageListByUserId(long memberId, Pageable pageable) {
         if (!memberRepository.existsById(memberId)) {
             throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다.");
         }
-
-        List<Message> sendListByUserId = searchMessageRepository.getSendListByUserId(memberId);
-        List<MessageDTO.MessageResponseDto> messageResponseDtoList = sendListByUserId.stream()
-                .map(Message::toMessageDto).collect(Collectors.toList());
-        return messageResponseDtoList;
+        Page<MessageDTO.MessageListResponseDto> sendListByUserId = searchMessageRepository.getSendListByUserId(memberId, pageable);
+        return sendListByUserId;
     }
 
     @Transactional(readOnly = true)
-    public List<MessageDTO.MessageResponseDto> getRecipientMessageListByUserId(long memberId) {
+    public Page<MessageDTO.MessageListResponseDto> getRecipientMessageListByUserId(long memberId, Pageable pageable) {
         if(!memberRepository.existsById(memberId)){
             throw new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다.");
         }
-        List<Message> recipientListByUserId = searchMessageRepository.getRecipientListByUserId(memberId);
+        Page<MessageDTO.MessageListResponseDto> recipientListByUserId = searchMessageRepository.getRecipientListByUserId(memberId,pageable);
 
-        List<MessageDTO.MessageResponseDto> messageResponseDtoList = recipientListByUserId.stream()
-                .map(Message::toMessageDto).collect(Collectors.toList());
 
-        return messageResponseDtoList;
+        return recipientListByUserId;
 
     }
 }

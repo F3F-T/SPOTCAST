@@ -32,6 +32,11 @@ public class Member extends MemberBase {
 
     private String otherSns;
 
+    private String information;
+
+
+    private String profile;
+    private String egName;
 
     @OneToMany(mappedBy = "member")
     private List<Scrap> scrapList = new ArrayList<>();
@@ -53,8 +58,12 @@ public class Member extends MemberBase {
     @OneToMany(mappedBy = "recruiter")
     private List<Apply> recruiterList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
-    private List<Bookmark> bookmarkList = new ArrayList<>();
+    @OneToMany(mappedBy = "follower")
+    private List<Bookmark> followerList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "following")
+    private List<Bookmark> followingList = new ArrayList<>();
+
 
     @OneToOne(fetch = FetchType.LAZY , mappedBy = "member")
     @JoinColumn(name = "portfolio_id" )
@@ -66,12 +75,17 @@ public class Member extends MemberBase {
     @OneToMany(mappedBy = "recipient")
     private List<Message> receptionMessageList = new ArrayList<>();
 
-
     @Builder
-    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information,  List<Board> boardList, List<Likes> likesList, List<Comment> commentList, List<Apply> volunteerList, List<Apply> recruiterList, List<Bookmark> bookmarkList, Portfolio portfolio) {
-        super(id, email, name, password, loginMemberType, loginType, authority, information);
-
+    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String field, String profile) {
+        super(id, email, name, password, loginMemberType, loginType, authority, field);
+        this.profile = profile;
     }
+
+
+
+
+
+
 
     public MemberInfoResponseDto toFindMemberDto(){
         return MemberInfoResponseDto.builder()
@@ -85,6 +99,8 @@ public class Member extends MemberBase {
                 .instagram(instagram)
                 .twitter(twitter)
                 .otherSns(otherSns)
+                .field(this.getField())
+                .egName(this.getEgName())
                 .build();
     }
 
@@ -105,6 +121,8 @@ public class Member extends MemberBase {
         this.instagram = updateInformationRequest.getInstagram();
         this.twitter = updateInformationRequest.getTwitter();
         this.otherSns = updateInformationRequest.getOtherSns();
+        this.field = updateInformationRequest.getField();
+        this.egName = updateInformationRequest.getEgName();
     }
 
 

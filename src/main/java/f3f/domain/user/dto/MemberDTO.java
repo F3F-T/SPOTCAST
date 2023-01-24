@@ -15,7 +15,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 @Getter
 @Builder
@@ -46,7 +45,7 @@ public class MemberDTO {
         @Enumerated(value = EnumType.STRING)
         private Authority authority;
 
-        private String information;
+        private String field;
 
 
 
@@ -56,14 +55,14 @@ public class MemberDTO {
 
         @Builder
         public MemberSaveRequestDto(String email, String password, String name,
-                                    LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information) {
+                                    LoginMemberType loginMemberType, LoginType loginType, Authority authority, String field) {
             this.email = email;
             this.password = password;
             this.name = name;
             this.loginMemberType = loginMemberType;
             this.loginType = loginType;
             this.authority = authority;
-            this.information = information;
+            this.field = field;
         }
 
         public Member toEntity(){
@@ -74,7 +73,8 @@ public class MemberDTO {
                         .loginMemberType(this.loginMemberType)
                         .loginType(this.loginType)
                         .authority(this.authority)
-                        .information(this.information)
+                        .field(this.field)
+                        .profile("https://shopping-phinf.pstatic.net/main_2343561/23435610490.20211228162539.jpg?type=f640")
                         .build();
         }
     }
@@ -94,6 +94,11 @@ public class MemberDTO {
 
         private String otherSns;
 
+        private String profile;
+        private String egName;
+
+        private String field;
+
         @Enumerated(value = EnumType.STRING)
         private LoginMemberType loginMemberType;
 
@@ -107,17 +112,20 @@ public class MemberDTO {
 
 
         @Builder
-        public MemberInfoResponseDto(Long id, String email, String name, String twitter, String instagram, String otherSns, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information) {
+        public MemberInfoResponseDto(Long id, String email, String name, String twitter, String instagram, String otherSns, String egName, String field, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information, String profile) {
             this.id = id;
             this.email = email;
             this.name = name;
             this.twitter = twitter;
             this.instagram = instagram;
             this.otherSns = otherSns;
+            this.egName = egName;
+            this.field = field;
             this.loginMemberType = loginMemberType;
             this.loginType = loginType;
             this.authority = authority;
             this.information = information;
+            this.profile = profile;
         }
     }
 
@@ -232,12 +240,18 @@ public class MemberDTO {
 
         private String otherSns;
 
+        private String field;
+
+        private String egName;
+
         @Builder
-        public MemberUpdateInformationRequestDto(String information, String twitter, String instagram, String otherSns) {
+        public MemberUpdateInformationRequestDto(String information, String twitter, String instagram, String otherSns, String field, String egName) {
             this.information = information;
             this.twitter = twitter;
             this.instagram = instagram;
             this.otherSns = otherSns;
+            this.field = field;
+            this.egName = egName;
         }
     }
 
