@@ -181,26 +181,13 @@ public class BookmarkServiceTest {
         bookmarkService.followRequest(bookmarkRequest, bookmarkRequest.getFollowerId());
 
         //when
-        bookmarkService.followCancel(bookmarkRequest, bookmarkRequest.getFollowerId());
+        bookmarkService.followCancel(bookmarkRequest);
         Bookmark bookmark = bookmarkRepository.findByFollowerIdAndFollowingId(bookmarkRequest.getFollowerId(), bookmarkRequest.getFollowingId()).orElse(null);
 
         //then
         Assertions.assertThat(bookmark).isNull();
     }
-    @Test
-    @DisplayName("북마크 취소 실패 - 본인이 요청한 취소요청이 아닌 경우")
-    public void fail_followCancel_MisMatchRequest() throws Exception{
-        //given
-        BookmarkRequestDto bookmarkRequest = createBookmarkRequest(followerId, followingId.get(0));
-        bookmarkService.followRequest(bookmarkRequest, bookmarkRequest.getFollowerId());
 
-        //when
-
-
-        //then
-        assertThrows(GeneralException.class, () ->
-                bookmarkService.followCancel(bookmarkRequest, bookmarkRequest.getFollowingId()));
-    }
 
     @Test
     @DisplayName("나를 북마크중인 리스트 조회 성공")

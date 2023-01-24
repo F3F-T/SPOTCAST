@@ -56,10 +56,7 @@ public class BookmarkService extends BaseTimeEntity {
 
     //북마크 취소 요청
     @Transactional
-    public void followCancel(BookmarkDTO.BookmarkRequestDto requestDto, Long currentMemberId){
-        if(!requestDto.getFollowerId().equals(currentMemberId)){
-            throw new GeneralException(ErrorCode.MISMATCH_FOLLOW, "본인만 팔로우를 취소할 수 있습니다.");
-        }
+    public void followCancel(BookmarkDTO.BookmarkRequestDto requestDto){
 
         bookmarkRepository.deleteByFollowerIdAndFollowingId(requestDto.getFollowerId(),requestDto.getFollowingId());
     }
