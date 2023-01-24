@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 public class MessageDTO {
 
     @Getter
@@ -43,16 +45,19 @@ public class MessageDTO {
         private String title;
         private String content;
 
+        private LocalDateTime createdDate;
+
         private Long memberId;
         private String memberEmail;
 
         private String memberName;
 
         @Builder
-        public MessageListResponseDto(Long id, String title, String content, Long memberId, String memberEmail, String memberName) {
+        public MessageListResponseDto(Long id, String title, String content, LocalDateTime createdDate, Long memberId, String memberEmail, String memberName) {
             this.id = id;
             this.title = title;
             this.content = content;
+            this.createdDate = createdDate;
             this.memberId = memberId;
             this.memberEmail = memberEmail;
             this.memberName = memberName;
