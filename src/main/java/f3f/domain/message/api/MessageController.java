@@ -42,7 +42,8 @@ public class MessageController {
     @PatchMapping(value = "/{messageId}")
     public ResultDataResponseDTO concealMessageDisplay(@PathVariable long messageId){
         Long memberId = SecurityUtil.getCurrentMemberId();
-        messageService.updateDisplayStatus(memberId,messageId);
+        System.out.println("memberId = " + memberId);
+        messageService.updateDisplayStatus(messageId,memberId);
 
         return ResultDataResponseDTO.empty();
     }

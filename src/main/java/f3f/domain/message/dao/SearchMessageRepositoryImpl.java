@@ -2,11 +2,9 @@ package f3f.domain.message.dao;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import f3f.domain.message.domain.Message;
 import f3f.domain.message.dto.MessageDTO;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -49,7 +47,7 @@ public class SearchMessageRepositoryImpl extends QuerydslRepositorySupport imple
                         member.name))
                 .from(member).leftJoin(message).fetchJoin()
                 .on(message.recipient.id.eq(member.id))
-                .where(message.sender.id.eq(memberId)));
+                .where(message.sender.id.eq(memberId),message.senderDisplayStatus.eq(true)));
 
         long total = query.fetchCount();
         List<MessageDTO.MessageListResponseDto> result = query.fetch();
@@ -71,7 +69,7 @@ public class SearchMessageRepositoryImpl extends QuerydslRepositorySupport imple
                         member.name))
                 .from(member).leftJoin(message).fetchJoin()
                 .on(message.sender.id.eq(member.id))
-                .where(message.recipient.id.eq(memberId)));
+                .where(message.recipient.id.eq(memberId),message.recipientDisplayStatus.eq(true)));
 
         long total = query.fetchCount();
         List<MessageDTO.MessageListResponseDto> result = query.fetch();
