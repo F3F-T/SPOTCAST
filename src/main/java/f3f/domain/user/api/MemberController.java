@@ -61,7 +61,7 @@ public class MemberController {
      * @param updatePasswordRequest
      * @return
      */
-    @PostMapping("/find/password")
+    @PatchMapping("/find/password")
     public ResultDataResponseDTO changePasswordByForgot(@RequestBody MemberUpdateForgotPasswordRequestDto updatePasswordRequest) {
 
         memberService.updatePasswordByForgot(updatePasswordRequest);
