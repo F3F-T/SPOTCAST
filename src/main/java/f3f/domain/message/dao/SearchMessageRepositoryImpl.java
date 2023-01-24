@@ -42,6 +42,7 @@ public class SearchMessageRepositoryImpl extends QuerydslRepositorySupport imple
                         message.id,
                         message.title,
                         message.content,
+                        message.createdDate,
                         member.id,
                         member.email,
                         member.name))
@@ -64,6 +65,7 @@ public class SearchMessageRepositoryImpl extends QuerydslRepositorySupport imple
                         message.id,
                         message.title,
                         message.content,
+                        message.createdDate,
                         member.id,
                         member.email,
                         member.name))
