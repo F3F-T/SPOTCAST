@@ -35,6 +35,7 @@ public class Member extends MemberBase {
     private String information;
 
 
+    private String profile;
     private String egName;
 
     @OneToMany(mappedBy = "member")
@@ -75,9 +76,14 @@ public class Member extends MemberBase {
     private List<Message> receptionMessageList = new ArrayList<>();
 
     @Builder
-    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String field) {
+    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String field, String profile) {
         super(id, email, name, password, loginMemberType, loginType, authority, field);
+        this.profile = profile;
     }
+
+
+
+
 
 
 

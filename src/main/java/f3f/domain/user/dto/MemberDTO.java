@@ -74,6 +74,7 @@ public class MemberDTO {
                         .loginType(this.loginType)
                         .authority(this.authority)
                         .field(this.field)
+                        .profile("https://shopping-phinf.pstatic.net/main_2343561/23435610490.20211228162539.jpg?type=f640")
                         .build();
         }
     }
@@ -93,6 +94,7 @@ public class MemberDTO {
 
         private String otherSns;
 
+        private String profile;
         private String egName;
 
         private String field;
@@ -110,7 +112,7 @@ public class MemberDTO {
 
 
         @Builder
-        public MemberInfoResponseDto(Long id, String email, String name, String twitter, String instagram, String otherSns, String egName, String field, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information) {
+        public MemberInfoResponseDto(Long id, String email, String name, String twitter, String instagram, String otherSns, String egName, String field, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information, String profile) {
             this.id = id;
             this.email = email;
             this.name = name;
@@ -123,6 +125,7 @@ public class MemberDTO {
             this.loginType = loginType;
             this.authority = authority;
             this.information = information;
+            this.profile = profile;
         }
     }
 
