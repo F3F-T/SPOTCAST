@@ -3,9 +3,6 @@ package f3f.domain.category.application;
 import f3f.domain.category.dao.CategoryRepository;
 import f3f.domain.category.domain.Category;
 import f3f.domain.category.dto.CategoryDTO;
-import f3f.domain.category.exception.DuplicateCategoryNameException;
-import f3f.domain.category.exception.MaxDepthCategoryException;
-import f3f.domain.category.exception.NotFoundCategoryException;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
 import lombok.RequiredArgsConstructor;
@@ -104,17 +101,15 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public Category getCategoryById(long categoryId) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "존재하지 않는 카테고리 입니다."));
-        return category;
+    public CategoryDTO.CategoryInfo getCategoryById(long categoryId) {
+        CategoryDTO.CategoryInfo categoryInfo = categoryRepository.findById(categoryId).get().toCategoryInfoDto();
+        return categoryInfo;
     }
 
 
     @Transactional(readOnly = true)
-    public Category getCategoryByName(String categoryName) {
-        Category category = categoryRepository.findByName(categoryName)
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "존재하지 않는 카테고리 입니다."));
-        return category;
+    public CategoryDTO.CategoryInfo getCategoryByName(String categoryName) {
+        CategoryDTO.CategoryInfo categoryInfo = categoryRepository.findByName(categoryName).get().toCategoryInfoDto();
+        return categoryInfo;
     }
 }

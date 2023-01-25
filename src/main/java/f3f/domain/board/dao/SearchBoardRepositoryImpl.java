@@ -12,14 +12,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 import static f3f.domain.board.domain.QBoard.board;
 import static org.springframework.util.StringUtils.hasText;
 
-@Repository
 @RequiredArgsConstructor
 public class SearchBoardRepositoryImpl implements SearchBoardRepository{
 

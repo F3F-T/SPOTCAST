@@ -3,6 +3,7 @@ package f3f.domain.category.dto;
 import f3f.domain.category.domain.Category;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public class CategoryDTO {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     public static class SaveRequest {
 
         private Long categoryId;
@@ -50,5 +52,28 @@ public class CategoryDTO {
         }
     }
 
+    @Getter
+    @NoArgsConstructor
+    public static class CategoryInfo {
+
+        private Long categoryId;
+
+        private String name;
+
+        private Integer depth;
+
+        private Category parentCategory;
+
+        private List<CategoryInfo> child = new ArrayList<>();
+
+        @Builder
+        public CategoryInfo(Long categoryId, String name, Integer depth, Category parentCategory, List<CategoryInfo> child) {
+            this.categoryId = categoryId;
+            this.name = name;
+            this.depth = depth;
+            this.parentCategory = parentCategory;
+            this.child = child;
+        }
+    }
 
 }
