@@ -6,6 +6,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
+import f3f.domain.publicModel.BoardType;
+import f3f.domain.publicModel.SortType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,7 +26,7 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
     private JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<BoardInfoDTO> getBoardListByCategoryId(long categoryId) {
+    public List<BoardInfoDTO> getBoardListByCategoryId(long categoryId, BoardType boardType, SortType sortType) {
         List<BoardInfoDTO> result = jpaQueryFactory
                 .select(Projections.fields(BoardInfoDTO.class,
                         board.title,
@@ -41,7 +43,7 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
     }
 
     @Override
-    public List<BoardInfoDTO> getBoardListByUserId(long memberId) {
+    public List<BoardInfoDTO> getBoardListByUserId(long memberId, BoardType boardType, SortType sortType) {
         List<BoardInfoDTO> result = jpaQueryFactory
                 .select(Projections.fields(BoardInfoDTO.class,
                         board.title,

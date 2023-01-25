@@ -1,6 +1,7 @@
 package f3f.domain.board.application;
 
 import f3f.domain.board.dao.BoardRepository;
+import f3f.domain.board.dao.SearchBoardRepository;
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
@@ -40,6 +41,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
+    private final SearchBoardRepository searchBoardRepository;
 
     @Transactional
     public Long saveBoard(BoardDTO.SaveRequest request) {
@@ -114,11 +116,10 @@ public class BoardService {
     @Transactional(readOnly = true)
     public List<BoardInfoDTO> getBoardListByMemberId(long memberId, BoardType boardType, SortType sortType){
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException());
+        List<BoardInfoDTO> boardListByUserId = searchBoardRepository.getBoardListByUserId(memberId, boardType,sortType);
 
-        List<BoardInfoDTO> userBoardList = member.getBoardList().stream().map((Board::toBoardInfoDTO)).collect(Collectors.toList());
-        return userBoardList;
+
+        return boardListByUserId;
     }
 
     /*
@@ -126,13 +127,9 @@ public class BoardService {
      */
     @Transactional(readOnly = true)
     public List<BoardInfoDTO> getBoardListByCategoryId(long categoryId, BoardType boardType, SortType sortType){
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(NotFoundCategoryException::new);
+        List<BoardInfoDTO> boardByCategoryId = searchBoardRepository.getBoardListByCategoryId(categoryId,boardType,sortType);
 
-        List<BoardInfoDTO> boardInfoList = category.getBoardList().stream()
-                .map(Board::toBoardInfoDTO).collect(Collectors.toList());
-
-        return boardInfoList;
+        return boardByCategoryId;
     }
 
     public List<BoardInfoDTO> getBoardListByBoardType(SortType sortType) {
