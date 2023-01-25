@@ -109,4 +109,12 @@ public class CategoryService {
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "존재하지 않는 카테고리 입니다."));
         return category;
     }
+
+
+    @Transactional(readOnly = true)
+    public Category getCategoryByName(String categoryName) {
+        Category category = categoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "존재하지 않는 카테고리 입니다."));
+        return category;
+    }
 }
