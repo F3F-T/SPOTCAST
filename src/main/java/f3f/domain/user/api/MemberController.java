@@ -47,24 +47,21 @@ public class MemberController {
 
     /**
      * 내 정보 찾기
-     * @param memberId
      * @return
      */
-    @GetMapping("/{memberId}/myInfo")
-    public ResultDataResponseDTO<MemberInfoResponseDto> findMyInfoById(@PathVariable Long memberId) {
+    @GetMapping("/myInfo")
+    public ResultDataResponseDTO<MemberInfoResponseDto> findMyInfoById() {
         //memberId 검증
-        CheckCurrentUser(memberId);
-
-
-        return ResultDataResponseDTO.of(memberService.findMyInfo(memberId));
+        return ResultDataResponseDTO.of(memberService.findMyInfo(SecurityUtil.getCurrentMemberId()));
     }
 
     /**
      * 비밀번호 변경 - 로그인 X
+     *
      * @param updatePasswordRequest
      * @return
      */
-    @PostMapping("/find/password")
+    @PatchMapping("/find/password")
     public ResultDataResponseDTO changePasswordByForgot(@RequestBody MemberUpdateForgotPasswordRequestDto updatePasswordRequest) {
 
         memberService.updatePasswordByForgot(updatePasswordRequest);
@@ -78,7 +75,7 @@ public class MemberController {
      * @param memberId
      * @return
      */
-    @PostMapping("/{memberId}/change/password")
+    @PatchMapping("/{memberId}/change/password")
     public ResultDataResponseDTO changePasswordByLogin(@RequestBody MemberUpdateLoginPasswordRequestDto updatePasswordRequest,
             @PathVariable Long memberId) {
 
@@ -97,7 +94,7 @@ public class MemberController {
      * @param memberId
      * @return
      */
-    @PostMapping("/{memberId}/change/information")
+    @PatchMapping("/{memberId}/change/information")
     public ResultDataResponseDTO updateInformation(@RequestBody MemberUpdateInformationRequestDto updateInformationRequest,
                                                @PathVariable Long memberId) {
 

@@ -24,13 +24,14 @@ public enum ErrorCode {
 
     UNAUTHORIZED(606, HttpStatus.UNAUTHORIZED),
 
-    INVALID_EMAIL_AND_PASSWORD_REQUEST(404,HttpStatus.NOT_FOUND),
+    INVALID_EMAIL_AND_PASSWORD_REQUEST(400,HttpStatus.BAD_REQUEST),
 
+    INVALID_REQUEST(400,HttpStatus.BAD_REQUEST),
     //refresh token 유효하지 않음
     NOTFOUND_REFRESHTOKEN(404,HttpStatus.NOT_FOUND),
 
     //refresh token 유효하지 않음
-    INVALID_REFRESHTOKEN(401,HttpStatus.UNAUTHORIZED),
+    INVALID_REFRESHTOKEN(410,HttpStatus.GONE),
 
     //현재 멤버와 불일치
     NOTCURRENT_MEMBER(400,HttpStatus.BAD_REQUEST),
@@ -50,13 +51,13 @@ public enum ErrorCode {
 
 
     //게시글 없음
-    NOTFOUND_BOARD(400,HttpStatus.BAD_REQUEST),
+    NOTFOUND_BOARD(404,HttpStatus.BAD_REQUEST),
 
     //스크랩 없음
     NOTFOUND_SCRAPBOX(404,HttpStatus.NOT_FOUND),
 
     //중복 회원가입
-    DUPLICATION_SIGNUP(400,HttpStatus.BAD_REQUEST),
+    DUPLICATION_SIGNUP(409,HttpStatus.CONFLICT),
 
     //이메일 중복
     DUPLICATION_EMAIL(409,HttpStatus.CONFLICT),
@@ -66,6 +67,10 @@ public enum ErrorCode {
 
     //메세지 전송자와 요청자 불일치
     MISMATCH_SENDER(400,HttpStatus.BAD_REQUEST),
+
+    //팔로우와 팔로잉이 같은사람인 경우
+    MISMATCH_FOLLOW(400,HttpStatus.BAD_REQUEST),
+
 
     //토큰 없음
     JWT_ACCESS_DENIED(401,HttpStatus.UNAUTHORIZED);

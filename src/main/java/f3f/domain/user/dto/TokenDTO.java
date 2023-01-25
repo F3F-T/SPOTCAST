@@ -31,46 +31,8 @@ public class TokenDTO {
                 .name(member.getName())
                 .loginMemberType(member.getLoginMemberType())
                 .authority(member.getAuthority())
-                .grantType(this.grantType)
-                .accessToken(this.accessToken)
-                .accessTokenExpiresIn(this.accessTokenExpiresIn)
-                .build();
-    }
-    public TokenResponseDTO toEntity(){
-        return TokenResponseDTO.builder()
-                .grantType(this.grantType)
-                .accessToken(this.accessToken)
-                .accessTokenExpiresIn(this.accessTokenExpiresIn)
                 .build();
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class TokenResponseDTO {
-
-        private String grantType;
-        private String accessToken;
-
-        private Long accessTokenExpiresIn;
-
-        @Builder
-        public TokenResponseDTO(String grantType, String accessToken, Long accessTokenExpiresIn) {
-            this.grantType = grantType;
-            this.accessToken = accessToken;
-            this.accessTokenExpiresIn = accessTokenExpiresIn;
-        }
-    }
-
-    @Getter
-    @NoArgsConstructor
-    public static class TokenRequestDTO {
-
-        private String accessToken;
-
-        @Builder
-        public TokenRequestDTO(String accessToken) {
-            this.accessToken = accessToken;
-        }
-    }
 
 }

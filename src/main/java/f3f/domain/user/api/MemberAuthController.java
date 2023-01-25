@@ -3,23 +3,19 @@ package f3f.domain.user.api;
 import f3f.domain.user.application.EmailCertificationService;
 import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dto.MemberDTO;
-import f3f.domain.user.dto.TokenDTO;
 import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
-import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import static f3f.global.constants.SecurityConstants.JSESSIONID;
-import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 
 @RestController
 @RequestMapping("/auth")
@@ -50,22 +46,22 @@ public class MemberAuthController {
      */
     @PostMapping("/login")
     public ResultDataResponseDTO<MemberDTO.MemberLoginServiceResponseDto> login(@RequestBody MemberDTO.MemberLoginRequestDto
-                                                                              loginRequestDto, HttpServletResponse response) {
+                                                                              loginRequestDto, HttpServletResponse response,HttpServletRequest request) {
 
-        MemberDTO.MemberLoginServiceResponseDto loginResponseDto = memberService.login(loginRequestDto);
+        MemberDTO.MemberLoginServiceResponseDto loginResponseDto = memberService.login(loginRequestDto,response,request);
 
         return ResultDataResponseDTO.of(loginResponseDto);
     }
 
     /**
      * JWT 토큰 재발급
-     * @param tokenRequestDto
      * @return
      */
     @PostMapping("/reissue")
-    public ResultDataResponseDTO<TokenDTO.TokenResponseDTO> reissue(@RequestBody TokenDTO.TokenRequestDTO tokenRequestDto) {
-        TokenDTO.TokenResponseDTO tokenResponseDTO = memberService.reissue(tokenRequestDto);
-        return ResultDataResponseDTO.of(tokenResponseDTO);
+    public ResultDataResponseDTO reissue(HttpServletRequest request,HttpServletResponse response) {
+
+        memberService.reissue(request,response);
+        return ResultDataResponseDTO.empty();
     }
 
     /**
@@ -74,21 +70,10 @@ public class MemberAuthController {
      * @return
      */
     @PostMapping("/logout")
-    public ResultDataResponseDTO logout(HttpServletResponse response) {
+    public ResultDataResponseDTO logout(HttpServletResponse response, HttpServletRequest request) throws IOException {
+        memberService.logout(response, request);
 
-        memberService.logout(SecurityUtil.getCurrentMemberId());
-        deleteCookie(response,JSESSIONID);
-        deleteCookie(response,REMEMBER_ME);
         return ResultDataResponseDTO.empty();
-    }
-    /**
-     * 소셜 로그인 시 정보 return
-     * @return
-     */
-    @GetMapping("/myInfo")
-    public ResultDataResponseDTO<MemberDTO.MemberInfoResponseDto> findMyInfoById() {
-
-        return ResultDataResponseDTO.of(memberService.findMyInfo(SecurityUtil.getCurrentMemberId()));
     }
     /**
      * 이메일 인증 번호 전송
@@ -122,14 +107,5 @@ public class MemberAuthController {
         return ResultDataResponseDTO.of(memberService.emailDuplicateCheck(email));
     }
 
-    /**
-     * 쿠키 제거
-     * @param response
-     * @param cookieName
-     */
-    private void deleteCookie(HttpServletResponse response,String cookieName) {
-        Cookie cookie = new Cookie(cookieName, null); // choiceCookieName(쿠키 이름)에 대한 값을 null로 지정
-        cookie.setMaxAge(0); // 유효시간을 0으로 설정
-        response.addCookie(cookie);
-    }
+
 }

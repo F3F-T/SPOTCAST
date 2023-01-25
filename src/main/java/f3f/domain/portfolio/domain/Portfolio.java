@@ -2,21 +2,16 @@ package f3f.domain.portfolio.domain;
 
 
 import f3f.domain.board.domain.Board;
-import f3f.domain.portfolioBookmark.domain.PortfolioBookmark;
 import f3f.domain.user.domain.Member;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Portfolio {
 
     @Id
@@ -33,9 +28,6 @@ public class Portfolio {
     @JoinColumn(name = "member_id")
     private Member member;
 
-
-    @OneToMany(mappedBy = "portfolio",fetch = FetchType.LAZY)
-    private List<PortfolioBookmark> bookmarkList = new ArrayList<>();
 
     private int orders;
 

@@ -41,7 +41,6 @@ class BoardServiceTest {
         return Member.builder()
                 .name("ryu")
                 .email("rdj1014@naver.com")
-                .information("내다")
                 .name("닉닉닉")
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .build();
