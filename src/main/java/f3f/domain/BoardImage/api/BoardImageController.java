@@ -11,9 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
-@Slf4j
 public class BoardImageController {
 
     private final BoardImageService boardImageService;

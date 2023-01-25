@@ -9,8 +9,6 @@ import f3f.domain.board.exception.BoardMissMatchUserException;
 import f3f.domain.board.exception.NotFoundBoardCategoryException;
 import f3f.domain.board.exception.NotFoundBoardException;
 import f3f.domain.category.dao.CategoryRepository;
-import f3f.domain.category.domain.Category;
-import f3f.domain.category.exception.NotFoundCategoryException;
 import f3f.domain.publicModel.BoardType;
 import f3f.domain.publicModel.SortType;
 import f3f.domain.user.dao.MemberRepository;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /*
  * 필요한 기능
@@ -124,8 +121,6 @@ public class BoardService {
     public List<BoardInfoDTO> getBoardListByMemberId(long memberId, BoardType boardType, SortType sortType){
 
         List<BoardInfoDTO> boardListByUserId = searchBoardRepository.getBoardListByUserId(memberId, boardType,sortType);
-
-
         return boardListByUserId;
     }
 

@@ -28,9 +28,13 @@ public class Apply extends BaseTimeEntity {
     private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
+
+    @JoinColumn(name = "recruiter_id", updatable = false, referencedColumnName = "member_id")
     private Member recruiter;
 
     @ManyToOne(fetch = FetchType.LAZY)
+
+    @JoinColumn(name = "volunteer_id", updatable = false, referencedColumnName = "member_id")
     private Member volunteer;
 
     @Builder

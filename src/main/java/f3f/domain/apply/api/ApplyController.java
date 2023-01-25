@@ -7,8 +7,6 @@ import f3f.global.response.ResultDataResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 public class ApplyController {
@@ -33,14 +31,14 @@ public class ApplyController {
     }
 
 
-    @GetMapping(value ="/apply/recruiter/{recruiterId}")
-    public ResultDataResponseDTO<List<ApplyDTO.ApplyInfo>> getRecruiterApplyList(@PathVariable long recruiterId) {
-        return ResultDataResponseDTO.of(applyService.getRecruiterApplyList(recruiterId));
-    }
-
-
-    @GetMapping(value ="/apply/volunteer/{volunteerId}")
-    public ResultDataResponseDTO<List<ApplyDTO.ApplyInfo>> getVolunteerApplyList(@PathVariable long volunteerId) {
-        return ResultDataResponseDTO.of(applyService.getVolunteerApplyList(volunteerId));
-    }
+//    @GetMapping(value ="/apply/recruiter/{recruiterId}")
+//    public ResultDataResponseDTO<List<ApplyDTO.ApplyInfo>> getRecruiterApplyList(@PathVariable long recruiterId) {
+//        return ResultDataResponseDTO.of(applyService.getRecruiterApplyList(recruiterId));
+//    }
+//
+//
+//    @GetMapping(value ="/apply/volunteer/{volunteerId}")
+//    public ResultDataResponseDTO<List<ApplyDTO.ApplyInfo>> getVolunteerApplyList(@PathVariable long volunteerId) {
+//        return ResultDataResponseDTO.of(applyService.getVolunteerApplyList(volunteerId));
+//    }
 }
