@@ -36,7 +36,6 @@ public class Member extends MemberBase {
 
     private String information;
 
-
     private String profile;
     private String egName;
 

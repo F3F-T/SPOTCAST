@@ -71,6 +71,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 .loginType(loginType)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .authority(Authority.ROLE_USER)
+                .profile("https://shopping-phinf.pstatic.net/main_2343561/23435610490.20211228162539.jpg?type=f640")
                 .build();
 
         return memberRepository.save(createMember);
