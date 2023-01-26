@@ -104,7 +104,7 @@ public class Member extends MemberBase {
                 .instagram(instagram)
                 .twitter(twitter)
                 .otherSns(otherSns)
-                .field(this.getField())
+                .profile(profile)
                 .egName(this.getEgName())
                 .build();
     }
