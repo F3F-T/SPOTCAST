@@ -2,6 +2,8 @@ package f3f.domain.category.domain;
 
 import f3f.domain.board.domain.Board;
 import f3f.domain.category.dto.CategoryDTO;
+import f3f.domain.memberCategory.domain.MemberCategory;
+import f3f.domain.user.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +36,9 @@ public class Category {
     @OneToMany(mappedBy = "category",fetch = FetchType.LAZY)
     private List<Board> boardList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "category")
+    private List<MemberCategory> memberCategories = new ArrayList<>();
+
     @Builder
     public Category(String name, Integer depth,Category parentCategory, List<Category> child) {
         this.name = name;
@@ -55,7 +60,7 @@ public class Category {
                 .categoryId(id)
                 .name(name)
                 .depth(depth)
-                .parentCategory(parentCategory)
+//                .parentCategory(parentCategory)
                 .child(changeChildCategory(child))
                 .build();
 

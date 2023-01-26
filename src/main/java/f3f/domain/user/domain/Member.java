@@ -2,8 +2,10 @@ package f3f.domain.user.domain;
 
 import f3f.domain.board.domain.Board;
 import f3f.domain.bookmark.domain.Bookmark;
+import f3f.domain.category.domain.Category;
 import f3f.domain.comment.domain.Comment;
 import f3f.domain.likes.domain.Likes;
+import f3f.domain.memberCategory.domain.MemberCategory;
 import f3f.domain.message.domain.Message;
 import f3f.domain.publicModel.LoginType;
 import f3f.domain.publicModel.LoginMemberType;
@@ -74,6 +76,10 @@ public class Member extends MemberBase {
 
     @OneToMany(mappedBy = "recipient")
     private List<Message> receptionMessageList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<MemberCategory> memberCategories = new ArrayList<>();
+
 
     @Builder
     public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String field, String profile) {
