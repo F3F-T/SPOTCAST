@@ -111,11 +111,6 @@ public class MemberAuthController {
         return ResultDataResponseDTO.of(memberService.emailDuplicateCheck(email));
     }
 
-    @GetMapping("/signup/fields")
-    public ResultDataResponseDTO<CategoryDTO.CategoryInfo> signupField(){
-        CategoryDTO.CategoryInfo category = categoryService.getCategoryByName("field");
-        return ResultDataResponseDTO.of(category);
-    }
 
 
 

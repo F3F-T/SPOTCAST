@@ -16,4 +16,6 @@ import java.util.Optional;
 public interface MemberCategoryRepository {
 
     List<MemberCategoryDTO.categoryResponseDto> findCategoryByMemberId(Long memberId);
+
+    List<MemberCategoryDTO.CategoryMyInfo> findChildCategoryByName(String name);
 }

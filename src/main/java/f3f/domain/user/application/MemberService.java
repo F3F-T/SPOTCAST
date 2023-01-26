@@ -1,9 +1,12 @@
 package f3f.domain.user.application;
 
-import f3f.domain.category.domain.Category;
+import f3f.domain.board.dto.BoardDTO;
+import f3f.domain.category.application.CategoryService;
+import f3f.domain.category.dto.CategoryDTO;
 import f3f.domain.memberCategory.dao.MemberCategoryRepository;
-import f3f.domain.memberCategory.domain.MemberCategory;
+import f3f.domain.memberCategory.dto.MemberCategoryDTO;
 import f3f.domain.publicModel.LoginType;
+import f3f.domain.scrapBoard.domain.ScrapBoard;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.dao.RefreshTokenDao;
 import f3f.domain.user.domain.Member;
@@ -49,15 +52,16 @@ public class MemberService {
 
     private TokenProvider tokenProvider;
     private MemberRepository memberRepository;
-
+    private CategoryService categoryService;
     private MemberCategoryRepository memberCategoryRepository;
     private RefreshTokenDao refreshTokenDao;
 
-    public MemberService(AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, MemberCategoryRepository memberCategoryRepository, RefreshTokenDao refreshTokenDao) {
+    public MemberService(AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository , CategoryService categoryService, MemberCategoryRepository memberCategoryRepository, RefreshTokenDao refreshTokenDao) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
         this.memberRepository = memberRepository;
+        this.categoryService = categoryService;
         this.memberCategoryRepository = memberCategoryRepository;
         this.refreshTokenDao = refreshTokenDao;
     }
@@ -289,7 +293,6 @@ public class MemberService {
 
     }
 
-
     /**
      * information 변경
      *
@@ -300,15 +303,7 @@ public class MemberService {
 
 
         Member member = findMemberByMemberId(memberId);
-        List<MemberCategory> memberCategories = memberCategoryRepository.findByMemberId(memberId);
-        List<Category> applicants = memberCategories.stream()
-                .map(MemberCategory::getCategory)
-                .collect(Collectors.toList());
 
-        for (Category applicant : applicants) {
-
-            System.out.println("applicant = " + applicant);
-        }
         member.updateInformation(updateInformationRequest);
     }
 
@@ -399,6 +394,28 @@ public class MemberService {
     public boolean emailDuplicateCheck(String email) {
         return memberRepository.existsByEmail(email);
     }
+
+    /**
+     * 정보 수정 화면 field 값 조회
+     *
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<MemberCategoryDTO.CategoryMyInfo> getFieldMyInfo(Long memberId) {
+        List<MemberCategoryDTO.categoryResponseDto> memberCategoryList = memberCategoryRepository.findCategoryByMemberId(memberId);
+        List<MemberCategoryDTO.CategoryMyInfo> categoryList = memberCategoryRepository.findChildCategoryByName("field");
+
+        for (MemberCategoryDTO.CategoryMyInfo category : categoryList) {
+            for (MemberCategoryDTO.categoryResponseDto memberCategory : memberCategoryList) {
+                if(memberCategory.getId().equals(category.getCategoryId())){
+                    category.updateExist();
+                }
+            }
+        }
+
+        return categoryList;
+    }
+
 
     /**
      * 쿠키 제거

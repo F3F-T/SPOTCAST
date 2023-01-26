@@ -1,5 +1,6 @@
 package f3f.domain.user.api;
 
+import f3f.domain.memberCategory.dto.MemberCategoryDTO;
 import f3f.domain.user.application.MemberService;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
@@ -7,6 +8,8 @@ import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static f3f.domain.user.dto.MemberDTO.*;
 
@@ -106,6 +109,19 @@ public class MemberController {
         return ResultDataResponseDTO.empty();
     }
 
+    /**
+     * mypage 정보 수정 용 field 값 조회
+     * @return
+     */
+    @GetMapping("/field")
+    public ResultDataResponseDTO<List<MemberCategoryDTO.CategoryMyInfo>> getFieldMyInfo() {
+
+        Long memberId = SecurityUtil.getCurrentMemberId();
+
+        List<MemberCategoryDTO.CategoryMyInfo> fieldMyInfo = memberService.getFieldMyInfo(memberId);
+
+        return ResultDataResponseDTO.of(fieldMyInfo);
+    }
 
 
 
