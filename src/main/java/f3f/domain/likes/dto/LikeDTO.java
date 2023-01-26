@@ -40,4 +40,15 @@ public class LikeDTO {
         private Board board;
         private Long id;
     }
+
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LikeInfo{
+        private Long likeId;
+        private Long boardId;
+        private Long memberId;
+    }
 }

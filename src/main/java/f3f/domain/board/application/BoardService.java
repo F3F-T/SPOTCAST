@@ -1,6 +1,7 @@
 package f3f.domain.board.application;
 
 import f3f.domain.board.dao.BoardRepository;
+import f3f.domain.board.dao.SearchBoardRepository;
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
@@ -8,8 +9,6 @@ import f3f.domain.board.exception.BoardMissMatchUserException;
 import f3f.domain.board.exception.NotFoundBoardCategoryException;
 import f3f.domain.board.exception.NotFoundBoardException;
 import f3f.domain.category.dao.CategoryRepository;
-import f3f.domain.category.domain.Category;
-import f3f.domain.category.exception.NotFoundCategoryException;
 import f3f.domain.publicModel.BoardType;
 import f3f.domain.publicModel.SortType;
 import f3f.domain.user.dao.MemberRepository;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /*
  * 필요한 기능
@@ -32,6 +30,13 @@ import java.util.stream.Collectors;
  * 6. 카테고리 식별자로 게시글 리스트 조회
  * 7. 최신순으로 게시글 조회
  * 8. 조회수 많은순으로 게시글 조회
+ * 9. 보드 아이디로 좋아요 조회--
+ * 10. 보드 아이디로 댓글 조회 (자식댓글까지 전부다)--
+ * 11. 이미지 업로드 기능 구현
+ * 12. 구인글에 지원기능 테스트
+ * 13. 본인이 지원한 구인글 리스트
+ * 14. 본인이 작성한 구인글 리스트
+ * 15. 이미지 저장 API 구현
  */
 @Service
 @RequiredArgsConstructor
@@ -40,6 +45,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
+    private final SearchBoardRepository searchBoardRepository;
 
     @Transactional
     public Long saveBoard(BoardDTO.SaveRequest request) {
@@ -101,7 +107,7 @@ public class BoardService {
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(NotFoundBoardException::new);
-
+        board.updateViewCount(board);
         if (member.getId() != board.getMember().getId()){
             throw new BoardMissMatchUserException();
         }
@@ -114,11 +120,8 @@ public class BoardService {
     @Transactional(readOnly = true)
     public List<BoardInfoDTO> getBoardListByMemberId(long memberId, BoardType boardType, SortType sortType){
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException());
-
-        List<BoardInfoDTO> userBoardList = member.getBoardList().stream().map((Board::toBoardInfoDTO)).collect(Collectors.toList());
-        return userBoardList;
+        List<BoardInfoDTO> boardListByUserId = searchBoardRepository.getBoardListByUserId(memberId, boardType,sortType);
+        return boardListByUserId;
     }
 
     /*
@@ -126,13 +129,9 @@ public class BoardService {
      */
     @Transactional(readOnly = true)
     public List<BoardInfoDTO> getBoardListByCategoryId(long categoryId, BoardType boardType, SortType sortType){
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(NotFoundCategoryException::new);
+        List<BoardInfoDTO> boardByCategoryId = searchBoardRepository.getBoardListByCategoryId(categoryId,boardType,sortType);
 
-        List<BoardInfoDTO> boardInfoList = category.getBoardList().stream()
-                .map(Board::toBoardInfoDTO).collect(Collectors.toList());
-
-        return boardInfoList;
+        return boardByCategoryId;
     }
 
     public List<BoardInfoDTO> getBoardListByBoardType(SortType sortType) {

@@ -14,6 +14,7 @@ import f3f.domain.board.domain.Board;
 import f3f.domain.comment.dao.CommentRepository;
 import f3f.domain.comment.domain.Comment;
 import f3f.domain.comment.dto.CommentDTO;
+import f3f.domain.comment.dto.CommentResponseDto;
 import f3f.domain.comment.exception.MaxDepthException;
 import f3f.domain.comment.exception.NotFoundBoardByIdException;
 import f3f.domain.comment.exception.NotFoundParentException;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -43,7 +45,7 @@ public class CommentService {
         Member author = userRepository.findById(saveRequest.getAuthor().getId()).orElseThrow(NotFoundUserException::new);
         Board board = boardRepository.findById(saveRequest.getBoard().getId()).orElseThrow(NotFoundBoardByIdException::new);
 
-        if (board.getId() != boardId){
+        if (board.getId() != boardId) {
             throw new IllegalArgumentException();
         }
         //댓글생성
@@ -60,13 +62,13 @@ public class CommentService {
                     .orElseThrow(NotFoundParentException::new);
 
             //대댓글까지만 허용
-            if(parent.getDepth()>=1){
+            if (parent.getDepth() >= 1) {
                 throw new MaxDepthException();
             }
 
             comment.updateParent(parent); //부모 update
             //parent.getChildComment().add(comment); //TODO 해줘야되나 ? ->nope
-            comment.setDepth(parent.getDepth()+1);
+            comment.setDepth(parent.getDepth() + 1);
         }
 
         commentRepository.save(comment);//댓글 저장
@@ -74,14 +76,24 @@ public class CommentService {
         return comment.getId();
 
     }
+
     /*READ*/
     @Transactional(readOnly = true)
-    public List<Comment> findCommentsByBoardId(Long boardId){
+    public List<CommentResponseDto> findCommentsByBoardId(Long boardId) {
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new NotFoundBoardByIdException());
-
-        return board.getComments();
+        List<Comment> commentList = commentRepository.findByBoardId(board.getId());
+        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+        for (Comment comment : commentList) {
+            CommentResponseDto commentResponseDto = new CommentResponseDto(comment);
+            for (Comment childComment : comment.getChildComment()) {
+                CommentResponseDto child = new CommentResponseDto(childComment);
+                commentResponseDto.getChildCommentsList().add(child);
+            }
+            commentResponseDtoList.add(commentResponseDto);
+        }
+        return commentResponseDtoList;
 
 //         //태희
 //        if (boardRepository.existsById(board.getId())) {

@@ -1,6 +1,7 @@
 package f3f.domain.category.domain;
 
 import f3f.domain.board.domain.Board;
+import f3f.domain.category.dto.CategoryDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -22,7 +24,6 @@ public class Category {
     private String name;
 
     private Integer depth;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Category parentCategory;
@@ -46,5 +47,23 @@ public class Category {
         this.depth = category.getDepth();
         this.parentCategory = category.getParentCategory();
 
+    }
+
+
+    public CategoryDTO.CategoryInfo toCategoryInfoDto(){
+        return CategoryDTO.CategoryInfo.builder()
+                .categoryId(id)
+                .name(name)
+                .depth(depth)
+                .parentCategory(parentCategory)
+                .child(changeChildCategory(child))
+                .build();
+
+    }
+
+    private List<CategoryDTO.CategoryInfo> changeChildCategory(List<Category> child) {
+        List<CategoryDTO.CategoryInfo> list = child.stream()
+                .map(Category::toCategoryInfoDto).collect(Collectors.toList());
+        return list;
     }
 }

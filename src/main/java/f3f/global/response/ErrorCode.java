@@ -1,6 +1,5 @@
 package f3f.global.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,6 +17,7 @@ public enum ErrorCode {
     BAD_REQUEST(601, HttpStatus.BAD_REQUEST),
     VALIDATION_ERROR(602, HttpStatus.BAD_REQUEST),
     NOT_FOUND(603, HttpStatus.NOT_FOUND),
+    S3_ERROR(604,HttpStatus.NOT_FOUND),
 
     INTERNAL_ERROR(600, HttpStatus.INTERNAL_SERVER_ERROR),
     DATA_ACCESS_ERROR(605, HttpStatus.INTERNAL_SERVER_ERROR),

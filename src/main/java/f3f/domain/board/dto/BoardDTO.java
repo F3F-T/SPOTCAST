@@ -55,11 +55,16 @@ public class BoardDTO {
     @Getter
     public static class BoardInfoDTO {
 
+        private long id;
         private String title;
 
         private String content;
 
         private long viewCount;
+
+        private long commentCount;
+
+        private long likeCount;
 
         @Enumerated(EnumType.STRING)
         private BoardType boardType;
@@ -69,17 +74,51 @@ public class BoardDTO {
         private MemberDTO.MemberBoardInfoResponseDto member;
 
         @Builder
-        public BoardInfoDTO(String title, String content, long viewCount, BoardType boardType, Category category,
-                            MemberDTO.MemberBoardInfoResponseDto member) {
+
+        public BoardInfoDTO(long id, String title, String content, long viewCount, long commentCount, long likeCount, BoardType boardType,
+                            Category category, MemberDTO.MemberBoardInfoResponseDto member) {
+            this.id = id;
             this.title = title;
             this.content = content;
             this.viewCount = viewCount;
+            this.commentCount = commentCount;
+            this.likeCount = likeCount;
             this.boardType = boardType;
             this.category = category;
             this.member = member;
         }
     }
+    @Getter
+    public static class BoardDetailInfoDTO {
 
+        private long id;
+
+        private String title;
+
+        private String content;
+
+        private long viewCount;
+
+        private long likeCount;
+
+        @Enumerated(EnumType.STRING)
+        private BoardType boardType;
+
+        private Category category;
+
+        private MemberDTO.MemberBoardInfoResponseDto member;
+
+        @Builder
+        public BoardDetailInfoDTO(String title, String content, long viewCount, long likeCount, BoardType boardType, Category category, MemberDTO.MemberBoardInfoResponseDto member) {
+            this.title = title;
+            this.content = content;
+            this.viewCount = viewCount;
+            this.likeCount = likeCount;
+            this.boardType = boardType;
+            this.category = category;
+            this.member = member;
+        }
+    }
 
     @Getter
     @Builder
