@@ -102,6 +102,7 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public CategoryDTO.CategoryInfo getCategoryById(long categoryId) {
+
         CategoryDTO.CategoryInfo categoryInfo = categoryRepository.findById(categoryId).get().toCategoryInfoDto();
         return categoryInfo;
     }
