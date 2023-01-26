@@ -62,12 +62,12 @@ public class CategoryDTO {
 
         private Integer depth;
 
-        private Category parentCategory;
+        private CategoryInfo parentCategory;
 
         private List<CategoryInfo> child = new ArrayList<>();
 
         @Builder
-        public CategoryInfo(Long categoryId, String name, Integer depth, Category parentCategory, List<CategoryInfo> child) {
+        public CategoryInfo(Long categoryId, String name, Integer depth, CategoryInfo parentCategory, List<CategoryInfo> child) {
             this.categoryId = categoryId;
             this.name = name;
             this.depth = depth;
