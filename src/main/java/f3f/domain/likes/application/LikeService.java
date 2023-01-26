@@ -78,4 +78,21 @@ public class LikeService extends BaseTimeEntity {
         return likeInfoList;
     }
 
+    @Transactional(readOnly = true)
+    public List<LikeDTO.LikeInfo> getListListByBoardId(long boardId){
+        //todo 쿼리 최적화 필요
+        List<LikeDTO.LikeInfo> likeInfoList = new ArrayList<>();
+        List<Likes> likeList = likesRepository.findByBoardId(boardId);
+        for (Likes likes : likeList) {
+            LikeDTO.LikeInfo likeInfo = LikeDTO.LikeInfo.builder()
+                    .likeId(likes.getId())
+                    .boardId(likes.getBoard().getId())
+                    .memberId(likes.getMember().getId())
+                    .build();
+            likeInfoList.add(likeInfo);
+        }
+
+        return likeInfoList;
+    }
+
 }

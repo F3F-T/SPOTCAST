@@ -79,7 +79,9 @@ public class CommentService {
 
     /*READ*/
     @Transactional(readOnly = true)
+
     public List<CommentResponseDto> findCommentsByBoardId(Long boardId) {
+
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new NotFoundBoardByIdException());
@@ -91,6 +93,7 @@ public class CommentService {
                 CommentResponseDto child = new CommentResponseDto(childComment);
                 commentResponseDto.getChildCommentsList().add(child);
             }
+
             commentResponseDtoList.add(commentResponseDto);
         }
         return commentResponseDtoList;

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+
 import java.util.List;
 
 @Service
@@ -38,6 +39,7 @@ public class BoardImageService {
         //찾아왔으면 보드 객체를 이미지에다가 넣어주고
         //이미지 객체 S3랑 DB 에 업데이트 DB 에 넣는값은 S3경로
         return "SUCCESS";
+
     }
 
     @Transactional
