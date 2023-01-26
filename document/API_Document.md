@@ -13,7 +13,8 @@
 | 이메일 중복 검사 | GET | /auth/member-emails/{email}/exists | email |  |  |  | boolean(true or false) |
 | 비밀번호 변경(로그인 X) | PATCH | /member/find/password |  |  | email, afterPassword |  |  |
 | 비밀번호 변경(로그인 O) | PATCH | /member/{memberId}/change/password | memberId |  | email, beforePassword, afterPassword | token |  |
-| 정보 변경 | PATCH | /member/{memberId}/change/information | memberId |  | information, twitter, instagram, otherSns,field,egName | token |  |
+| 정보 변경 화면 분야 리스트 | GET | /member/.feild |  |  |  | token | List<categoryId,name,exist> |
+| 정보 변경 | PATCH | /member/{memberId}/change/information | memberId |  | information, twitter, instagram, otherSns,field,egName,List<categoryId,name,exist> | token |  |
 | 북마크 추가 | POST | /member/bookmark |  |  | followerId,followingId | token |  |
 | 북마크 삭제 | DELETE | /member/bookmark |  |  | followerId,followingId | token |  |
 | 북마크 팔로워 리스트 조회(나를 북마크 중인 사람들) | GET | /member/bookmark/follower |  | page,size |  | token | List<bookmarkId,memberId,name,email> |
