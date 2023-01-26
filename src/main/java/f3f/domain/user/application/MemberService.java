@@ -1,12 +1,14 @@
 package f3f.domain.user.application;
 
+import f3f.domain.category.domain.Category;
+import f3f.domain.memberCategory.dao.MemberCategoryRepository;
+import f3f.domain.memberCategory.domain.MemberCategory;
 import f3f.domain.publicModel.LoginType;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.dao.RefreshTokenDao;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO.MemberSaveRequestDto;
 import f3f.domain.user.dto.TokenDTO;
-import f3f.domain.user.exception.*;
 import f3f.global.jwt.TokenProvider;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
@@ -17,7 +19,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static f3f.domain.user.dto.MemberDTO.*;
 import static f3f.global.constants.JwtConstants.ACCESSTOKEN;
@@ -46,13 +49,16 @@ public class MemberService {
 
     private TokenProvider tokenProvider;
     private MemberRepository memberRepository;
+
+    private MemberCategoryRepository memberCategoryRepository;
     private RefreshTokenDao refreshTokenDao;
 
-    public MemberService(AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, RefreshTokenDao refreshTokenDao) {
+    public MemberService(AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, MemberCategoryRepository memberCategoryRepository, RefreshTokenDao refreshTokenDao) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
         this.memberRepository = memberRepository;
+        this.memberCategoryRepository = memberCategoryRepository;
         this.refreshTokenDao = refreshTokenDao;
     }
 
@@ -294,7 +300,15 @@ public class MemberService {
 
 
         Member member = findMemberByMemberId(memberId);
+        List<MemberCategory> memberCategories = memberCategoryRepository.findByMemberId(memberId);
+        List<Category> applicants = memberCategories.stream()
+                .map(MemberCategory::getCategory)
+                .collect(Collectors.toList());
 
+        for (Category applicant : applicants) {
+
+            System.out.println("applicant = " + applicant);
+        }
         member.updateInformation(updateInformationRequest);
     }
 

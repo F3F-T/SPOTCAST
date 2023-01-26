@@ -10,6 +10,5 @@ import java.util.List;
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
 
-
 }
 
