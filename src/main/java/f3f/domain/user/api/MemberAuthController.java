@@ -26,8 +26,6 @@ public class MemberAuthController {
 
     private final MemberService memberService;
 
-    private final CategoryService categoryService;
-
     private final EmailCertificationService emailCertificationService;
     /**
      * 회원가입
@@ -110,8 +108,5 @@ public class MemberAuthController {
 
         return ResultDataResponseDTO.of(memberService.emailDuplicateCheck(email));
     }
-
-
-
 
 }

@@ -1,5 +1,6 @@
 package f3f.domain.user.dto;
 
+import f3f.domain.memberCategory.dto.MemberCategoryDTO;
 import f3f.domain.publicModel.LoginType;
 import f3f.domain.publicModel.LoginMemberType;
 import f3f.domain.publicModel.Authority;
@@ -15,6 +16,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Getter
 @Builder
@@ -244,14 +246,18 @@ public class MemberDTO {
 
         private String egName;
 
+        private List<MemberCategoryDTO.CategoryMyInfo> categoryInfo;
+
+
         @Builder
-        public MemberUpdateInformationRequestDto(String information, String twitter, String instagram, String otherSns, String field, String egName) {
+        public MemberUpdateInformationRequestDto(String information, String twitter, String instagram, String otherSns, String field, String egName, List<MemberCategoryDTO.CategoryMyInfo> categoryInfo) {
             this.information = information;
             this.twitter = twitter;
             this.instagram = instagram;
             this.otherSns = otherSns;
             this.field = field;
             this.egName = egName;
+            this.categoryInfo = categoryInfo;
         }
     }
 

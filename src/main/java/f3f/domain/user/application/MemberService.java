@@ -1,12 +1,12 @@
 package f3f.domain.user.application;
 
-import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.category.application.CategoryService;
-import f3f.domain.category.dto.CategoryDTO;
+import f3f.domain.category.domain.Category;
+import f3f.domain.memberCategory.dao.MemberCategoryJpaRepository;
 import f3f.domain.memberCategory.dao.MemberCategoryRepository;
+import f3f.domain.memberCategory.domain.MemberCategory;
 import f3f.domain.memberCategory.dto.MemberCategoryDTO;
 import f3f.domain.publicModel.LoginType;
-import f3f.domain.scrapBoard.domain.ScrapBoard;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.dao.RefreshTokenDao;
 import f3f.domain.user.domain.Member;
@@ -28,13 +28,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static f3f.domain.user.dto.MemberDTO.*;
 import static f3f.global.constants.JwtConstants.ACCESSTOKEN;
@@ -46,7 +46,7 @@ import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 @Slf4j
 public class MemberService {
 
-
+    private EntityManager em;
     private AuthenticationManagerBuilder authenticationManagerBuilder;
     private PasswordEncoder passwordEncoder;
 
@@ -54,15 +54,19 @@ public class MemberService {
     private MemberRepository memberRepository;
     private CategoryService categoryService;
     private MemberCategoryRepository memberCategoryRepository;
+
+    private MemberCategoryJpaRepository memberCategoryJpaRepository;
     private RefreshTokenDao refreshTokenDao;
 
-    public MemberService(AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository , CategoryService categoryService, MemberCategoryRepository memberCategoryRepository, RefreshTokenDao refreshTokenDao) {
+    public MemberService(EntityManager em, AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, CategoryService categoryService, MemberCategoryRepository memberCategoryRepository, MemberCategoryJpaRepository memberCategoryJpaRepository, RefreshTokenDao refreshTokenDao) {
+        this.em = em;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
         this.memberRepository = memberRepository;
         this.categoryService = categoryService;
         this.memberCategoryRepository = memberCategoryRepository;
+        this.memberCategoryJpaRepository = memberCategoryJpaRepository;
         this.refreshTokenDao = refreshTokenDao;
     }
 
@@ -118,7 +122,7 @@ public class MemberService {
      * @return
      */
     @Transactional(readOnly = true)
-    public MemberLoginServiceResponseDto login(MemberLoginRequestDto loginRequest,HttpServletResponse response,HttpServletRequest request) {
+    public MemberLoginServiceResponseDto login(MemberLoginRequestDto loginRequest, HttpServletResponse response, HttpServletRequest request) {
 
         // 로그인 정보로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
@@ -139,8 +143,8 @@ public class MemberService {
 
             String refreshToken = tokenDto.getRefreshToken();
             saveRefreshTokenInStorage(refreshToken, Long.valueOf(authentication.getName())); // 추후 DB 나 어딘가 저장 예정
-            CookieUtil.deleteCookie(request,response,ACCESSTOKEN);
-            CookieUtil.addCookie(response,ACCESSTOKEN,tokenDto.getAccessToken(),  ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
+            CookieUtil.deleteCookie(request, response, ACCESSTOKEN);
+            CookieUtil.addCookie(response, ACCESSTOKEN, tokenDto.getAccessToken(), ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
 
             return memberLoginResponse;
         } catch (BadCredentialsException e) {
@@ -161,10 +165,10 @@ public class MemberService {
 
 
         Cookie cookie = CookieUtil.getCookie(request, ACCESSTOKEN).orElse(null);
-        String accessToken ;
-        if(cookie==null){
-            throw new GeneralException(ErrorCode.INVALID_REQUEST,"로그인이 필요한 서비스입니다.");
-        } else{
+        String accessToken;
+        if (cookie == null) {
+            throw new GeneralException(ErrorCode.INVALID_REQUEST, "로그인이 필요한 서비스입니다.");
+        } else {
             accessToken = cookie.getValue();
         }
 
@@ -194,7 +198,7 @@ public class MemberService {
         saveRefreshTokenInStorage(tokenDTO.getRefreshToken(), Long.valueOf(authentication.getName()));// 추후 디비에 저장
 
         // 토큰 발급
-        CookieUtil.addCookie(response,ACCESSTOKEN,tokenDTO.getAccessToken(),  ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
+        CookieUtil.addCookie(response, ACCESSTOKEN, tokenDTO.getAccessToken(), ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
     }
 
 
@@ -206,17 +210,17 @@ public class MemberService {
 
         Cookie cookie = CookieUtil.getCookie(request, ACCESSTOKEN).orElse(null);
         String accessToken;
-        if(cookie==null){
-            throw new GeneralException(ErrorCode.INVALID_REQUEST,"로그인이 필요한 서비스입니다.");
-        } else{
+        if (cookie == null) {
+            throw new GeneralException(ErrorCode.INVALID_REQUEST, "로그인이 필요한 서비스입니다.");
+        } else {
             accessToken = cookie.getValue();
         }
         Authentication auth = tokenProvider.getAuthentication(accessToken);
 
         if (auth != null && auth.isAuthenticated()) {
             refreshTokenDao.removeRefreshToken(Long.valueOf(auth.getName()));
-            deleteCookie(response,JSESSIONID);
-            deleteCookie(response,REMEMBER_ME);
+            deleteCookie(response, JSESSIONID);
+            deleteCookie(response, REMEMBER_ME);
             deleteCookie(response, ACCESSTOKEN);
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
@@ -303,6 +307,30 @@ public class MemberService {
 
 
         Member member = findMemberByMemberId(memberId);
+        List<MemberCategory> memberCategories = member.getMemberCategories();
+        List<MemberCategoryDTO.CategoryMyInfo> categoryInfo = updateInformationRequest.getCategoryInfo();
+        for (MemberCategoryDTO.CategoryMyInfo categoryMyInfo : categoryInfo) {
+
+            boolean flag = true;
+            for (MemberCategory memberCategory : memberCategories) {
+                if (memberCategory.getCategory().getId().equals(categoryMyInfo.getCategoryId())) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (categoryMyInfo.getExist()&&flag) {
+                MemberCategory memberCategory = MemberCategory.builder()
+                        .member(Member.builder().id(memberId).build())
+                        .category(Category.builder().id(categoryMyInfo.getCategoryId()).build())
+                        .build();
+                em.persist(memberCategory);
+            }
+            else if(!categoryMyInfo.getExist()&&!flag) {
+                MemberCategory memberCategory = memberCategoryJpaRepository.findByCategoryIdAndMemberId(categoryMyInfo.getCategoryId(), memberId).orElse(null);
+                em.remove(memberCategory);
+            }
+
+        }
 
         member.updateInformation(updateInformationRequest);
     }
@@ -407,7 +435,7 @@ public class MemberService {
 
         for (MemberCategoryDTO.CategoryMyInfo category : categoryList) {
             for (MemberCategoryDTO.categoryResponseDto memberCategory : memberCategoryList) {
-                if(memberCategory.getId().equals(category.getCategoryId())){
+                if (memberCategory.getId().equals(category.getCategoryId())) {
                     category.updateExist();
                 }
             }
@@ -419,10 +447,11 @@ public class MemberService {
 
     /**
      * 쿠키 제거
+     *
      * @param response
      * @param cookieName
      */
-    private void deleteCookie(HttpServletResponse response,String cookieName) {
+    private void deleteCookie(HttpServletResponse response, String cookieName) {
         Cookie cookie = new Cookie(cookieName, null); // choiceCookieName(쿠키 이름)에 대한 값을 null로 지정
         cookie.setMaxAge(0); // 유효시간을 0으로 설정
         cookie.setPath("/");
