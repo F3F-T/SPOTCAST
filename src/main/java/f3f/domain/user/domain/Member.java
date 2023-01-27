@@ -81,8 +81,8 @@ public class Member extends MemberBase {
 
 
     @Builder
-    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String field, String profile) {
-        super(id, email, name, password, loginMemberType, loginType, authority, field);
+    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String profile) {
+        super(id, email, name, password, loginMemberType, loginType, authority);
         this.profile = profile;
     }
 
@@ -133,7 +133,6 @@ public class Member extends MemberBase {
         this.instagram = updateInformationRequest.getInstagram();
         this.twitter = updateInformationRequest.getTwitter();
         this.otherSns = updateInformationRequest.getOtherSns();
-        this.field = updateInformationRequest.getField();
         this.egName = updateInformationRequest.getEgName();
     }
 
