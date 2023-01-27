@@ -99,7 +99,8 @@ public class SecurityConfig {
                 .antMatchers("/oauth2/**").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE,"/member/{memberId}").access("hasRole('ADMIN') or hasRole('USER')")
-                .antMatchers("/member/myInfo","/member/field","/member/{memberId}/change/**").access("hasRole('ADMIN') or hasRole('USER')")
+                .antMatchers("/member/myInfo","/member/field"
+                        ,"/member/{memberId}/change/**","/member/bookmark").access("hasRole('ADMIN') or hasRole('USER')")
                 .antMatchers("/member/**").permitAll()
                 .antMatchers("/message/**").access("hasRole('ADMIN') or hasRole('USER')")
 
