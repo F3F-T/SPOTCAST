@@ -53,7 +53,6 @@ public class MemberService {
 
     private TokenProvider tokenProvider;
     private MemberRepository memberRepository;
-    private CategoryService categoryService;
     private MemberCategoryRepository memberCategoryRepository;
 
     private MemberCategoryJpaRepository memberCategoryJpaRepository;
@@ -61,13 +60,12 @@ public class MemberService {
 
     private MemberRepositoryDao memberRepositoryDao;
 
-    public MemberService(EntityManager em, AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, CategoryService categoryService, MemberCategoryRepository memberCategoryRepository, MemberCategoryJpaRepository memberCategoryJpaRepository, RefreshTokenDao refreshTokenDao, MemberRepositoryDao memberRepositoryDao) {
+    public MemberService(EntityManager em, AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository,  MemberCategoryRepository memberCategoryRepository, MemberCategoryJpaRepository memberCategoryJpaRepository, RefreshTokenDao refreshTokenDao, MemberRepositoryDao memberRepositoryDao) {
         this.em = em;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
         this.memberRepository = memberRepository;
-        this.categoryService = categoryService;
         this.memberCategoryRepository = memberCategoryRepository;
         this.memberCategoryJpaRepository = memberCategoryJpaRepository;
         this.refreshTokenDao = refreshTokenDao;
@@ -240,8 +238,9 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public MemberInfoResponseDto findMemberInfoByMemberId(Long memberId) {
-        List<MemberCategoryDTO.CategoryMyInfo> field = getFieldMyInfo(memberId);
+
         MemberInfoResponseDto memberInfo = memberRepositoryDao.getMemberInfo(memberId);
+        List<MemberCategoryDTO.CategoryMyInfo> field = getFieldMyInfo(memberId);
         memberInfo.addField(field);
         return memberInfo;
     }
