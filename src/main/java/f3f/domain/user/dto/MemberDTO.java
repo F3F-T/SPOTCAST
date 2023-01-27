@@ -103,14 +103,22 @@ public class MemberDTO {
         @Enumerated(value = EnumType.STRING)
         private LoginType loginType;
 
+        public void addField(List<MemberCategoryDTO.CategoryMyInfo> field) {
+            this.field = field;
+        }
+
         @Enumerated(value = EnumType.STRING)
         private Authority authority;
 
         private String information;
 
+        private List<MemberCategoryDTO.CategoryMyInfo> field;
 
+        private Integer follower;
+
+        private Integer following;
         @Builder
-        public MemberInfoResponseDto(Long id, String email, String name, String twitter, String instagram, String otherSns, String egName, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information, String profile) {
+        public MemberInfoResponseDto(Long id, String email, String name, String twitter, String instagram, String otherSns, String egName, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information, String profile, Integer follower, Integer following) {
             this.id = id;
             this.email = email;
             this.name = name;
@@ -123,6 +131,8 @@ public class MemberDTO {
             this.authority = authority;
             this.information = information;
             this.profile = profile;
+            this.follower = follower;
+            this.following = following;
         }
     }
 

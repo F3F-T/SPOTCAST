@@ -55,7 +55,7 @@ public class MemberController {
     @GetMapping("/myInfo")
     public ResultDataResponseDTO<MemberInfoResponseDto> findMyInfoById() {
         //memberId 검증
-        return ResultDataResponseDTO.of(memberService.findMyInfo(SecurityUtil.getCurrentMemberId()));
+        return ResultDataResponseDTO.of(memberService.findMemberInfoByMemberId(SecurityUtil.getCurrentMemberId()));
     }
 
     /**

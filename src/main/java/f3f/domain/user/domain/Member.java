@@ -6,6 +6,7 @@ import f3f.domain.category.domain.Category;
 import f3f.domain.comment.domain.Comment;
 import f3f.domain.likes.domain.Likes;
 import f3f.domain.memberCategory.domain.MemberCategory;
+import f3f.domain.memberCategory.dto.MemberCategoryDTO;
 import f3f.domain.message.domain.Message;
 import f3f.domain.publicModel.LoginType;
 import f3f.domain.publicModel.LoginMemberType;
