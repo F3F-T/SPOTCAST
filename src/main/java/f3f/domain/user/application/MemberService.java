@@ -8,6 +8,7 @@ import f3f.domain.memberCategory.domain.MemberCategory;
 import f3f.domain.memberCategory.dto.MemberCategoryDTO;
 import f3f.domain.publicModel.LoginType;
 import f3f.domain.user.dao.MemberRepository;
+import f3f.domain.user.dao.MemberRepositoryDao;
 import f3f.domain.user.dao.RefreshTokenDao;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO.MemberSaveRequestDto;
@@ -58,7 +59,9 @@ public class MemberService {
     private MemberCategoryJpaRepository memberCategoryJpaRepository;
     private RefreshTokenDao refreshTokenDao;
 
-    public MemberService(EntityManager em, AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, CategoryService categoryService, MemberCategoryRepository memberCategoryRepository, MemberCategoryJpaRepository memberCategoryJpaRepository, RefreshTokenDao refreshTokenDao) {
+    private MemberRepositoryDao memberRepositoryDao;
+
+    public MemberService(EntityManager em, AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, CategoryService categoryService, MemberCategoryRepository memberCategoryRepository, MemberCategoryJpaRepository memberCategoryJpaRepository, RefreshTokenDao refreshTokenDao, MemberRepositoryDao memberRepositoryDao) {
         this.em = em;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.passwordEncoder = passwordEncoder;
@@ -68,6 +71,7 @@ public class MemberService {
         this.memberCategoryRepository = memberCategoryRepository;
         this.memberCategoryJpaRepository = memberCategoryJpaRepository;
         this.refreshTokenDao = refreshTokenDao;
+        this.memberRepositoryDao = memberRepositoryDao;
     }
 
     /**
@@ -236,21 +240,12 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public MemberInfoResponseDto findMemberInfoByMemberId(Long memberId) {
-        return findMemberByMemberId(memberId)
-                .toFindMemberDto();
+        List<MemberCategoryDTO.CategoryMyInfo> field = getFieldMyInfo(memberId);
+        MemberInfoResponseDto memberInfo = memberRepositoryDao.getMemberInfo(memberId);
+        memberInfo.addField(field);
+        return memberInfo;
     }
 
-    /**
-     * 내 정보 조회
-     *
-     * @return
-     */
-
-    @Transactional(readOnly = true)
-    public MemberInfoResponseDto findMyInfo(Long memberId) {
-        return findMemberByMemberId(memberId)
-                .toFindMemberDto();
-    }
 
     /**
      * 비밀번호 수정 - 로그인된 상태인 경우
