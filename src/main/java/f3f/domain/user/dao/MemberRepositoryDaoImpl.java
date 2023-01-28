@@ -37,8 +37,8 @@ public class MemberRepositoryDaoImpl implements MemberRepositoryDao{
                         member.authority,
                         member.information,
                         member.profile,
-                        member.followerList.size(),
-                        member.followingList.size()
+                        member.followingList.size(),
+                        member.followerList.size()
                 ))
                 .from(member)
                 .where(member.id.eq(memberId))
