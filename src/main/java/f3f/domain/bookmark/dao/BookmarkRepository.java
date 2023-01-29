@@ -21,9 +21,9 @@ public interface BookmarkRepository  extends JpaRepository<Bookmark, Long> {
             ":following_id AS following_id) AS new_value\n" +
             "WHERE NOT EXISTS ( SELECT bm.follower_id,bm.following_id FROM bookmark bm WHERE bm.follower_id = :follower_id \n" +
             " and bm.following_id = :following_id) LIMIT 1;",nativeQuery = true)
-    Integer saveFollowRequest(@Param("follower_id")Long follower_id, @Param("following_id")Long following_id);
+    void saveFollowRequest(@Param("follower_id")Long follower_id, @Param("following_id")Long following_id);
 
-    Integer deleteByFollowerIdAndFollowingId(Long follower_id, Long following_id);
+    void deleteByFollowerIdAndFollowingId(Long follower_id, Long following_id);
 
     Optional<Bookmark> findByFollowerIdAndFollowingId(Long follower_id, Long following_id);
 

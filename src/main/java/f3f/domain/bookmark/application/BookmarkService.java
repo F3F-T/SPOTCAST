@@ -37,7 +37,7 @@ public class BookmarkService extends BaseTimeEntity {
 
     // 북마크 요청
     @Transactional
-    public Boolean followRequest(BookmarkDTO.BookmarkRequestDto requestDto, Long currentMemberId) {
+    public Long followRequest(BookmarkDTO.BookmarkRequestDto requestDto, Long currentMemberId) {
         if (!requestDto.getFollowerId().equals(currentMemberId)) {
             throw new GeneralException(ErrorCode.MISMATCH_FOLLOW, "본인만 팔로우를 할 수 있습니다.");
         }
@@ -50,18 +50,18 @@ public class BookmarkService extends BaseTimeEntity {
         if (!memberRepository.existsById(requestDto.getFollowingId())) {
             throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다.");
         }
-        Integer result = bookmarkRepository.saveFollowRequest(requestDto.getFollowerId(), requestDto.getFollowingId());
+        bookmarkRepository.saveFollowRequest(requestDto.getFollowerId(), requestDto.getFollowingId());
 
-        return result == 1;
+        return requestDto.getFollowingId();
 
     }
 
     //북마크 취소 요청
     @Transactional
-    public Boolean followCancel(BookmarkDTO.BookmarkRequestDto requestDto) {
+    public Long followCancel(BookmarkDTO.BookmarkRequestDto requestDto) {
 
-        Integer result = bookmarkRepository.deleteByFollowerIdAndFollowingId(requestDto.getFollowerId(), requestDto.getFollowingId());
-        return result == 1;
+        bookmarkRepository.deleteByFollowerIdAndFollowingId(requestDto.getFollowerId(), requestDto.getFollowingId());
+        return requestDto.getFollowingId();
     }
 
     //나를 팔로우하는 사람들 리스트
