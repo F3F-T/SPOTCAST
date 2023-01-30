@@ -101,7 +101,7 @@ public class SearchMessageRepositoryImpl extends QuerydslRepositorySupport imple
                         message.readStatus))
                 .from(member).leftJoin(message).fetchJoin()
                 .on(message.sender.id.eq(member.id))
-                .where(message.recipient.id.eq(memberId),message.recipientDisplayStatus.eq(true),message.readStatus.eq(true))
+                .where(message.recipient.id.eq(memberId),message.recipientDisplayStatus.eq(true),message.readStatus.eq(false))
                 .orderBy(new OrderSpecifier(Order.DESC,message.createdDate)));
 
         long total = query.fetchCount();
