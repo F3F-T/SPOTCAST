@@ -94,6 +94,7 @@ public class MessageDTO {
                     .sender(this.sender)
                     .recipientDisplayStatus(true)
                     .senderDisplayStatus(true)
+                    .readStatus(false)
                     .build();
 
         }

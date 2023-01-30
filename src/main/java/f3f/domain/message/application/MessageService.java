@@ -64,6 +64,20 @@ public class MessageService {
 
     }
 
+    @Transactional
+    public void updateReadStatus(long messageId, long memberId) {
+        if (!memberRepository.existsById(memberId)) {
+            throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다.");
+        }
+
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MESSAGE, "존재하지 않는 메세지입니다."));
+
+
+        message.updateReadStatus(memberId);
+
+    }
+
 
     @Transactional(readOnly = true)
     public MessageDTO.MessageResponseDto getMessageInfo(long messageId, Long memberId) {

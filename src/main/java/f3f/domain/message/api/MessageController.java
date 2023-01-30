@@ -68,4 +68,11 @@ public class MessageController {
         Page<MessageDTO.MessageListResponseDto> recipientMessageList = messageService.getRecipientMessageListByUserId(memberId,pageable);
         return ResultDataResponseDTO.of(recipientMessageList);
     }
+
+    @PatchMapping(value = "/{messageId}/read")
+    public ResultDataResponseDTO readMessage(@PathVariable long messageId){
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        messageService.updateReadStatus(messageId,memberId);
+        return ResultDataResponseDTO.empty();
+    }
 }
