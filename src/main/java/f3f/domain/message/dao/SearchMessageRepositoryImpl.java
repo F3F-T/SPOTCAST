@@ -47,7 +47,8 @@ public class SearchMessageRepositoryImpl extends QuerydslRepositorySupport imple
                         message.createdDate,
                         member.id,
                         member.email,
-                        member.name))
+                        member.name,
+                        member.profile))
                 .from(member).leftJoin(message).fetchJoin()
                 .on(message.recipient.id.eq(member.id))
                 .where(message.sender.id.eq(memberId),message.senderDisplayStatus.eq(true))
@@ -70,7 +71,8 @@ public class SearchMessageRepositoryImpl extends QuerydslRepositorySupport imple
                         message.createdDate,
                         member.id,
                         member.email,
-                        member.name))
+                        member.name,
+                        member.profile))
                 .from(member).leftJoin(message).fetchJoin()
                 .on(message.sender.id.eq(member.id))
                 .where(message.recipient.id.eq(memberId),message.recipientDisplayStatus.eq(true))
