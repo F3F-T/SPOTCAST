@@ -83,6 +83,30 @@ public class SearchMessageRepositoryImpl extends QuerydslRepositorySupport imple
 
         return new PageImpl<>(result, pageable, total);
     }
+
+    @Override
+    public Page<MessageDTO.MessageListResponseDto> getRecipientUnReadListByUserId(long memberId, Pageable pageable) {
+        JPQLQuery<MessageDTO.MessageListResponseDto> query = querydsl().applyPagination(pageable, jpaQueryFactory
+                .select(Projections.constructor(MessageDTO.MessageListResponseDto.class,
+                        message.id,
+                        message.title,
+                        message.content,
+                        message.createdDate,
+                        member.id,
+                        member.email,
+                        member.name,
+                        member.profile))
+                .from(member).leftJoin(message).fetchJoin()
+                .on(message.sender.id.eq(member.id))
+                .where(message.recipient.id.eq(memberId),message.recipientDisplayStatus.eq(true),message.readStatus.eq(true))
+                .orderBy(new OrderSpecifier(Order.DESC,message.createdDate)));
+
+        long total = query.fetchCount();
+        List<MessageDTO.MessageListResponseDto> result = query.fetch();
+
+        return new PageImpl<>(result, pageable, total);
+    }
+
     private Querydsl querydsl() {
         return Objects.requireNonNull(getQuerydsl());
     }

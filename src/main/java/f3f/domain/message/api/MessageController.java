@@ -69,6 +69,14 @@ public class MessageController {
         return ResultDataResponseDTO.of(recipientMessageList);
     }
 
+    @GetMapping(value = "/unread")
+    public ResultDataResponseDTO<Page<MessageDTO.MessageListResponseDto>> getRecipientUnReadMessageListByUserId(Pageable pageable){
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        Page<MessageDTO.MessageListResponseDto> recipientMessageList = messageService.getRecipientUnReadMessageListByUserId(memberId,pageable);
+        return ResultDataResponseDTO.of(recipientMessageList);
+    }
+
+
     @PatchMapping(value = "/{messageId}/read")
     public ResultDataResponseDTO readMessage(@PathVariable long messageId){
         Long memberId = SecurityUtil.getCurrentMemberId();
