@@ -32,7 +32,6 @@ public class MessageController {
     @PostMapping(value = "/send")
     public ResultDataResponseDTO sendMessage(@RequestBody MessageDTO.MessageRequestDto requestDto){
 
-        log.info(requestDto.toString());
         Long memberId = SecurityUtil.getCurrentMemberId();
         messageService.sendMessage(requestDto,memberId);
 

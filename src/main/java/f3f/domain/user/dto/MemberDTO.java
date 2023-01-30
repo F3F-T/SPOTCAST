@@ -18,6 +18,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
+import static f3f.global.constants.MemberConstants.DEFAULT_PROFILE;
+
 @Getter
 @Builder
 public class MemberDTO {
@@ -73,7 +75,7 @@ public class MemberDTO {
                         .loginMemberType(this.loginMemberType)
                         .loginType(this.loginType)
                         .authority(this.authority)
-                        .profile("https://shopping-phinf.pstatic.net/main_2343561/23435610490.20211228162539.jpg?type=f640")
+                        .profile(DEFAULT_PROFILE)
                         .build();
         }
     }

@@ -20,6 +20,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import static f3f.global.constants.MemberConstants.DEFAULT_PROFILE;
+
 
 @Service
 @Slf4j
@@ -71,7 +73,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 .loginType(loginType)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .authority(Authority.ROLE_USER)
-                .profile("https://shopping-phinf.pstatic.net/main_2343561/23435610490.20211228162539.jpg?type=f640")
+                .profile(DEFAULT_PROFILE)
                 .build();
 
         return memberRepository.save(createMember);
