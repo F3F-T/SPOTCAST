@@ -52,8 +52,10 @@ public class MessageDTO {
 
         private String memberName;
 
+        private String memberProfile;
+
         @Builder
-        public MessageListResponseDto(Long id, String title, String content, LocalDateTime createdDate, Long memberId, String memberEmail, String memberName) {
+        public MessageListResponseDto(Long id, String title, String content, LocalDateTime createdDate, Long memberId, String memberEmail, String memberName, String memberProfile) {
             this.id = id;
             this.title = title;
             this.content = content;
@@ -61,6 +63,7 @@ public class MessageDTO {
             this.memberId = memberId;
             this.memberEmail = memberEmail;
             this.memberName = memberName;
+            this.memberProfile = memberProfile;
         }
     }
 
