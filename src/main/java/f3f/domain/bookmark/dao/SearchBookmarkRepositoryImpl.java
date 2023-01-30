@@ -1,10 +1,12 @@
 package f3f.domain.bookmark.dao;
 
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sun.xml.bind.v2.TODO;
+import f3f.domain.bookmark.domain.QBookmark;
 import f3f.domain.bookmark.dto.BookmarkDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.querydsl.jpa.JPAExpressions.select;
+import static com.querydsl.jpa.JPAExpressions.selectOne;
 import static f3f.domain.bookmark.domain.QBookmark.bookmark;
 import static f3f.domain.message.domain.QMessage.message;
 import static f3f.domain.user.domain.QMember.member;
@@ -27,9 +31,15 @@ public class SearchBookmarkRepositoryImpl implements SearchBookmarkRepository {
 
     @Override
     public Slice<BookmarkDTO.BookmarkListResponseDto> getFollowerListByMemberId(Long member_id, Pageable pageable) {
+        QBookmark bookmarkExist = new QBookmark("bookmarkExist");
         List<BookmarkDTO.BookmarkListResponseDto> followerList = jpaQueryFactory
                 .select(Projections.constructor(
-                        BookmarkDTO.BookmarkListResponseDto.class,bookmark.id, member.id, member.email, member.name,member.profile))
+                        BookmarkDTO.BookmarkListResponseDto.class,
+                        bookmark.id, member.id, member.email, member.name,member.profile,
+                                selectOne().from(bookmarkExist)
+                                        .where(bookmarkExist.follower.id.eq(member_id)
+                                        ,bookmarkExist.following.id.eq(bookmark.follower.id)).exists()
+                        ))
                 .from(member).leftJoin(bookmark).fetchJoin()
                 .on(bookmark.follower.id.eq(member.id))
                 .where(bookmark.following.id.eq(member_id))

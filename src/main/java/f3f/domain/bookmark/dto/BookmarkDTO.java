@@ -41,14 +41,24 @@ public class BookmarkDTO {
         private String email;
 
         private String profile;
-        @Builder
 
+        private Boolean exist;
+        @Builder
         public BookmarkListResponseDto(Long bookmarkId, Long memberId, String name, String email, String profile) {
             this.bookmarkId = bookmarkId;
             this.memberId = memberId;
             this.name = name;
             this.email = email;
             this.profile = profile;
+        }
+        @Builder
+        public BookmarkListResponseDto(Long bookmarkId, Long memberId, String name, String email, String profile, Boolean exist) {
+            this.bookmarkId = bookmarkId;
+            this.memberId = memberId;
+            this.name = name;
+            this.email = email;
+            this.profile = profile;
+            this.exist = exist;
         }
     }
 }
