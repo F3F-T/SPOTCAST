@@ -1,6 +1,7 @@
 package f3f.domain.BoardImage.domain;
 
 import f3f.domain.board.domain.Board;
+import f3f.domain.publicModel.BaseTimeEntity;
 import lombok.*;
 import javax.persistence.*;
 import f3f.global.util.ImageUtil;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Entity
-public class BoardImage {
+public class BoardImage extends BaseTimeEntity {
 
     @Id
     @GeneratedValue

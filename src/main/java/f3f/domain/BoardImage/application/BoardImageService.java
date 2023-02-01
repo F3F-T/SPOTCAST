@@ -25,16 +25,16 @@ public class BoardImageService {
     //private final S3Uploader s3Uploader;
 
     @Transactional
-    public String  saveBoardImage(long boardId , List<MultipartFile> boardImageList) throws IOException {
+    public String  saveBoardImage(long boardId , MultipartFile intputBoardImage) throws IOException {
         Board board = boardRepository.findById(boardId).orElseThrow();
-        for (MultipartFile multipartFile : boardImageList) {
+
        //     String imagePath = s3Uploader.upload(multipartFile, "임시 ");
             BoardImage boardImage = BoardImage.builder()
                     .board(board)
                     .s3Url("imagePath")
                     .build();
             boardImageRepository.save(boardImage);
-        }
+
         //1차로 boardId 로 게시글을 찾아온다.
         //찾아왔으면 보드 객체를 이미지에다가 넣어주고
         //이미지 객체 S3랑 DB 에 업데이트 DB 에 넣는값은 S3경로
