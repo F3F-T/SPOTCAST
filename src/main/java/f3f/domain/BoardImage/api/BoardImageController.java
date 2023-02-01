@@ -20,8 +20,8 @@ public class BoardImageController {
     private final BoardImageService boardImageService;
 
     @PostMapping(value = "/board/boardImage/{boardId}")
-    public String saveBoardImage(@PathVariable long boardId, @RequestBody List<MultipartFile> imageList) throws IOException {
-        return boardImageService.saveBoardImage(boardId,imageList);
+    public String saveBoardImage(@PathVariable long boardId, @RequestBody MultipartFile image) throws IOException {
+        return boardImageService.saveBoardImage(boardId,image);
     }
 
     @DeleteMapping(value = "/board/boardImage")

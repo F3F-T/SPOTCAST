@@ -7,6 +7,7 @@ import f3f.domain.board.dao.BoardRepository;
 import f3f.domain.board.domain.Board;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
+import f3f.infra.aws.S3.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,16 +23,16 @@ public class BoardImageService {
 
     private final BoardRepository boardRepository;
     private final BoardImageRepository boardImageRepository;
-    //private final S3Uploader s3Uploader;
+    private final S3Uploader s3Uploader;
 
     @Transactional
-    public String  saveBoardImage(long boardId , MultipartFile intputBoardImage) throws IOException {
+    public String  saveBoardImage(long boardId , MultipartFile inputBoardImage) throws IOException {
         Board board = boardRepository.findById(boardId).orElseThrow();
 
-       //     String imagePath = s3Uploader.upload(multipartFile, "임시 ");
+            String imagePath = s3Uploader.upload(inputBoardImage, "임시 ");
             BoardImage boardImage = BoardImage.builder()
                     .board(board)
-                    .s3Url("imagePath")
+                    .s3Url(imagePath)
                     .build();
             boardImageRepository.save(boardImage);
 
@@ -46,7 +47,7 @@ public class BoardImageService {
     public BoardImage deleteBoardImage(BoardImage boardImage){
         BoardImage image = boardImageRepository.findById(boardImage.getId())
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "존재하지 않는 이미지 입니다."));
-//        s3Uploader.deleteImage("임시",boardImage.getS3Url());
+        s3Uploader.deleteImage("임시",boardImage.getS3Url());
         boardImageRepository.deleteById(image.getId());
         return boardImage;
     }
