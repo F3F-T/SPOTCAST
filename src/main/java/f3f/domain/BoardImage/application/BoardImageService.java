@@ -29,7 +29,7 @@ public class BoardImageService {
     public String  saveBoardImage(long boardId , MultipartFile inputBoardImage) throws IOException {
         Board board = boardRepository.findById(boardId).orElseThrow();
 
-            String imagePath = s3Uploader.upload(inputBoardImage, "임시 ");
+            String imagePath = s3Uploader.upload(inputBoardImage, "boardImage ");
             BoardImage boardImage = BoardImage.builder()
                     .board(board)
                     .s3Url(imagePath)
@@ -39,7 +39,7 @@ public class BoardImageService {
         //1차로 boardId 로 게시글을 찾아온다.
         //찾아왔으면 보드 객체를 이미지에다가 넣어주고
         //이미지 객체 S3랑 DB 에 업데이트 DB 에 넣는값은 S3경로
-        return "SUCCESS";
+        return imagePath;
 
     }
 
@@ -47,7 +47,7 @@ public class BoardImageService {
     public BoardImage deleteBoardImage(BoardImage boardImage){
         BoardImage image = boardImageRepository.findById(boardImage.getId())
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "존재하지 않는 이미지 입니다."));
-        s3Uploader.deleteImage("임시",boardImage.getS3Url());
+        s3Uploader.deleteImage("boardImage",boardImage.getS3Url());
         boardImageRepository.deleteById(image.getId());
         return boardImage;
     }

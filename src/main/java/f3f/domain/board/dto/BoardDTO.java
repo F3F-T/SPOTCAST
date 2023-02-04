@@ -134,14 +134,14 @@ public class BoardDTO {
 
         private BoardType boardType;
 
-        private CategoryDTO.CategoryInfo category;
+        private Category category;
 
         private MemberDTO.MemberBoardInfoResponseDto member;
 
         @Builder
         public BoardInfoDTO(long id, String title, String content, long viewCount, long commentCount, long likeCount,
                             String supportEmail, String phone, long pay, int participationPeriod, int recruitVolume, String recruitType,
-                            ProfitStatus profitStatus, LocalDateTime regDate, BoardType boardType, CategoryDTO.CategoryInfo category,
+                            ProfitStatus profitStatus, LocalDateTime regDate, BoardType boardType, Category category,
                             MemberDTO.MemberBoardInfoResponseDto member) {
             this.id = id;
             this.title = title;
@@ -165,6 +165,10 @@ public class BoardDTO {
     @Getter
     public static class BoardDetailInfoDTO {
 
+    }
+
+    public static class BoardListResponse{
+
         private long id;
 
         private String title;
@@ -175,23 +179,36 @@ public class BoardDTO {
 
         private long likeCount;
 
+        private long commentCount;
+
+        private String recruitType;
+
+        private LocalDateTime regDate;
+
         @Enumerated(EnumType.STRING)
         private BoardType boardType;
 
-        private Category category;
+        private CategoryDTO.CategoryInfo category;
 
         private MemberDTO.MemberBoardInfoResponseDto member;
 
         @Builder
-        public BoardDetailInfoDTO(String title, String content, long viewCount, long likeCount, BoardType boardType, Category category, MemberDTO.MemberBoardInfoResponseDto member) {
+        public BoardListResponse(long id, String title, String content, long viewCount, long likeCount, long commentCount,
+                                 LocalDateTime regDate, BoardType boardType,String recruitType, CategoryDTO.CategoryInfo category,
+                                 MemberDTO.MemberBoardInfoResponseDto member) {
+            this.id = id;
             this.title = title;
             this.content = content;
             this.viewCount = viewCount;
             this.likeCount = likeCount;
+            this.commentCount = commentCount;
+            this.recruitType = recruitType;
+            this.regDate = regDate;
             this.boardType = boardType;
             this.category = category;
             this.member = member;
         }
+
     }
 
     @Getter

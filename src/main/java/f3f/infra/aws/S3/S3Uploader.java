@@ -34,12 +34,13 @@ public class S3Uploader {
         return upload(uploadFile, dirName);
     }
 
-    public String deleteImage(String bucket, String key){
+    public String deleteImage(String dirName, String key){
+        dirName = "f3f-spotcast/"+dirName;
         try{
-            amazonS3Client.deleteObject(bucket,key);
+            amazonS3Client.deleteObject(dirName,key);
             return "SUCCESS";
         }catch (Exception e){
-            throw new GeneralException(ErrorCode.S3_ERROR,"S3 파일 삭제");
+            throw new GeneralException(ErrorCode.S3_ERROR,"S3 파일 삭제 실패");
         }
 
     }

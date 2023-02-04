@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
+import f3f.domain.board.dto.BoardDTO.BoardListResponse;
 import f3f.domain.publicModel.BoardType;
 import f3f.domain.publicModel.SortType;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,9 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
     private JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<BoardInfoDTO> getBoardListByCategoryId(long categoryId, BoardType boardType, SortType sortType) {
-        List<BoardInfoDTO> result = jpaQueryFactory
-                .select(Projections.fields(BoardInfoDTO.class,
+    public List<BoardListResponse> getBoardListByCategoryId(long categoryId, BoardType boardType, SortType sortType) {
+        List<BoardListResponse> result = jpaQueryFactory
+                .select(Projections.fields(BoardListResponse.class,
                         board.title,
                         board.content,
                         board.viewCount,
@@ -41,9 +42,9 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
     }
 
     @Override
-    public List<BoardInfoDTO> getBoardListByUserId(long memberId, BoardType boardType, SortType sortType) {
-        List<BoardInfoDTO> result = jpaQueryFactory
-                .select(Projections.fields(BoardInfoDTO.class,
+    public List<BoardListResponse> getBoardListByUserId(long memberId, BoardType boardType, SortType sortType) {
+        List<BoardListResponse> result = jpaQueryFactory
+                .select(Projections.fields(BoardListResponse.class,
                         board.title,
                         board.content,
                         board.viewCount,

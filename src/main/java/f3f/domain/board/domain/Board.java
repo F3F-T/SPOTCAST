@@ -103,13 +103,37 @@ public class Board extends BaseTimeEntity {
         this.member = member;
     }
 
+    public BoardDTO.BoardListResponse toBoardListResponseInfo(){
+        return BoardDTO.BoardListResponse.builder()
+                .id(this.id)
+                .title(this.title)
+                .content(this.content)
+                .viewCount(this.viewCount)
+                .boardType(this.boardType)
+                .recruitType(this.recruitType)
+                .regDate(this.regDate)
+                .likeCount(this.likesList.size())
+                .commentCount(this.comments.size())
+                .category(changeCategoryBoardInfo(this.category))
+                .member(changeMemberBoardInfoDTO(this.member))
+                .build();
+    }
+
     public BoardDTO.BoardInfoDTO toBoardInfoDTO(){
         return BoardDTO.BoardInfoDTO.builder()
                 .title(this.title)
                 .content(this.content)
                 .viewCount(this.viewCount)
                 .boardType(this.boardType)
-                .category(changeCategoryBoardInfo(this.category))
+                .supportEmail(this.supportEmail)
+                .phone(this.phone)
+                .participationPeriod(this.participationPeriod)
+                .recruitType(this.recruitType)
+                .recruitVolume(this.recruitVolume)
+                .regDate(this.regDate)
+                .category(this.category)
+                .likeCount(this.likesList.size())
+                .commentCount(this.comments.size())
                 .member(changeMemberBoardInfoDTO(this.member))
                 .build();
     }

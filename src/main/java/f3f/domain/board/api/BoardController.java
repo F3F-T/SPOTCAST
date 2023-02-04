@@ -42,14 +42,22 @@ public class BoardController {
         return ResultDataResponseDTO.of(board.getId());
     }
 
-    @GetMapping(value = "/board/list/{categoryId}/{boardType}/{sortType}")
-    public ResultDataResponseDTO<List<BoardDTO.BoardInfoDTO>> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType,@PathVariable SortType sortType){
-        return ResultDataResponseDTO.of(boardService.getBoardListByCategoryId(categoryId,boardType,sortType));
+    @GetMapping(value = "/board/list/{boardType}/{categoryId}/{sortType}")
+    public ResultDataResponseDTO<List<BoardDTO.BoardListResponse>> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType,@PathVariable SortType sortType){
+        if (categoryId == 0 || categoryId == null){
+            return ResultDataResponseDTO.of(boardService.getBoardListByBoardType(boardType,sortType));
+        }else{
+            return ResultDataResponseDTO.of(boardService.getBoardListByCategoryId(categoryId,boardType,sortType));
+        }
     }
 
     @GetMapping(value = "/board/list/{memberId}/{boardType}/{sortType}")
-    public ResultDataResponseDTO<List<BoardDTO.BoardInfoDTO>> getBoardListByMemberId(@PathVariable Long memberId,@PathVariable BoardType boardType,@PathVariable SortType sortType){
-        return ResultDataResponseDTO.of(boardService.getBoardListByMemberId(memberId,boardType,sortType));
+    public ResultDataResponseDTO<List<BoardDTO.BoardListResponse>> getBoardListByMemberId(@PathVariable Long memberId,@PathVariable BoardType boardType,@PathVariable SortType sortType){
+        if (boardType == null ){
+            return null;
+        }else{
+            return ResultDataResponseDTO.of(boardService.getBoardListByMemberId(memberId,boardType,sortType));
+        }
     }
 
     //게시글 조회
