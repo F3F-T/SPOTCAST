@@ -42,7 +42,7 @@ public class BoardController {
         return ResultDataResponseDTO.of(board.getId());
     }
 
-    @GetMapping(value = "/board/list/{boardType}/{categoryId}/{sortType}")
+    @GetMapping(value = "/board/list/{categoryId}/{boardType}/{sortType}")
     public ResultDataResponseDTO<List<BoardDTO.BoardInfoDTO>> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType,@PathVariable SortType sortType){
         return ResultDataResponseDTO.of(boardService.getBoardListByCategoryId(categoryId,boardType,sortType));
     }
