@@ -8,7 +8,9 @@ import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 import static f3f.domain.user.dto.MemberDTO.*;
@@ -123,6 +125,15 @@ public class MemberController {
         return ResultDataResponseDTO.of(fieldMyInfo);
     }
 
+    @PostMapping("/profile")
+    public ResultDataResponseDTO updateProfile(@RequestBody MultipartFile image) throws IOException {
+        System.out.println("updat = " );
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        System.out.println("memberId = " + memberId);
+        String url = memberService.saveProfileImage(memberId, image);
+        System.out.println("url = " + url);
+        return ResultDataResponseDTO.of(url);
+    }
 
 
     /**

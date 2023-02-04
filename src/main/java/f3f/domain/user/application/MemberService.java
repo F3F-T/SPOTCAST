@@ -1,6 +1,5 @@
 package f3f.domain.user.application;
 
-import f3f.domain.category.application.CategoryService;
 import f3f.domain.category.domain.Category;
 import f3f.domain.memberCategory.dao.MemberCategoryJpaRepository;
 import f3f.domain.memberCategory.dao.MemberCategoryRepository;
@@ -17,6 +16,7 @@ import f3f.global.jwt.TokenProvider;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
 import f3f.global.util.CookieUtil;
+import f3f.infra.aws.S3.S3Uploader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -27,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.persistence.EntityManager;
@@ -60,7 +61,9 @@ public class MemberService {
 
     private MemberRepositoryDao memberRepositoryDao;
 
-    public MemberService(EntityManager em, AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository,  MemberCategoryRepository memberCategoryRepository, MemberCategoryJpaRepository memberCategoryJpaRepository, RefreshTokenDao refreshTokenDao, MemberRepositoryDao memberRepositoryDao) {
+    private final S3Uploader s3Uploader;
+
+    public MemberService(EntityManager em, AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, MemberCategoryRepository memberCategoryRepository, MemberCategoryJpaRepository memberCategoryJpaRepository, RefreshTokenDao refreshTokenDao, MemberRepositoryDao memberRepositoryDao, S3Uploader s3Uploader) {
         this.em = em;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.passwordEncoder = passwordEncoder;
@@ -70,6 +73,7 @@ public class MemberService {
         this.memberCategoryJpaRepository = memberCategoryJpaRepository;
         this.refreshTokenDao = refreshTokenDao;
         this.memberRepositoryDao = memberRepositoryDao;
+        this.s3Uploader = s3Uploader;
     }
 
     /**
@@ -439,6 +443,13 @@ public class MemberService {
     }
 
 
+    @Transactional
+    public String saveProfileImage(Long memberId, MultipartFile inputBoardImage) throws IOException {
+
+        String boardImage = s3Uploader.upload(inputBoardImage, "profileImage");
+        System.out.println("boardImage = " + boardImage);
+        return boardImage;
+    }
     /**
      * 쿠키 제거
      *
