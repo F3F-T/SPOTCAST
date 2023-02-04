@@ -134,7 +134,7 @@ public class BoardService {
         List<BoardListResponse> boardListByUserId = searchBoardRepository.getBoardListByUserId(memberId, boardType,sortType);
         return boardListByUserId;
     }
-
+// 커밋 테스트
     /*
      * 카테고리 식별자로 게시글 조회
      */
