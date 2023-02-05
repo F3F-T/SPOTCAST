@@ -9,6 +9,8 @@ import f3f.domain.publicModel.SortType;
 import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +26,6 @@ public class BoardController {
     public ResultDataResponseDTO<Long> saveBoard(@RequestBody BoardDTO.SaveRequest request){
         return ResultDataResponseDTO.of(boardService.saveBoard(request));
     }
-
 
     //게시글 수정
     @PutMapping(value = "/board/{boardId}")
@@ -43,20 +44,20 @@ public class BoardController {
     }
 
     @GetMapping(value = "/board/list/{boardType}/{categoryId}/{sortType}")
-    public ResultDataResponseDTO<List<BoardDTO.BoardListResponse>> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType,@PathVariable SortType sortType){
+    public ResultDataResponseDTO<Page<BoardDTO.BoardListResponse>> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType,@PathVariable SortType sortType, @RequestBody Pageable pageable){
         if (categoryId == 0 || categoryId == null){
             return ResultDataResponseDTO.of(boardService.getBoardListByBoardType(boardType,sortType));
         }else{
-            return ResultDataResponseDTO.of(boardService.getBoardListByCategoryId(categoryId,boardType,sortType));
+            return ResultDataResponseDTO.of(boardService.getBoardListByCategoryId(categoryId,boardType,sortType,pageable));
         }
     }
 
     @GetMapping(value = "/board/list/{memberId}/{boardType}/{sortType}")
-    public ResultDataResponseDTO<List<BoardDTO.BoardListResponse>> getBoardListByMemberId(@PathVariable Long memberId,@PathVariable BoardType boardType,@PathVariable SortType sortType){
+    public ResultDataResponseDTO<Page<BoardDTO.BoardListResponse>> getBoardListByMemberId(@PathVariable Long memberId, @PathVariable BoardType boardType, @PathVariable SortType sortType, @RequestBody Pageable pageable){
         if (boardType == null ){
             return null;
         }else{
-            return ResultDataResponseDTO.of(boardService.getBoardListByMemberId(memberId,boardType,sortType));
+            return ResultDataResponseDTO.of(boardService.getBoardListByMemberId(memberId,boardType,sortType,pageable));
         }
     }
 

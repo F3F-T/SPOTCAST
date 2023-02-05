@@ -12,14 +12,18 @@ import f3f.domain.board.exception.NotFoundBoardException;
 import f3f.domain.category.dao.CategoryRepository;
 import f3f.domain.publicModel.BoardType;
 import f3f.domain.publicModel.SortType;
+import f3f.domain.scrapBoard.domain.ScrapBoard;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /*
  * 필요한 기능
@@ -129,22 +133,26 @@ public class BoardService {
      * 유저 식별자로 게시글 조회
      */
     @Transactional(readOnly = true)
-    public List<BoardListResponse> getBoardListByMemberId(long memberId, BoardType boardType, SortType sortType){
-
-        List<BoardListResponse> boardListByUserId = searchBoardRepository.getBoardListByUserId(memberId, boardType,sortType);
+    public Page<BoardListResponse> getBoardListByMemberId(long memberId, BoardType boardType, SortType sortType, Pageable pageable){
+        Page<BoardListResponse> boardListByUserId = searchBoardRepository.getBoardListInfoByUserId(memberId, boardType,sortType,pageable);
+//        List<Board> boardListByCategoryId = boardRepository.getBoardListByUserId(memberId, sortType);
+//        List<BoardListResponse> boardListResponses = boardListByCategoryId.stream()
+//                .map(Board::toBoardListResponseInfo).collect(Collectors.toList());
         return boardListByUserId;
     }
-// 커밋 테스트
     /*
      * 카테고리 식별자로 게시글 조회
      */
     @Transactional(readOnly = true)
-    public List<BoardListResponse> getBoardListByCategoryId(long categoryId, BoardType boardType, SortType sortType){
-        List<BoardListResponse> boardByCategoryId = searchBoardRepository.getBoardListByCategoryId(categoryId,boardType,sortType);
+    public Page<BoardListResponse> getBoardListByCategoryId(long categoryId, BoardType boardType, SortType sortType, Pageable pageable){
+        Page<BoardListResponse> boardByCategoryId = searchBoardRepository.getBoardListInfoByCategoryId(categoryId,boardType,sortType,pageable);
+//        List<Board> boardListByCategoryId = boardRepository.getBoardListByCategoryId(boardType, categoryId, sortType);
+//        List<BoardListResponse> boardListResponses = boardListByCategoryId.stream()
+//                .map(Board::toBoardListResponseInfo).collect(Collectors.toList());
         return boardByCategoryId;
     }
     @Transactional(readOnly = true)
-    public List<BoardListResponse> getBoardListByBoardType(BoardType boardType, SortType sortType) {
+    public Page<BoardListResponse> getBoardListByBoardType(BoardType boardType, SortType sortType) {
         return null;
     }
 }

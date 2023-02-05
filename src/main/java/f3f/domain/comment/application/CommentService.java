@@ -55,7 +55,6 @@ public class CommentService {
                 .content(saveRequest.getContent())
                 .build();
 
-
         //부모댓글 존재하면
         if (saveRequest.getParentComment() != null) {
             parent = commentRepository.findById(saveRequest.getParentComment().getId())
