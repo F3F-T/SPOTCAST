@@ -7,6 +7,7 @@ import f3f.domain.board.dao.BoardRepository;
 import f3f.domain.board.domain.Board;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
+import f3f.infra.aws.S3.S3Config;
 import f3f.infra.aws.S3.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,13 @@ public class BoardImageService {
 
     private final BoardRepository boardRepository;
     private final BoardImageRepository boardImageRepository;
-    private final S3Uploader s3Uploader;
+    private final S3Config s3Uploader;
 
     @Transactional
     public String  saveBoardImage(long boardId , MultipartFile inputBoardImage) throws IOException {
         Board board = boardRepository.findById(boardId).orElseThrow();
 
-            String imagePath = s3Uploader.upload(inputBoardImage, "boardImage ");
+            String imagePath = s3Uploader.upload(inputBoardImage,"boardImage");
             BoardImage boardImage = BoardImage.builder()
                     .board(board)
                     .s3Url(imagePath)
@@ -47,7 +48,7 @@ public class BoardImageService {
     public BoardImage deleteBoardImage(BoardImage boardImage){
         BoardImage image = boardImageRepository.findById(boardImage.getId())
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "존재하지 않는 이미지 입니다."));
-        s3Uploader.deleteImage("boardImage",boardImage.getS3Url());
+        //s3Uploader.deleteImage("boardImage",boardImage.getS3Url());
         boardImageRepository.deleteById(image.getId());
         return boardImage;
     }

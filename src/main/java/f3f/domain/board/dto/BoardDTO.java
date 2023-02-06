@@ -1,5 +1,6 @@
 package f3f.domain.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.domain.ProfitStatus;
 import f3f.domain.category.domain.Category;
@@ -7,18 +8,19 @@ import f3f.domain.category.dto.CategoryDTO;
 import f3f.domain.publicModel.BoardType;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.FutureOrPresent;
 import java.time.LocalDateTime;
 
 public class BoardDTO {
 
     @Getter
+    @Setter
+    @NoArgsConstructor
     public static class SaveRequest {
         private String title;
 
@@ -46,9 +48,9 @@ public class BoardDTO {
         private ProfitStatus profitStatus;
 
         //작업일, 마감일
+        @FutureOrPresent
         private LocalDateTime regDate;
 
-        @Enumerated(EnumType.STRING)
         private BoardType boardType;
 
         private Category category;
