@@ -8,8 +8,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
 import f3f.domain.board.dto.BoardDTO.BoardListResponse;
-import f3f.domain.comment.domain.QComment;
-import f3f.domain.likes.domain.QLikes;
 import f3f.domain.publicModel.BoardType;
 import f3f.domain.publicModel.SortType;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +32,7 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
     private JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<BoardListResponse> getBoardListInfoByCategoryId(long categoryId, BoardType boardType,
-                                                           SortType sortType,Pageable pageable) {
+    public Page<BoardListResponse> getBoardListInfoByCategoryId(long categoryId, BoardType boardType, SortType sortType, Pageable pageable) {
         QueryResults<BoardListResponse> result = jpaQueryFactory
                 .select(Projections.fields(BoardListResponse.class,
                         board.title,
