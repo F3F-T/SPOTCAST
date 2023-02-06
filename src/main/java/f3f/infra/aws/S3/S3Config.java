@@ -7,8 +7,10 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-
+@Slf4j
 @Service
 @NoArgsConstructor
 public class S3Config {
@@ -51,9 +53,19 @@ public class S3Config {
 
         bucket = bucket + "/"+dirName;
 
-        s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(file.getContentType());
+
+        s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), metadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
         return s3Client.getUrl(bucket, fileName).toString();
+    }
+
+    public void delete(String fileName,String dirName) {
+        log.info("File Delete : " + fileName);
+
+        bucket = bucket + "/"+dirName;
+        s3Client.deleteObject(bucket, fileName);
     }
 }
 

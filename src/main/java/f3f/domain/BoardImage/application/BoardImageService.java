@@ -8,7 +8,6 @@ import f3f.domain.board.domain.Board;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
 import f3f.infra.aws.S3.S3Config;
-import f3f.infra.aws.S3.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
