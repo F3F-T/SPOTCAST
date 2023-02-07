@@ -7,7 +7,7 @@ import f3f.domain.likes.dao.LikesRepository;
 import f3f.domain.likes.domain.Likes;
 import f3f.domain.likes.dto.LikeDTO;
 import f3f.domain.likes.exception.ExistLikeAlreadyException;
-import f3f.domain.model.BaseTimeEntity;
+import f3f.domain.publicModel.BaseTimeEntity;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.MemberNotFoundException;
@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -45,11 +47,36 @@ public class LikeService extends BaseTimeEntity {
 
         return likes.getId();
     }
+    @Transactional
+    public Likes deleteLike(Long boardId, Long memberId) {
+        Likes byMemberIdAndBoardId = likesRepository.findByMemberIdAndBoardId(memberId, boardId);
+        likesRepository.deleteById(byMemberIdAndBoardId.getId());
+        return  byMemberIdAndBoardId;
+    }
 
 
     //사용자가 이미 좋아요 한 게시물인지 체크
     private boolean isAlreadyLike(Optional<Member> member, Board board) {
         return !(likesRepository.findByMemberIdAndBoardId(member, board).isEmpty());
     }
+
+
+
+    @Transactional(readOnly = true)
+    public List<LikeDTO.LikeInfo> getListListByBoardId(long boardId){
+        //todo 쿼리 최적화 필요
+        List<LikeDTO.LikeInfo> likeInfoList = new ArrayList<>();
+        List<Likes> likeList = likesRepository.findByBoardId(boardId);
+        for (Likes likes : likeList) {
+            LikeDTO.LikeInfo likeInfo = LikeDTO.LikeInfo.builder()
+                    .likeId(likes.getId())
+                    .boardId(likes.getBoard().getId())
+                    .memberId(likes.getMember().getId())
+                    .build();
+            likeInfoList.add(likeInfo);
+        }
+        return likeInfoList;
+    }
+
 
 }

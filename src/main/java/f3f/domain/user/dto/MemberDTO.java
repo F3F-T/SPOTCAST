@@ -1,8 +1,8 @@
 package f3f.domain.user.dto;
 
-import f3f.domain.model.LoginType;
-import f3f.domain.model.LoginMemberType;
-import f3f.domain.model.Authority;
+import f3f.domain.publicModel.LoginType;
+import f3f.domain.publicModel.LoginMemberType;
+import f3f.domain.publicModel.Authority;
 import f3f.domain.user.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +15,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 @Getter
 @Builder
@@ -36,10 +35,6 @@ public class MemberDTO {
         @NotBlank
         private String name;
 
-        @NotBlank
-        @Length(min = 3, max = 20)
-        @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9-_]{3,20}$")
-        private String nickname;
 
         @Enumerated(value = EnumType.STRING)
         private LoginMemberType loginMemberType;
@@ -50,12 +45,8 @@ public class MemberDTO {
         @Enumerated(value = EnumType.STRING)
         private Authority authority;
 
-        @NotBlank
-        private String information;
+        private String field;
 
-        @NotBlank
-        @Length(min = 10, max = 11)
-        private String phone;
 
 
         public void passwordEncryption(PasswordEncoder passwordEncoder) {
@@ -63,30 +54,27 @@ public class MemberDTO {
         }
 
         @Builder
-        public MemberSaveRequestDto(String email, String password, String name, String nickname,
-                                    LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information, String phone) {
+        public MemberSaveRequestDto(String email, String password, String name,
+                                    LoginMemberType loginMemberType, LoginType loginType, Authority authority, String field) {
             this.email = email;
             this.password = password;
             this.name = name;
-            this.nickname = nickname;
             this.loginMemberType = loginMemberType;
             this.loginType = loginType;
             this.authority = authority;
-            this.information = information;
-            this.phone = phone;
+            this.field = field;
         }
 
         public Member toEntity(){
                 return Member.builder()
                         .email(this.email)
                         .password(this.password)
-                        .nickname(this.nickname)
                         .name(this.name)
                         .loginMemberType(this.loginMemberType)
                         .loginType(this.loginType)
                         .authority(this.authority)
-                        .phone(this.phone)
-                        .information(this.information)
+                        .field(this.field)
+                        .profile("https://shopping-phinf.pstatic.net/main_2343561/23435610490.20211228162539.jpg?type=f640")
                         .build();
         }
     }
@@ -100,7 +88,17 @@ public class MemberDTO {
 
         private String name;
 
-        private String nickname;
+        private String twitter;
+
+        private String instagram;
+
+        private String otherSns;
+
+        private String profile;
+        private String egName;
+
+        private String field;
+
         @Enumerated(value = EnumType.STRING)
         private LoginMemberType loginMemberType;
 
@@ -112,20 +110,22 @@ public class MemberDTO {
 
         private String information;
 
-        private String phone;
 
         @Builder
-        public MemberInfoResponseDto(Long id,String email, String name, String nickname, LoginMemberType loginMemberType,
-                                     LoginType loginType, Authority authority, String information, String phone) {
+        public MemberInfoResponseDto(Long id, String email, String name, String twitter, String instagram, String otherSns, String egName, String field, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information, String profile) {
             this.id = id;
             this.email = email;
             this.name = name;
-            this.nickname = nickname;
+            this.twitter = twitter;
+            this.instagram = instagram;
+            this.otherSns = otherSns;
+            this.egName = egName;
+            this.field = field;
             this.loginMemberType = loginMemberType;
             this.loginType = loginType;
             this.authority = authority;
             this.information = information;
-            this.phone = phone;
+            this.profile = profile;
         }
     }
 
@@ -152,36 +152,24 @@ public class MemberDTO {
     @NoArgsConstructor
     public static class MemberLoginServiceResponseDto {
 
+        private Long id;
         private String email;
 
         private Authority authority;
 
         private String name;
 
-        private String nickname;
-
         private LoginMemberType loginMemberType;
 
-        private String grantType;
-
-        private String accessToken;
-
-
-        private Long accessTokenExpiresIn;
 
         @Builder
-        public MemberLoginServiceResponseDto(String email, Authority authority, String name, String nickname, LoginMemberType loginMemberType, String grantType, String accessToken, Long accessTokenExpiresIn) {
+        public MemberLoginServiceResponseDto(Long id, String email, Authority authority, String name, LoginMemberType loginMemberType) {
+            this.id = id;
             this.email = email;
             this.authority = authority;
             this.name = name;
-            this.nickname = nickname;
             this.loginMemberType = loginMemberType;
-            this.grantType = grantType;
-            this.accessToken = accessToken;
-            this.accessTokenExpiresIn = accessTokenExpiresIn;
         }
-
-
     }
 
 
@@ -238,48 +226,35 @@ public class MemberDTO {
         }
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class MemberUpdateNicknameRequestDto {
-
-        @NotBlank
-        @Length(min = 3, max = 20)
-        @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9-_]{3,20}$")
-        private String nickname;
-
-        @Builder
-        public MemberUpdateNicknameRequestDto(String nickname) {
-            this.nickname = nickname;
-        }
-    }
 
 
     @Getter
     @NoArgsConstructor
     public static class MemberUpdateInformationRequestDto {
 
-        @NotBlank
         private String information;
 
+        private String twitter;
+
+        private String instagram;
+
+        private String otherSns;
+
+        private String field;
+
+        private String egName;
+
         @Builder
-        public MemberUpdateInformationRequestDto(String information) {
+        public MemberUpdateInformationRequestDto(String information, String twitter, String instagram, String otherSns, String field, String egName) {
             this.information = information;
+            this.twitter = twitter;
+            this.instagram = instagram;
+            this.otherSns = otherSns;
+            this.field = field;
+            this.egName = egName;
         }
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class MemberUpdatePhoneRequestDto {
-
-        @NotBlank
-        @Length(min = 10, max = 11)
-        private String phone;
-        @Builder
-
-        public MemberUpdatePhoneRequestDto(String phone) {
-            this.phone = phone;
-        }
-    }
 
 
     @Getter
@@ -294,4 +269,58 @@ public class MemberDTO {
             this.certificationNumber = certificationNumber;
         }
     }
+
+    @Getter
+    @NoArgsConstructor
+    public static class MemberBoardInfoResponseDto {
+
+        private Long id;
+        private String email;
+
+        private String name;
+
+        private String nickname;
+
+
+
+        @Builder
+        public MemberBoardInfoResponseDto(Long id, String email, String name, String nickname) {
+            this.id = id;
+            this.email = email;
+            this.name = name;
+            this.nickname = nickname;
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class OtherMemberInfoResponseDto {
+
+        private Long id;
+        private String email;
+
+        private String name;
+
+        private String information;
+
+        private String twitter;
+
+        private String instagram;
+
+        private String otherSns;
+        @Builder
+        public OtherMemberInfoResponseDto(Long id, String email, String name, String information, String twitter, String instagram, String otherSns) {
+            this.id = id;
+            this.email = email;
+            this.name = name;
+            this.information = information;
+            this.twitter = twitter;
+            this.instagram = instagram;
+            this.otherSns = otherSns;
+        }
+    }
+
+
+
+
 }

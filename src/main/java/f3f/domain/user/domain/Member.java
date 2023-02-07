@@ -2,16 +2,19 @@ package f3f.domain.user.domain;
 
 import f3f.domain.board.domain.Board;
 import f3f.domain.bookmark.domain.Bookmark;
+import f3f.domain.category.domain.Category;
 import f3f.domain.comment.domain.Comment;
 import f3f.domain.likes.domain.Likes;
+import f3f.domain.memberCategory.domain.MemberCategory;
 import f3f.domain.message.domain.Message;
-import f3f.domain.model.LoginType;
-import f3f.domain.model.LoginMemberType;
-import f3f.domain.model.MemberBase;
-import f3f.domain.model.Authority;
+import f3f.domain.publicModel.LoginType;
+import f3f.domain.publicModel.LoginMemberType;
+import f3f.domain.publicModel.MemberBase;
+import f3f.domain.publicModel.Authority;
 import f3f.domain.portfolio.domain.Portfolio;
 import f3f.domain.scrap.domain.Scrap;
-import f3f.domain.teamApply.domain.Apply;
+import f3f.domain.apply.domain.Apply;
+import f3f.domain.user.dto.MemberDTO;
 import f3f.domain.user.dto.MemberDTO.MemberInfoResponseDto;
 import lombok.*;
 
@@ -25,10 +28,17 @@ import java.util.List;
 @AllArgsConstructor
 public class Member extends MemberBase {
 
-    private String phone;
+    private String twitter;
 
-    private String nickname;
+    private String instagram;
 
+    private String otherSns;
+
+    private String information;
+
+
+    private String profile;
+    private String egName;
 
     @OneToMany(mappedBy = "member")
     private List<Scrap> scrapList = new ArrayList<>();
@@ -50,8 +60,12 @@ public class Member extends MemberBase {
     @OneToMany(mappedBy = "recruiter")
     private List<Apply> recruiterList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
-    private List<Bookmark> bookmarkList = new ArrayList<>();
+    @OneToMany(mappedBy = "follower")
+    private List<Bookmark> followerList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "following")
+    private List<Bookmark> followingList = new ArrayList<>();
+
 
     @OneToOne(fetch = FetchType.LAZY , mappedBy = "member")
     @JoinColumn(name = "portfolio_id" )
@@ -63,44 +77,71 @@ public class Member extends MemberBase {
     @OneToMany(mappedBy = "recipient")
     private List<Message> receptionMessageList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member")
+    private List<MemberCategory> memberCategories = new ArrayList<>();
+
 
     @Builder
-    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information, String phone, String nickname, List<Board> boardList, List<Likes> likesList, List<Comment> commentList, List<Apply> volunteerList, List<Apply> recruiterList, List<Bookmark> bookmarkList, Portfolio portfolio) {
-        super(id, email, name, password, loginMemberType, loginType, authority, information);
-        this.phone = phone;
-        this.nickname = nickname;
-
+    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String field, String profile) {
+        super(id, email, name, password, loginMemberType, loginType, authority, field);
+        this.profile = profile;
     }
+
+
+
+
+
+
 
     public MemberInfoResponseDto toFindMemberDto(){
         return MemberInfoResponseDto.builder()
                 .id(this.getId())
                 .email(this.getEmail())
                 .name(this.getName())
-                .nickname(this.getNickname())
                 .loginMemberType(this.getLoginMemberType())
                 .loginType(this.getLoginType())
                 .authority(this.getAuthority())
                 .information(this.getInformation())
-                .phone(this.getPhone())
+                .instagram(instagram)
+                .twitter(twitter)
+                .otherSns(otherSns)
+                .field(this.getField())
+                .egName(this.getEgName())
                 .build();
-
     }
 
+    public MemberDTO.MemberBoardInfoResponseDto toMessageMemberDTO(){
+        return MemberDTO.MemberBoardInfoResponseDto.builder()
+                .id(this.getId())
+                .email(this.getEmail())
+                .name(this.getName())
+                .build();
+    }
 
+    public MemberDTO.MemberBoardInfoResponseDto toBoardMemberDTO(){
+        return MemberDTO.MemberBoardInfoResponseDto.builder()
+                .id(this.getId())
+                .email(this.getEmail())
+                .name(this.getName())
+                .build();
+    }
     public void updatePassword(String password){
         this.password = password;
     }
 
-    public void updateNickname(String nickname){
-        this.nickname = nickname;
-    }
-    public void updateInformation(String information){
-        this.information = information;
+    public void updateInformation(MemberDTO.MemberUpdateInformationRequestDto updateInformationRequest){
+        this.information = updateInformationRequest.getInformation();
+        this.instagram = updateInformationRequest.getInstagram();
+        this.twitter = updateInformationRequest.getTwitter();
+        this.otherSns = updateInformationRequest.getOtherSns();
+        this.field = updateInformationRequest.getField();
+        this.egName = updateInformationRequest.getEgName();
     }
 
-    public void updatePhone(String phone){
-        this.phone = phone;
+
+    public void addScrapList(Scrap scrap){
+        this.scrapList.add(scrap);
+
     }
 
 }

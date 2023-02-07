@@ -1,14 +1,15 @@
 package f3f.domain.user.application;
 
-import f3f.domain.model.Authority;
-import f3f.domain.model.LoginMemberType;
-import f3f.domain.model.LoginType;
+import f3f.domain.publicModel.Authority;
+import f3f.domain.publicModel.LoginMemberType;
+import f3f.domain.publicModel.LoginType;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.domain.UserPrincipal;
-import f3f.domain.user.exception.OAuthTypeMissMatchException;
 import f3f.global.oauth.OAuth2UserInfo;
 import f3f.global.oauth.OAuth2UserInfoFactory;
+import f3f.global.response.ErrorCode;
+import f3f.global.response.GeneralException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,7 +37,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws GeneralException {
         OAuth2UserService delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
@@ -50,10 +51,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         if (findMember != null) { //회원가입 된경우
             if (loginType != findMember.getLoginType()) {
-                throw new OAuthTypeMissMatchException(
-                        "Looks like you're signed up with " + loginType +
-                                " account. Please use your " + findMember.getLoginType() + " account to login."
-                );
+                throw new GeneralException(ErrorCode.DUPLICATION_SIGNUP, findMember.getLoginType().getType() + "로그인으로 회원가입 되어있습니다.");
             }
         } else {
             // 회원가입 안된 경우 회원가입 진행

@@ -11,29 +11,16 @@ import f3f.global.oauth.handler.OAuthAuthenticationSuccessHandler;
 import f3f.global.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-
-import static f3f.global.constants.MemberConstants.REFRESH_TOKEN;
-import static f3f.global.constants.SecurityConstants.JSESSIONID;
-import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -97,50 +84,46 @@ public class SecurityConfig {
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
 
-                .and()
-                    .headers()
-                    .frameOptions()
-                    .sameOrigin()
-
                 // 시큐리티는 기본적으로 세션을 사용
                 // 여기서는 세션을 사용하지 않기 때문에 세션 설정을 Stateless 로 설정
                 .and()
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
 
                 // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
                 .and()
                 .authorizeRequests()
-                    .antMatchers("/auth/**").permitAll()
-                    .antMatchers("/oauth2/**").permitAll()
-//                .antMatchers("/admin/**").hasRole("ADMIN")
-                    .antMatchers("/member/**").hasRole("USER")
-                    //유저정보보기
-                    .antMatchers("/admin/**").permitAll()
-//                .antMatchers("/member/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "**").permitAll()
+                .antMatchers("/auth/**").permitAll()
+                .antMatchers("/oauth2/**").permitAll()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE,"/member/{memberId}").access("hasRole('ADMIN') or hasRole('USER')")
+                .antMatchers("/member/myInfo","/member/{memberId}/change/**").access("hasRole('ADMIN') or hasRole('USER')")
+                .antMatchers("/member/**").permitAll()
+                .antMatchers("/message/**").access("hasRole('ADMIN') or hasRole('USER')")
+
 //                .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
-                .anyRequest().permitAll()   // 나머지 API 는 전부 인증 필요
+                .anyRequest().permitAll()   //` 나머지 API 는 전부 허용
 
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider))
 
                 .and()
-                    .oauth2Login()
-                    .authorizationEndpoint()
-                    .baseUri("/oauth2/authorization") //default
-                    .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
+                .oauth2Login()
+                .authorizationEndpoint()
+                .baseUri("/oauth2/authorization") //default
+                .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
                 .and()
-                    .redirectionEndpoint()
-                    .baseUri("/*/oauth2/code/*")
+                .redirectionEndpoint()
+                .baseUri("/*/oauth2/code/*")
                 .and()
-                    .userInfoEndpoint()
-                    .userService(customOAuth2UserService)
+                .userInfoEndpoint()
+                .userService(customOAuth2UserService)
                 .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler())
                 .failureHandler(oAuth2AuthenticationFailureHandler());
-
 
         return http.build();
     }

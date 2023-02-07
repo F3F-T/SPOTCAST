@@ -11,4 +11,5 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
 
     List<Scrap> findByMemberId(Long memberId);
 
+
 }

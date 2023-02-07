@@ -35,9 +35,20 @@ public class LikeDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class DeleteLikes{
+    public static class DeleteLike{
 
         private Board board;
         private Long id;
+    }
+
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LikeInfo{
+        private Long likeId;
+        private Long boardId;
+        private Long memberId;
     }
 }

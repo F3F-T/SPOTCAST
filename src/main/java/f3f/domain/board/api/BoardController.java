@@ -4,12 +4,18 @@ package f3f.domain.board.api;
 import f3f.domain.board.application.BoardService;
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.dto.BoardDTO;
-import f3f.domain.model.BoardType;
-import f3f.domain.model.SortType;
+import f3f.domain.publicModel.BoardType;
+import f3f.domain.publicModel.SortType;
+import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.DateFormatter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -20,42 +26,53 @@ public class BoardController {
 
     //게시글 생성
     @PostMapping(value = "/board")
-    public String saveBoard(@RequestBody BoardDTO.SaveRequest request){
-        boardService.saveBoard(request);
-        return "OK";
+    public ResultDataResponseDTO<Long> saveBoard(@RequestBody BoardDTO.SaveRequest request){
+        return ResultDataResponseDTO.of(boardService.saveBoard(request));
     }
-
 
     //게시글 수정
     @PutMapping(value = "/board/{boardId}")
-    public BoardDTO.BoardInfoDTO updateBoard(@PathVariable long boardId,@RequestBody BoardDTO.SaveRequest request){
+    public ResultDataResponseDTO<BoardDTO.BoardInfoDTO> updateBoard(@PathVariable long boardId,@RequestBody BoardDTO.SaveRequest request){
         Long memberId = SecurityUtil.getCurrentMemberId();
         Board board = boardService.updateBoard(boardId, memberId,request);
-        return board.toBoardInfoDTO();
+        return ResultDataResponseDTO.of(board.toBoardInfoDTO());
     }
 
     //게시글 삭제
     @DeleteMapping(value = "/board/{boardId}")
-    public long deleteBoard(@PathVariable long boardId){
+    public ResultDataResponseDTO<Long> deleteBoard(@PathVariable long boardId){
         Long memberId = SecurityUtil.getCurrentMemberId();
         Board board = boardService.deleteBoard(boardId,memberId);
-        return board.getId();
+        return ResultDataResponseDTO.of(board.getId());
     }
 
-    @GetMapping(value = "/board/list/{categoryId}/{boardType}/{sortType}")
-    public List<BoardDTO.BoardInfoDTO> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType,@PathVariable SortType sortType){
-        return boardService.getBoardListByCategoryId(categoryId,boardType,sortType);
+    @GetMapping(value = "/board/list/{boardType}/{categoryId}/{sortType}")
+    public ResultDataResponseDTO<Page<BoardDTO.BoardListResponse>> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType,@PathVariable SortType sortType, @RequestBody Pageable pageable){
+        if (categoryId == 0 || categoryId == null){
+            return ResultDataResponseDTO.of(boardService.getBoardListByBoardType(boardType,sortType));
+        }else{
+            return ResultDataResponseDTO.of(boardService.getBoardListByCategoryId(categoryId,boardType,sortType,pageable));
+        }
     }
 
     @GetMapping(value = "/board/list/{memberId}/{boardType}/{sortType}")
-    public List<BoardDTO.BoardInfoDTO> getBoardListByMemberId(@PathVariable Long memberId,@PathVariable BoardType boardType,@PathVariable SortType sortType){
-        return boardService.getBoardListByMemberId(memberId,boardType,sortType);
+    public ResultDataResponseDTO<Page<BoardDTO.BoardListResponse>> getBoardListByMemberId(@PathVariable Long memberId, @PathVariable BoardType boardType, @PathVariable SortType sortType, @RequestBody Pageable pageable){
+        if (boardType == null ){
+            return null;
+        }else{
+            return ResultDataResponseDTO.of(boardService.getBoardListByMemberId(memberId,boardType,sortType,pageable));
+        }
     }
 
     //게시글 조회
     @GetMapping(value = "/board/{boardId}")
-    public BoardDTO.BoardInfoDTO getBoardInfo(@PathVariable long boardId, @PathVariable long memberId){
-        return boardService.getBoardInfo(boardId,memberId);
+    public ResultDataResponseDTO<BoardDTO.BoardInfoDTO> getBoardInfo(@PathVariable long boardId, @PathVariable long memberId){
+        return ResultDataResponseDTO.of(boardService.getBoardInfo(boardId,memberId));
+    }
+
+    @GetMapping(value = "/board/list")
+    public List<BoardDTO.BoardInfoDTO> getBoardInfoList(){
+        return null;
     }
 
 }

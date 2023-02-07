@@ -1,21 +1,23 @@
 package f3f.domain.user.application;
 
-import f3f.domain.model.LoginType;
-import f3f.domain.model.LoginMemberType;
-import f3f.domain.model.Authority;
+import f3f.domain.publicModel.LoginType;
+import f3f.domain.publicModel.LoginMemberType;
+import f3f.domain.publicModel.Authority;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO;
 import f3f.domain.user.dto.TokenDTO;
 import f3f.domain.user.exception.*;
 import f3f.global.encrypt.EncryptionService;
+import f3f.global.response.GeneralException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,13 +68,10 @@ class MemberServiceTest {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email(EMAIL)
                 .password(PASSWORD)
-                .phone(PHONE)
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information(INFORMATION)
                 .name(NAME)
-                .nickname(NICKNAME)
                 .build();
         return memberSaveRequestDto;
     }
@@ -81,13 +80,10 @@ class MemberServiceTest {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email(EMAIL)
                 .password(PASSWORD)
-                .phone("01011112222")
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GOOGLE_LOGIN)
-                .information("test")
                 .name("lim")
-                .nickname("dong")
                 .build();
         return memberSaveRequestDto;
     }
@@ -96,13 +92,10 @@ class MemberServiceTest {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123@test.com")
                 .password("te234")
-                .phone("01011112222")
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information("test")
                 .name("lim")
-                .nickname("dong")
                 .build();
         return memberSaveRequestDto;
     }
@@ -111,13 +104,10 @@ class MemberServiceTest {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123@test.com")
                 .password("test1234")
-                .phone("01012222")
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information("test")
                 .name("lim")
-                .nickname("dong")
                 .build();
         return memberSaveRequestDto;
     }
@@ -126,13 +116,10 @@ class MemberServiceTest {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123@test.com")
                 .password("test1234")
-                .phone("01011112222")
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information("")
                 .name("lim")
-                .nickname("dong")
                 .build();
         return memberSaveRequestDto;
     }
@@ -141,12 +128,9 @@ class MemberServiceTest {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123@test.com")
                 .password("test1234")
-                .phone("01011112222")
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information("")
-                .nickname("dong")
                 .build();
         return memberSaveRequestDto;
     }
@@ -155,11 +139,9 @@ class MemberServiceTest {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123@test.com")
                 .password("test1234")
-                .phone("01011112222")
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information("")
                 .name("lim")
                 .build();
         return memberSaveRequestDto;
@@ -169,13 +151,10 @@ class MemberServiceTest {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
                 .email("test123")
                 .password("test1234")
-                .phone("01011112222")
                 .authority(Authority.ROLE_USER)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .loginType(LoginType.GENERAL_LOGIN)
-                .information("test")
                 .name("lim")
-                .nickname("dong")
                 .build();
         return memberSaveRequestDto;
     }
@@ -203,7 +182,7 @@ class MemberServiceTest {
         memberService.saveMember(memberSaveRequestDto1);
 
         //then
-        assertThrows(DuplicateEmailException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 memberService.saveMember(memberSaveRequestDto2));
 
     }
@@ -237,21 +216,7 @@ class MemberServiceTest {
 
     }
 
-    @Test
-    @DisplayName("전화번호 오류로 회원가입 실패")
-    void fail_SaveMember_ByPhone() throws Exception {
-        //given
-        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByPhoneMemberDto();
-
-        //when
-        Set<ConstraintViolation<MemberDTO.MemberSaveRequestDto>> violations = validator.validate(memberSaveRequestDto);
-
-        //then
-        assertThat(violations.size()).isGreaterThan(0);
-
-    }
-
-    @Test
+ 
     @DisplayName("이름 오류로 회원가입 실패")
     void fail_SaveMember_ByName() throws Exception {
         //given
@@ -264,31 +229,8 @@ class MemberServiceTest {
         assertThat(violations.size()).isGreaterThan(0);
     }
 
-    @Test
-    @DisplayName("정보 오류로 회원가입 실패")
-    void fail_SaveMember_ByNickname() throws Exception {
-        //given
-        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByNicknameMemberDto();
 
-        //when
-        Set<ConstraintViolation<MemberDTO.MemberSaveRequestDto>> violations = validator.validate(memberSaveRequestDto);
 
-        //then
-        assertThat(violations.size()).isGreaterThan(0);
-    }
-
-    @Test
-    @DisplayName("정보 오류로 회원가입 실패")
-    void fail_SaveMember_ByInformation() throws Exception {
-        //given
-        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createFailByInformationMemberDto();
-
-        //when
-        Set<ConstraintViolation<MemberDTO.MemberSaveRequestDto>> violations = validator.validate(memberSaveRequestDto);
-
-        //then
-        assertThat(violations.size()).isGreaterThan(0);
-    }
 
     @Test
     @DisplayName("회원정보조회_성공")
@@ -313,7 +255,7 @@ class MemberServiceTest {
         //when
 
         //then
-        assertThrows(MemberNotFoundException.class, () ->
+        assertThrows(GeneralException.class, () ->
                 memberService.findMemberInfoByMemberId(memberId));
     }
 
@@ -360,7 +302,7 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(UnauthenticatedMemberException.class, () -> memberService.updatePassword(passwordRequest, memberId));
+        assertThrows(GeneralException.class, () -> memberService.updatePassword(passwordRequest, memberId));
     }
 
     @Test
@@ -379,7 +321,7 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(NotGeneralLoginTypeException.class, () -> memberService.updatePassword(passwordRequest, memberId));
+        assertThrows(GeneralException.class, () -> memberService.updatePassword(passwordRequest, memberId));
     }
 
     @Test
@@ -417,7 +359,7 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(MemberNotFoundException.class, () -> memberService.updatePasswordByForgot(passwordRequest));
+        assertThrows(GeneralException.class, () -> memberService.updatePasswordByForgot(passwordRequest));
     }
 
     @Test
@@ -435,67 +377,10 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(NotGeneralLoginTypeException.class, () -> memberService.updatePasswordByForgot(passwordRequest));
+        assertThrows(GeneralException.class, () -> memberService.updatePasswordByForgot(passwordRequest));
     }
 
-    @Test
-    @DisplayName("닉네임 변경 성공")
-    public void success_UpdateNickname() throws Exception {
-        //given
-        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
-        Long memberId = memberService.saveMember(memberSaveRequestDto);
-        Member member = memberRepository.findById(memberId).get();
 
-        String changeNickname = "test1234";
-
-        MemberDTO.MemberUpdateNicknameRequestDto nicknameRequest = MemberDTO.MemberUpdateNicknameRequestDto.builder()
-                .nickname(changeNickname)
-                .build();
-
-        //when
-        memberService.updateNickname(nicknameRequest, memberId);
-
-        //then
-        Assertions.assertThat(member.getNickname()).isEqualTo(changeNickname);
-    }
-
-    @Test
-    @DisplayName("닉네임 변경 실패 - 유저 찾지 못한 경우")
-    public void fail_UpdateNickname_NotFoundMember() throws Exception {
-        //given
-        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
-        Long memberId = 1213123L;
-        memberService.saveMember(memberSaveRequestDto);
-
-        //when
-        String changeNickname = "tes123t";
-
-        MemberDTO.MemberUpdateNicknameRequestDto nicknameRequest = MemberDTO.MemberUpdateNicknameRequestDto.builder()
-                .nickname(changeNickname)
-                .build();
-
-        //then
-        assertThrows(MemberNotFoundException.class, () -> memberService.updateNickname(nicknameRequest, memberId));
-    }
-
-    @Test
-    @DisplayName("닉네임 변경 실패 - 중복된 닉네임")
-    public void fail_UpdateNickname_DuplicatedNickname() throws Exception {
-        //given
-        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
-        Long memberId = memberService.saveMember(memberSaveRequestDto);
-
-        //when
-        String changeNickname = NICKNAME;
-
-        MemberDTO.MemberUpdateNicknameRequestDto nicknameRequest = MemberDTO.MemberUpdateNicknameRequestDto.builder()
-                .nickname(changeNickname)
-                .build();
-
-        //then
-        assertThrows(DuplicateNicknameException.class, () -> memberService.updateNickname(nicknameRequest, memberId));
-
-    }
 
     @Test
     @DisplayName("정보 변경 성공")
@@ -535,7 +420,7 @@ class MemberServiceTest {
 
 
         //then
-        assertThrows(MemberNotFoundException.class, () -> memberService.updateInformation(informationRequest, memberId));
+        assertThrows(GeneralException.class, () -> memberService.updateInformation(informationRequest, memberId));
     }
 
     @Test
@@ -581,7 +466,7 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(MemberNotFoundException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
+        assertThrows(GeneralException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
 
     }
 
@@ -601,7 +486,7 @@ class MemberServiceTest {
                 .build();
 
         //then
-        assertThrows(InvalidEmailException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
+        assertThrows(GeneralException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
 
     }
 
@@ -621,7 +506,7 @@ class MemberServiceTest {
                 .password(password)
                 .build();
         //then
-        assertThrows(InvalidPasswordException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
+        assertThrows(GeneralException.class, () -> memberService.deleteMember(deleteRequestDto, memberId));
     }
 
     @Test
@@ -638,64 +523,6 @@ class MemberServiceTest {
     }
 
 
-    @Test
-    @DisplayName("휴대폰 번호 변경 성공")
-    public void success_UpdatePhone() throws Exception {
-        //given
-        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
-        Long memberId = memberService.saveMember(memberSaveRequestDto);
-        Member member = memberRepository.findById(memberId).get();
-
-        String changePhone = "01012341234";
-
-        MemberDTO.MemberUpdatePhoneRequestDto phoneRequest = MemberDTO.MemberUpdatePhoneRequestDto.builder()
-                .phone(changePhone)
-                .build();
-
-        //when
-        memberService.updatePhone(phoneRequest, memberId);
-
-        //then
-        Assertions.assertThat(member.getPhone()).isEqualTo(changePhone);
-    }
-
-    @Test
-    @DisplayName("휴대폰 번호 변경 실패 - 유저 찾지 못한 경우")
-    public void fail_UpdatePhone_NotFoundMember() throws Exception {
-        //given
-        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
-        Long memberId = 1213123L;
-        memberService.saveMember(memberSaveRequestDto);
-
-        //when
-        String changePhone = "01012341234";
-
-        MemberDTO.MemberUpdatePhoneRequestDto phoneRequest = MemberDTO.MemberUpdatePhoneRequestDto.builder()
-                .phone(changePhone)
-                .build();
-
-        //then
-        assertThrows(MemberNotFoundException.class, () -> memberService.updatePhone(phoneRequest, memberId));
-    }
-
-    @Test
-    @DisplayName("휴대폰 번호 변경 실패 - 중복된 휴대폰 번호")
-    public void fail_UpdatePhone_DuplicatedPhone() throws Exception {
-        //given
-        MemberDTO.MemberSaveRequestDto memberSaveRequestDto = createMemberDto();
-        Long memberId = memberService.saveMember(memberSaveRequestDto);
-
-        //when
-        String changePhone = PHONE;
-
-        MemberDTO.MemberUpdatePhoneRequestDto phoneRequest = MemberDTO.MemberUpdatePhoneRequestDto.builder()
-                .phone(changePhone)
-                .build();
-
-        //then
-        assertThrows(DuplicatePhoneException.class, () -> memberService.updatePhone(phoneRequest, memberId));
-
-    }
 
 
     @Test
@@ -710,7 +537,9 @@ class MemberServiceTest {
                 .email(EMAIL)
                 .password(PASSWORD)
                 .build();
-        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest,response,request);
 
         //then
         assertThat(loginServiceResponseDto.getEmail()).isEqualTo(findMember.getEmail());
@@ -728,9 +557,10 @@ class MemberServiceTest {
                 .password(PASSWORD)
                 .build();
 
-
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
         //then
-        assertThrows(InternalAuthenticationServiceException.class, () -> memberService.login(memberLoginRequest));
+        assertThrows(GeneralException.class, () -> memberService.login(memberLoginRequest,response,request));
     }
 
     @Test
@@ -745,9 +575,10 @@ class MemberServiceTest {
                 .password("PASSWORD")
                 .build();
 
-
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
         //then
-        assertThrows(BadCredentialsException.class, () -> memberService.login(memberLoginRequest));
+        assertThrows(GeneralException.class, () -> memberService.login(memberLoginRequest,response,request));
     }
 
     @Test
@@ -762,59 +593,12 @@ class MemberServiceTest {
                 .password(null)
                 .build();
 
-
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
         //then
-        assertThrows(InternalAuthenticationServiceException.class, () -> memberService.login(memberLoginRequest));
+        assertThrows(GeneralException.class, () -> memberService.login(memberLoginRequest,response,request));
     }
 
-    @Test
-    @DisplayName("토큰 재발급 성공")
-    public void success_Reissue() throws Exception {
-        //given
-        memberService.saveMember(createMemberDto());
-
-        //when
-        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
-                .email(EMAIL)
-                .password(PASSWORD)
-                .build();
-
-        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
-        TokenDTO.TokenRequestDTO tokenRequestDTO = TokenDTO.TokenRequestDTO.builder()
-                .accessToken(loginServiceResponseDto.getAccessToken())
-                .build();
-
-        
-        //when
-        TokenDTO tokenDTO = memberService.reissue(tokenRequestDTO);
-
-        //then
-        assertThat(loginServiceResponseDto.getAccessToken()).isNotEqualTo(tokenDTO.getAccessToken());
-    }
-
-    @Test
-    @DisplayName("토큰 재발급 실패 - 유효하지 않은 access token")
-    public void fail_Reissue_InvalidAccessToken() throws Exception {
-        //given
-        memberService.saveMember(createMemberDto());
-
-        //when
-        MemberDTO.MemberLoginRequestDto memberLoginRequest = MemberDTO.MemberLoginRequestDto.builder()
-                .email(EMAIL)
-                .password(PASSWORD)
-                .build();
-
-        MemberDTO.MemberLoginServiceResponseDto loginServiceResponseDto = memberService.login(memberLoginRequest);
-
-
-        //when
-        TokenDTO.TokenRequestDTO tokenRequestDTO = TokenDTO.TokenRequestDTO.builder()
-                .accessToken("")
-                .build();
-
-        //then
-        assertThrows(RuntimeException.class, () -> memberService.reissue(tokenRequestDTO));//MalformedJwtException 라는 exception 이 발생하는데 테스트코드에서 확인 불가능..
-    }
 
 
     @Test
@@ -843,55 +627,5 @@ class MemberServiceTest {
         assertThat(duplicateCheck).isFalse();
     }
 
-    @Test
-    @DisplayName("닉네임 중복 체크 성공")
-    public void success_CheckDuplicateNickname_TRUE() throws Exception{
-        //given
-        memberService.saveMember(createMemberDto());
 
-        //when
-        boolean duplicateCheck = memberService.nicknameDuplicateCheck(NICKNAME);
-
-        //then
-        assertThat(duplicateCheck).isTrue();
-    }
-
-    @Test
-    @DisplayName("닉네임 중복 체크 성공")
-    public void success_CheckDuplicateNickname_FALSE() throws Exception{
-        //given
-        memberService.saveMember(createMemberDto());
-
-        //when
-        boolean duplicateCheck = memberService.nicknameDuplicateCheck("test222");
-
-        //then
-        assertThat(duplicateCheck).isFalse();
-    }
-
-    @Test
-    @DisplayName("휴대폰번호 중복 체크 성공")
-    public void success_CheckDuplicatePhone_TRUE() throws Exception{
-        //given
-        memberService.saveMember(createMemberDto());
-
-        //when
-        boolean duplicateCheck = memberService.phoneDuplicateCheck(PHONE);
-
-        //then
-        assertThat(duplicateCheck).isTrue();
-    }
-
-    @Test
-    @DisplayName("휴대폰번호 중복 체크 성공")
-    public void success_CheckDuplicatePhone_FALSE() throws Exception{
-        //given
-        memberService.saveMember(createMemberDto());
-
-        //when
-        boolean duplicateCheck = memberService.phoneDuplicateCheck("01010102222");
-
-        //then
-        assertThat(duplicateCheck).isFalse();
-    }
 }

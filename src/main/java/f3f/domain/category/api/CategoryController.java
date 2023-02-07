@@ -3,6 +3,7 @@ package f3f.domain.category.api;
 import f3f.domain.category.application.CategoryService;
 import f3f.domain.category.domain.Category;
 import f3f.domain.category.dto.CategoryDTO;
+import f3f.global.response.ResultDataResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class CategoryController {
     }
 
     @GetMapping(value = "/category/{categoryId}")
-    public  Category getCategoryInfo(@PathVariable long categoryId){
-            return categoryService.getCategoryById(categoryId);
+    public ResultDataResponseDTO<CategoryDTO.CategoryInfo> getCategoryInfo(@PathVariable long categoryId){
+            return ResultDataResponseDTO.of(categoryService.getCategoryById(categoryId));
     }
 }
