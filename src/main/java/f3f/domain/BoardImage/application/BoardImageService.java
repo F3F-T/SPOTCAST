@@ -47,14 +47,14 @@ public class BoardImageService {
     public BoardImage deleteBoardImage(BoardImage boardImage){
         BoardImage image = boardImageRepository.findById(boardImage.getId())
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "존재하지 않는 이미지 입니다."));
-        //s3Uploader.deleteImage("boardImage",boardImage.getS3Url());
+        s3Uploader.delete("boardImage",boardImage.getS3Url());
         boardImageRepository.deleteById(image.getId());
         return boardImage;
     }
 
     @Transactional(readOnly = true)
     public List<BoardImageDTO.BoardImageInfo> getBoardImageList(long boardId){
-        List<BoardImageDTO.BoardImageInfo> boardImagesByBoardId = boardImageRepository.findBoardImagesByBoardId(boardId);
+        List<BoardImageDTO.BoardImageInfo> boardImagesByBoardId = boardImageRepository.findBoardImagesByBoardIdOrderByCreatedDateDesc(boardId);
         return boardImagesByBoardId;
     }
 }
