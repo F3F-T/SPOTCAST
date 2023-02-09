@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface BoardImageRepository extends JpaRepository<BoardImage,Long> {
 
-    List<BoardImageDTO.BoardImageInfo> findBoardImagesByBoardId(long boardId);
+    List<BoardImageDTO.BoardImageInfo> findBoardImagesByBoardIdOrderByCreatedDateDesc(long boardId);
 }
