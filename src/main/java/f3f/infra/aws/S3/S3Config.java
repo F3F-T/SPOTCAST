@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+
 @Slf4j
 @Service
 @NoArgsConstructor
@@ -48,10 +49,10 @@ public class S3Config {
                 .build();
     }
 
-    public String upload(MultipartFile file,String dirName) throws IOException {
+    public String upload(MultipartFile file, String dirName) throws IOException {
         String fileName = file.getOriginalFilename();
 
-        bucket = bucket + "/"+dirName;
+        bucket = bucket + "/" + dirName;
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
@@ -61,10 +62,10 @@ public class S3Config {
         return s3Client.getUrl(bucket, fileName).toString();
     }
 
-    public void delete(String fileName,String dirName) {
+    public void delete(String fileName, String dirName) {
         log.info("File Delete : " + fileName);
 
-        bucket = bucket + "/"+dirName;
+        bucket = bucket + "/" + dirName;
         s3Client.deleteObject(bucket, fileName);
     }
 }
