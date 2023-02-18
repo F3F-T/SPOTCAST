@@ -131,7 +131,7 @@ public class Board extends BaseTimeEntity {
                 .recruitType(this.recruitType)
                 .recruitVolume(this.recruitVolume)
                 .regDate(this.regDate)
-                .category(this.category)
+                .category(changeCategoryBoardInfo(this.category))
                 .likeCount(this.likesList.size())
                 .commentCount(this.comments.size())
                 .member(changeMemberBoardInfoDTO(this.member))

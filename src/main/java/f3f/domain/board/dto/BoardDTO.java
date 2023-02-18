@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 public class BoardDTO {
 
     @Getter
+    @NoArgsConstructor
     public static class SaveRequest {
         private String title;
 
@@ -97,6 +98,7 @@ public class BoardDTO {
     }
 
     @Getter
+    @NoArgsConstructor
     public static class BoardInfoDTO {
 
         private long id;
@@ -134,14 +136,14 @@ public class BoardDTO {
 
         private BoardType boardType;
 
-        private Category category;
+        private CategoryDTO.CategoryInfo category;
 
         private MemberDTO.MemberBoardInfoResponseDto member;
 
         @Builder
         public BoardInfoDTO(long id, String title, String content, long viewCount, long commentCount, long likeCount,
                             String supportEmail, String phone, long pay, int participationPeriod, int recruitVolume, String recruitType,
-                            ProfitStatus profitStatus, LocalDateTime regDate, BoardType boardType, Category category,
+                            ProfitStatus profitStatus, LocalDateTime regDate, BoardType boardType, CategoryDTO.CategoryInfo category,
                             MemberDTO.MemberBoardInfoResponseDto member) {
             this.id = id;
             this.title = title;
@@ -166,7 +168,8 @@ public class BoardDTO {
     public static class BoardDetailInfoDTO {
 
     }
-
+    @Getter
+    @NoArgsConstructor
     public static class BoardListResponse{
 
         private long id;
