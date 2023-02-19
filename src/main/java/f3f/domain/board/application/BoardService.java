@@ -114,16 +114,10 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public BoardInfoDTO getBoardInfo(long boardId , long userId) {
-        Member member = memberRepository.findById(userId)
-                .orElseThrow(MemberNotFoundException::new);
-
+    public BoardInfoDTO getBoardInfo(long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(NotFoundBoardException::new);
         board.updateViewCount(board);
-        if (member.getId() != board.getMember().getId()){
-            throw new BoardMissMatchUserException();
-        }
         return board.toBoardInfoDTO();
     }
 

@@ -66,8 +66,8 @@ public class BoardController {
 
     //게시글 조회
     @GetMapping(value = "/board/{boardId}")
-    public ResultDataResponseDTO<BoardDTO.BoardInfoDTO> getBoardInfo(@PathVariable long boardId, @PathVariable long memberId){
-        return ResultDataResponseDTO.of(boardService.getBoardInfo(boardId,memberId));
+    public ResultDataResponseDTO<BoardDTO.BoardInfoDTO> getBoardInfo(@PathVariable long boardId){
+        return ResultDataResponseDTO.of(boardService.getBoardInfo(boardId));
     }
 
     @GetMapping(value = "/board/list")

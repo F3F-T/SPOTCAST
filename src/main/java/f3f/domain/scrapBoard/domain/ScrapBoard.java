@@ -2,6 +2,8 @@ package f3f.domain.scrapBoard.domain;
 
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.dto.BoardDTO;
+import f3f.domain.category.domain.Category;
+import f3f.domain.category.dto.CategoryDTO;
 import f3f.domain.scrap.domain.Scrap;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO;
@@ -43,8 +45,16 @@ public class ScrapBoard {
                 .content(this.board.getContent())
                 .viewCount(this.board.getViewCount())
                 .boardType(this.board.getBoardType())
-                .category(this.board.getCategory())
+                .category(changeCategoryBoardInfo(this.board.getCategory()))
                 .member(changeMemberBoardInfoDTO(this.board.getMember()))
+                .build();
+    }
+
+    private CategoryDTO.CategoryInfo changeCategoryBoardInfo(Category category) {
+        return CategoryDTO.CategoryInfo.builder()
+                .categoryId(category.getId())
+                .name(category.getName())
+                .depth(category.getDepth())
                 .build();
     }
 
