@@ -49,14 +49,15 @@ public class S3Config {
                 .build();
     }
 
-    public String upload(MultipartFile file, String dirName) throws IOException {
-        String fileName = file.getOriginalFilename();
+
+    public String upload(Long id,MultipartFile file, String dirName) throws IOException {
+        String fileName = id+"_"+file.getOriginalFilename();
 
         bucket = bucket + "/" + dirName;
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
-
+        metadata.setContentLength(file.getBytes().length);
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), metadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
         return s3Client.getUrl(bucket, fileName).toString();

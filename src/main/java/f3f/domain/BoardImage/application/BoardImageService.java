@@ -29,7 +29,7 @@ public class BoardImageService {
     public String  saveBoardImage(long boardId , MultipartFile inputBoardImage) throws IOException {
         Board board = boardRepository.findById(boardId).orElseThrow();
 
-            String imagePath = s3Uploader.upload(inputBoardImage,"boardImage");
+            String imagePath = s3Uploader.upload(boardId,inputBoardImage,"boardImage");
             BoardImage boardImage = BoardImage.builder()
                     .board(board)
                     .s3Url(imagePath)
