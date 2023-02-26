@@ -129,6 +129,22 @@ public class MemberController {
     }
 
 
+    /**
+     * default profile로 변경
+     * @param memberId
+     * @return
+     */
+    @PatchMapping("/{memberId}/profile")
+    public ResultDataResponseDTO updateDefaultProfile(@PathVariable Long memberId) throws IOException {
+
+        //memberId 검증
+        CheckCurrentUser(memberId);
+
+        memberService.updateProfile(memberId);
+
+        return ResultDataResponseDTO.empty();
+    }
+
 
 
     /**

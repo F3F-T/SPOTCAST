@@ -311,6 +311,19 @@ public class MemberService {
     }
 
     /**
+     * profile default 로 변경
+     *
+     */
+    @Transactional
+    public void updateProfile(Long memberId) throws IOException {
+        Member member = findMemberByMemberId(memberId);
+
+        String imagePath = s3Uploader.getDefaultProfileUrl();
+        member.updateProfile(imagePath);
+
+    }
+
+    /**
      * redis 에 refresh token 저장
      *
      * @param refreshToken
