@@ -2,7 +2,6 @@ package f3f.domain.memberCategory.domain;
 
 import f3f.domain.category.domain.Category;
 import f3f.domain.user.domain.Member;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,10 +22,4 @@ public class MemberCategory {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
-
-    @Builder
-    public MemberCategory(Member member, Category category) {
-        this.member = member;
-        this.category = category;
-    }
 }

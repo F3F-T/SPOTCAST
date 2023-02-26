@@ -3,9 +3,12 @@ package f3f.domain.category.domain;
 import f3f.domain.board.domain.Board;
 import f3f.domain.category.dto.CategoryDTO;
 import f3f.domain.memberCategory.domain.MemberCategory;
+import f3f.domain.user.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -39,8 +42,7 @@ public class Category {
     private List<MemberCategory> memberCategories = new ArrayList<>();
 
     @Builder
-    public Category(Long id, String name, Integer depth, Category parentCategory, List<Category> child) {
-        this.id = id;
+    public Category(String name, Integer depth, Category parentCategory, List<Category> child) {
         this.name = name;
         this.depth = depth;
         this.parentCategory = parentCategory;

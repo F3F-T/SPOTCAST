@@ -9,8 +9,13 @@ import f3f.domain.publicModel.SortType;
 import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.DateFormatter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -24,7 +29,6 @@ public class BoardController {
     public ResultDataResponseDTO<Long> saveBoard(@RequestBody BoardDTO.SaveRequest request){
         return ResultDataResponseDTO.of(boardService.saveBoard(request));
     }
-
 
     //게시글 수정
     @PutMapping(value = "/board/{boardId}")
@@ -43,19 +47,27 @@ public class BoardController {
     }
 
     @GetMapping(value = "/board/list/{boardType}/{categoryId}/{sortType}")
-    public ResultDataResponseDTO<List<BoardDTO.BoardInfoDTO>> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType,@PathVariable SortType sortType){
-        return ResultDataResponseDTO.of(boardService.getBoardListByCategoryId(categoryId,boardType,sortType));
+    public ResultDataResponseDTO<Page<BoardDTO.BoardListResponse>> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType,@PathVariable SortType sortType, @RequestBody Pageable pageable){
+        if (categoryId == 0 || categoryId == null){
+            return ResultDataResponseDTO.of(boardService.getBoardListByBoardType(boardType,sortType));
+        }else{
+            return ResultDataResponseDTO.of(boardService.getBoardListByCategoryId(categoryId,boardType,sortType,pageable));
+        }
     }
 
     @GetMapping(value = "/board/list/{memberId}/{boardType}/{sortType}")
-    public ResultDataResponseDTO<List<BoardDTO.BoardInfoDTO>> getBoardListByMemberId(@PathVariable Long memberId,@PathVariable BoardType boardType,@PathVariable SortType sortType){
-        return ResultDataResponseDTO.of(boardService.getBoardListByMemberId(memberId,boardType,sortType));
+    public ResultDataResponseDTO<Page<BoardDTO.BoardListResponse>> getBoardListByMemberId(@PathVariable Long memberId, @PathVariable BoardType boardType, @PathVariable SortType sortType, @RequestBody Pageable pageable){
+        if (boardType == null ){
+            return null;
+        }else{
+            return ResultDataResponseDTO.of(boardService.getBoardListByMemberId(memberId,boardType,sortType,pageable));
+        }
     }
 
     //게시글 조회
     @GetMapping(value = "/board/{boardId}")
-    public ResultDataResponseDTO<BoardDTO.BoardInfoDTO> getBoardInfo(@PathVariable long boardId, @PathVariable long memberId){
-        return ResultDataResponseDTO.of(boardService.getBoardInfo(boardId,memberId));
+    public ResultDataResponseDTO<BoardDTO.BoardInfoDTO> getBoardInfo(@PathVariable long boardId){
+        return ResultDataResponseDTO.of(boardService.getBoardInfo(boardId));
     }
 
     @GetMapping(value = "/board/list")

@@ -3,8 +3,8 @@
 | 회원가입 | POST | /auth/signup |  |  | email,password , name, loginMemberType, loginType, authority, field |  |  |
 | 회원 탈퇴 | DELETE | /member/{memberId} | memberId |  | email, password | token |  |
 | 회원정보수정 | PATCH | /member/{memberId} |  |  |  | token |  |
-| 회원정보 조회 | GET | /member/{memberId} | memberId |  |  |  | id, email, name , twitter, instagram, other sns, loginMemberType, loginType authority, information,egName ,field<list>, follower, follwing |
-| 내 정보 조회 | GET | /member/myInfo |  |  |  | token | id, email, name , twitter, instagram, other sns, loginMemberType, loginType authority, information,egName,field<list>, follower, follwing |
+| 회원정보 조회 | GET | /member/{memberId} | memberId |  |  |  | id, email, name , twitter, instagram, other sns, loginMemberType, loginType authority, information,field,egName |
+| 내 정보 조회 | GET | /member/myInfo |  |  |  | token | id, email, name , twitter, instagram, other sns, loginMemberType, loginType authority, information,field,egName |
 | 로그인 | POST | /auth/login |  |  | email, password |  | id, email, name ,loginMemberType,authority |
 | 로그아웃 | POST | /authlogout |  |  |  | token |  |
 | 토큰 재발행 | POST | /auth/reissue |  |  |  | token |  |
@@ -13,8 +13,7 @@
 | 이메일 중복 검사 | GET | /auth/member-emails/{email}/exists | email |  |  |  | boolean(true or false) |
 | 비밀번호 변경(로그인 X) | PATCH | /member/find/password |  |  | email, afterPassword |  |  |
 | 비밀번호 변경(로그인 O) | PATCH | /member/{memberId}/change/password | memberId |  | email, beforePassword, afterPassword | token |  |
-| 정보 변경 화면 분야 리스트 | GET | /member/field |  |  |  | token | List<categoryId,name,exist> |
-| 정보 변경 | PATCH | /member/{memberId}/change/information | memberId |  | information, twitter, instagram, otherSns,field,egName,List<categoryId,name,exist> | token |  |
+| 정보 변경 | PATCH | /member/{memberId}/change/information | memberId |  | information, twitter, instagram, otherSns,field,egName | token |  |
 | 북마크 추가 | POST | /member/bookmark |  |  | followerId,followingId | token |  |
 | 북마크 삭제 | DELETE | /member/bookmark |  |  | followerId,followingId | token |  |
 | 북마크 팔로워 리스트 조회(나를 북마크 중인 사람들) | GET | /member/bookmark/follower |  | page,size |  | token | List<bookmarkId,memberId,name,email> |

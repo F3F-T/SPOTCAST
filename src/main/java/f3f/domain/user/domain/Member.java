@@ -6,7 +6,6 @@ import f3f.domain.category.domain.Category;
 import f3f.domain.comment.domain.Comment;
 import f3f.domain.likes.domain.Likes;
 import f3f.domain.memberCategory.domain.MemberCategory;
-import f3f.domain.memberCategory.dto.MemberCategoryDTO;
 import f3f.domain.message.domain.Message;
 import f3f.domain.publicModel.LoginType;
 import f3f.domain.publicModel.LoginMemberType;
@@ -36,6 +35,7 @@ public class Member extends MemberBase {
     private String otherSns;
 
     private String information;
+
 
     private String profile;
     private String egName;
@@ -82,8 +82,8 @@ public class Member extends MemberBase {
 
 
     @Builder
-    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String profile) {
-        super(id, email, name, password, loginMemberType, loginType, authority);
+    public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String field, String profile) {
+        super(id, email, name, password, loginMemberType, loginType, authority, field);
         this.profile = profile;
     }
 
@@ -105,7 +105,7 @@ public class Member extends MemberBase {
                 .instagram(instagram)
                 .twitter(twitter)
                 .otherSns(otherSns)
-                .profile(profile)
+                .field(this.getField())
                 .egName(this.getEgName())
                 .build();
     }
@@ -134,6 +134,7 @@ public class Member extends MemberBase {
         this.instagram = updateInformationRequest.getInstagram();
         this.twitter = updateInformationRequest.getTwitter();
         this.otherSns = updateInformationRequest.getOtherSns();
+        this.field = updateInformationRequest.getField();
         this.egName = updateInformationRequest.getEgName();
     }
 

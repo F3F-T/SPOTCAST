@@ -52,12 +52,8 @@ public class MessageDTO {
 
         private String memberName;
 
-        private String memberProfile;
-
-        private Boolean readStatus;
-
         @Builder
-        public MessageListResponseDto(Long id, String title, String content, LocalDateTime createdDate, Long memberId, String memberEmail, String memberName, String memberProfile, Boolean readStatus) {
+        public MessageListResponseDto(Long id, String title, String content, LocalDateTime createdDate, Long memberId, String memberEmail, String memberName) {
             this.id = id;
             this.title = title;
             this.content = content;
@@ -65,8 +61,6 @@ public class MessageDTO {
             this.memberId = memberId;
             this.memberEmail = memberEmail;
             this.memberName = memberName;
-            this.memberProfile = memberProfile;
-            this.readStatus = readStatus;
         }
     }
 
@@ -100,7 +94,6 @@ public class MessageDTO {
                     .sender(this.sender)
                     .recipientDisplayStatus(true)
                     .senderDisplayStatus(true)
-                    .readStatus(false)
                     .build();
 
         }

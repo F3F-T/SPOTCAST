@@ -1,7 +1,5 @@
 package f3f.domain.message.dao;
 
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -47,18 +45,16 @@ public class SearchMessageRepositoryImpl extends QuerydslRepositorySupport imple
                         message.createdDate,
                         member.id,
                         member.email,
-                        member.name,
-                        member.profile,
-                        message.readStatus))
+                        member.name))
                 .from(member).leftJoin(message).fetchJoin()
                 .on(message.recipient.id.eq(member.id))
-                .where(message.sender.id.eq(memberId),message.senderDisplayStatus.eq(true))
-                .orderBy(new OrderSpecifier(Order.DESC,message.createdDate)));
+                .where(message.sender.id.eq(memberId),message.senderDisplayStatus.eq(true)));
 
         long total = query.fetchCount();
         List<MessageDTO.MessageListResponseDto> result = query.fetch();
 
         return new PageImpl<>(result, pageable, total);
+//        return result;
     }
 
     @Override
@@ -72,44 +68,16 @@ public class SearchMessageRepositoryImpl extends QuerydslRepositorySupport imple
                         message.createdDate,
                         member.id,
                         member.email,
-                        member.name,
-                        member.profile,
-                        message.readStatus))
+                        member.name))
                 .from(member).leftJoin(message).fetchJoin()
                 .on(message.sender.id.eq(member.id))
-                .where(message.recipient.id.eq(memberId),message.recipientDisplayStatus.eq(true))
-                .orderBy(new OrderSpecifier(Order.DESC,message.createdDate)));
+                .where(message.recipient.id.eq(memberId),message.recipientDisplayStatus.eq(true)));
 
         long total = query.fetchCount();
         List<MessageDTO.MessageListResponseDto> result = query.fetch();
 
         return new PageImpl<>(result, pageable, total);
     }
-
-    @Override
-    public Page<MessageDTO.MessageListResponseDto> getRecipientUnReadListByUserId(long memberId, Pageable pageable) {
-        JPQLQuery<MessageDTO.MessageListResponseDto> query = querydsl().applyPagination(pageable, jpaQueryFactory
-                .select(Projections.constructor(MessageDTO.MessageListResponseDto.class,
-                        message.id,
-                        message.title,
-                        message.content,
-                        message.createdDate,
-                        member.id,
-                        member.email,
-                        member.name,
-                        member.profile,
-                        message.readStatus))
-                .from(member).leftJoin(message).fetchJoin()
-                .on(message.sender.id.eq(member.id))
-                .where(message.recipient.id.eq(memberId),message.recipientDisplayStatus.eq(true),message.readStatus.eq(false))
-                .orderBy(new OrderSpecifier(Order.DESC,message.createdDate)));
-
-        long total = query.fetchCount();
-        List<MessageDTO.MessageListResponseDto> result = query.fetch();
-
-        return new PageImpl<>(result, pageable, total);
-    }
-
     private Querydsl querydsl() {
         return Objects.requireNonNull(getQuerydsl());
     }

@@ -11,10 +11,13 @@ public class BoardImageDTO{
         private Long id;
         private String s3Url;
 
+        private Long boardId;
+
         @Builder
-        public BoardImageInfo(Long id, String s3Url) {
+        public BoardImageInfo(Long id, String s3Url, Long boardId) {
             this.id = id;
             this.s3Url = s3Url;
+            this.boardId = boardId;
         }
     }
 }

@@ -31,6 +31,8 @@ public class MemberBase extends BaseTimeEntity {
     @Enumerated(value = EnumType.STRING)
     private Authority authority;
 
+    protected String field;
+
 
 
 }

@@ -1,7 +1,5 @@
 package f3f.domain.user.api;
 
-import f3f.domain.category.application.CategoryService;
-import f3f.domain.category.dto.CategoryDTO;
 import f3f.domain.user.application.EmailCertificationService;
 import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dto.MemberDTO;
@@ -108,5 +106,6 @@ public class MemberAuthController {
 
         return ResultDataResponseDTO.of(memberService.emailDuplicateCheck(email));
     }
+
 
 }

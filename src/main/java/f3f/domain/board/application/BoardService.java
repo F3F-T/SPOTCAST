@@ -5,6 +5,7 @@ import f3f.domain.board.dao.SearchBoardRepository;
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
+import f3f.domain.board.dto.BoardDTO.BoardListResponse;
 import f3f.domain.board.exception.BoardMissMatchUserException;
 import f3f.domain.board.exception.NotFoundBoardCategoryException;
 import f3f.domain.board.exception.NotFoundBoardException;
@@ -15,6 +16,8 @@ import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +64,16 @@ public class BoardService {
                 .category(request.getCategory())
                 .boardType(request.getBoardType())
                 .member(member)
+                .supportEmail(request.getSupportEmail())
+                .participationPeriod(request.getParticipationPeriod())
+                .pay(request.getPay())
+                .recruitType(request.getRecruitType())
+                .recruitVolume(request.getRecruitVolume())
+                .profitStatus(request.getProfitStatus())
+                .regDate(request.getRegDate())
+                .phone(request.getPhone())
+                .category(request.getCategory())
+                .member(member)
                 .build();
         boardRepository.save(board);
 
@@ -101,16 +114,10 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public BoardInfoDTO getBoardInfo(long boardId , long userId) {
-        Member member = memberRepository.findById(userId)
-                .orElseThrow(MemberNotFoundException::new);
-
+    public BoardInfoDTO getBoardInfo(long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(NotFoundBoardException::new);
         board.updateViewCount(board);
-        if (member.getId() != board.getMember().getId()){
-            throw new BoardMissMatchUserException();
-        }
         return board.toBoardInfoDTO();
     }
 
@@ -118,23 +125,26 @@ public class BoardService {
      * 유저 식별자로 게시글 조회
      */
     @Transactional(readOnly = true)
-    public List<BoardInfoDTO> getBoardListByMemberId(long memberId, BoardType boardType, SortType sortType){
-
-        List<BoardInfoDTO> boardListByUserId = searchBoardRepository.getBoardListByUserId(memberId, boardType,sortType);
+    public Page<BoardListResponse> getBoardListByMemberId(long memberId, BoardType boardType, SortType sortType, Pageable pageable){
+        Page<BoardListResponse> boardListByUserId = searchBoardRepository.getBoardListInfoByUserId(memberId, boardType,sortType,pageable);
+//        List<Board> boardListByCategoryId = boardRepository.getBoardListByUserId(memberId, sortType);
+//        List<BoardListResponse> boardListResponses = boardListByCategoryId.stream()
+//                .map(Board::toBoardListResponseInfo).collect(Collectors.toList());
         return boardListByUserId;
     }
-
     /*
      * 카테고리 식별자로 게시글 조회
      */
     @Transactional(readOnly = true)
-    public List<BoardInfoDTO> getBoardListByCategoryId(long categoryId, BoardType boardType, SortType sortType){
-        List<BoardInfoDTO> boardByCategoryId = searchBoardRepository.getBoardListByCategoryId(categoryId,boardType,sortType);
-
+    public Page<BoardListResponse> getBoardListByCategoryId(long categoryId, BoardType boardType, SortType sortType, Pageable pageable){
+        Page<BoardListResponse> boardByCategoryId = searchBoardRepository.getBoardListInfoByCategoryId(categoryId,boardType,sortType,pageable);
+//        List<Board> boardListByCategoryId = boardRepository.getBoardListByCategoryId(boardType, categoryId, sortType);
+//        List<BoardListResponse> boardListResponses = boardListByCategoryId.stream()
+//                .map(Board::toBoardListResponseInfo).collect(Collectors.toList());
         return boardByCategoryId;
     }
-
-    public List<BoardInfoDTO> getBoardListByBoardType(SortType sortType) {
+    @Transactional(readOnly = true)
+    public Page<BoardListResponse> getBoardListByBoardType(BoardType boardType, SortType sortType) {
         return null;
     }
 }

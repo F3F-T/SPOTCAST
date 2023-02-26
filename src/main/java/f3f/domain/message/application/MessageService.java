@@ -64,20 +64,6 @@ public class MessageService {
 
     }
 
-    @Transactional
-    public void updateReadStatus(long messageId, long memberId) {
-        if (!memberRepository.existsById(memberId)) {
-            throw new GeneralException(ErrorCode.NOTFOUND_MEMBER, "존재하지 않는 사용자입니다.");
-        }
-
-        Message message = messageRepository.findById(messageId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MESSAGE, "존재하지 않는 메세지입니다."));
-
-
-        message.updateReadStatus(memberId);
-
-    }
-
 
     @Transactional(readOnly = true)
     public MessageDTO.MessageResponseDto getMessageInfo(long messageId, Long memberId) {
@@ -92,6 +78,7 @@ public class MessageService {
         return message.toMessageDto();
     }
 
+    //TODO 리스트 가져오는 쿼리 작성
     @Transactional(readOnly = true)
     public Page<MessageDTO.MessageListResponseDto> getSendMessageListByUserId(long memberId, Pageable pageable) {
         if (!memberRepository.existsById(memberId)) {
@@ -107,17 +94,6 @@ public class MessageService {
             throw new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다.");
         }
         Page<MessageDTO.MessageListResponseDto> recipientListByUserId = searchMessageRepository.getRecipientListByUserId(memberId,pageable);
-
-
-        return recipientListByUserId;
-    }
-
-    @Transactional(readOnly = true)
-    public Page<MessageDTO.MessageListResponseDto> getRecipientUnReadMessageListByUserId(long memberId, Pageable pageable) {
-        if(!memberRepository.existsById(memberId)){
-            throw new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다.");
-        }
-        Page<MessageDTO.MessageListResponseDto> recipientListByUserId = searchMessageRepository.getRecipientUnReadListByUserId(memberId,pageable);
 
 
         return recipientListByUserId;

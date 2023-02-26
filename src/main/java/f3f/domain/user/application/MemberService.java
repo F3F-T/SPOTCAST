@@ -1,22 +1,14 @@
 package f3f.domain.user.application;
 
-import f3f.domain.category.domain.Category;
-import f3f.domain.memberCategory.dao.MemberCategoryJpaRepository;
-import f3f.domain.memberCategory.dao.MemberCategoryRepository;
-import f3f.domain.memberCategory.domain.MemberCategory;
-import f3f.domain.memberCategory.dto.MemberCategoryDTO;
 import f3f.domain.publicModel.LoginType;
 import f3f.domain.user.dao.MemberRepository;
-import f3f.domain.user.dao.MemberRepositoryDao;
 import f3f.domain.user.dao.RefreshTokenDao;
 import f3f.domain.user.domain.Member;
-import f3f.domain.user.dto.MemberDTO.MemberSaveRequestDto;
 import f3f.domain.user.dto.TokenDTO;
 import f3f.global.jwt.TokenProvider;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
 import f3f.global.util.CookieUtil;
-import f3f.infra.aws.S3.S3Uploader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -27,16 +19,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-
-import javax.persistence.EntityManager;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
-import java.util.List;
 
 import static f3f.domain.user.dto.MemberDTO.*;
 import static f3f.global.constants.JwtConstants.ACCESSTOKEN;
@@ -48,32 +35,20 @@ import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 @Slf4j
 public class MemberService {
 
-    private EntityManager em;
+
     private AuthenticationManagerBuilder authenticationManagerBuilder;
     private PasswordEncoder passwordEncoder;
 
     private TokenProvider tokenProvider;
     private MemberRepository memberRepository;
-    private MemberCategoryRepository memberCategoryRepository;
-
-    private MemberCategoryJpaRepository memberCategoryJpaRepository;
     private RefreshTokenDao refreshTokenDao;
 
-    private MemberRepositoryDao memberRepositoryDao;
-
-    private final S3Uploader s3Uploader;
-
-    public MemberService(EntityManager em, AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, MemberCategoryRepository memberCategoryRepository, MemberCategoryJpaRepository memberCategoryJpaRepository, RefreshTokenDao refreshTokenDao, MemberRepositoryDao memberRepositoryDao, S3Uploader s3Uploader) {
-        this.em = em;
+    public MemberService(AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, RefreshTokenDao refreshTokenDao) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
         this.memberRepository = memberRepository;
-        this.memberCategoryRepository = memberCategoryRepository;
-        this.memberCategoryJpaRepository = memberCategoryJpaRepository;
         this.refreshTokenDao = refreshTokenDao;
-        this.memberRepositoryDao = memberRepositoryDao;
-        this.s3Uploader = s3Uploader;
     }
 
     /**
@@ -128,7 +103,7 @@ public class MemberService {
      * @return
      */
     @Transactional(readOnly = true)
-    public MemberLoginServiceResponseDto login(MemberLoginRequestDto loginRequest, HttpServletResponse response, HttpServletRequest request) {
+    public MemberLoginServiceResponseDto login(MemberLoginRequestDto loginRequest,HttpServletResponse response,HttpServletRequest request) {
 
         // 로그인 정보로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
@@ -149,8 +124,8 @@ public class MemberService {
 
             String refreshToken = tokenDto.getRefreshToken();
             saveRefreshTokenInStorage(refreshToken, Long.valueOf(authentication.getName())); // 추후 DB 나 어딘가 저장 예정
-            CookieUtil.deleteCookie(request, response, ACCESSTOKEN);
-            CookieUtil.addCookie(response, ACCESSTOKEN, tokenDto.getAccessToken(), ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
+            CookieUtil.deleteCookie(request,response,ACCESSTOKEN);
+            CookieUtil.addCookie(response,ACCESSTOKEN,tokenDto.getAccessToken(),  ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
 
             return memberLoginResponse;
         } catch (BadCredentialsException e) {
@@ -171,10 +146,10 @@ public class MemberService {
 
 
         Cookie cookie = CookieUtil.getCookie(request, ACCESSTOKEN).orElse(null);
-        String accessToken;
-        if (cookie == null) {
-            throw new GeneralException(ErrorCode.INVALID_REQUEST, "로그인이 필요한 서비스입니다.");
-        } else {
+        String accessToken ;
+        if(cookie==null){
+            throw new GeneralException(ErrorCode.INVALID_REQUEST,"로그인이 필요한 서비스입니다.");
+        } else{
             accessToken = cookie.getValue();
         }
 
@@ -204,7 +179,7 @@ public class MemberService {
         saveRefreshTokenInStorage(tokenDTO.getRefreshToken(), Long.valueOf(authentication.getName()));// 추후 디비에 저장
 
         // 토큰 발급
-        CookieUtil.addCookie(response, ACCESSTOKEN, tokenDTO.getAccessToken(), ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
+        CookieUtil.addCookie(response,ACCESSTOKEN,tokenDTO.getAccessToken(),  ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
     }
 
 
@@ -216,17 +191,17 @@ public class MemberService {
 
         Cookie cookie = CookieUtil.getCookie(request, ACCESSTOKEN).orElse(null);
         String accessToken;
-        if (cookie == null) {
-            throw new GeneralException(ErrorCode.INVALID_REQUEST, "로그인이 필요한 서비스입니다.");
-        } else {
+        if(cookie==null){
+            throw new GeneralException(ErrorCode.INVALID_REQUEST,"로그인이 필요한 서비스입니다.");
+        } else{
             accessToken = cookie.getValue();
         }
         Authentication auth = tokenProvider.getAuthentication(accessToken);
 
         if (auth != null && auth.isAuthenticated()) {
             refreshTokenDao.removeRefreshToken(Long.valueOf(auth.getName()));
-            deleteCookie(response, JSESSIONID);
-            deleteCookie(response, REMEMBER_ME);
+            deleteCookie(response,JSESSIONID);
+            deleteCookie(response,REMEMBER_ME);
             deleteCookie(response, ACCESSTOKEN);
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
@@ -242,13 +217,21 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public MemberInfoResponseDto findMemberInfoByMemberId(Long memberId) {
-
-        MemberInfoResponseDto memberInfo = memberRepositoryDao.getMemberInfo(memberId);
-        List<MemberCategoryDTO.CategoryMyInfo> field = getFieldMyInfo(memberId);
-        memberInfo.addField(field);
-        return memberInfo;
+        return findMemberByMemberId(memberId)
+                .toFindMemberDto();
     }
 
+    /**
+     * 내 정보 조회
+     *
+     * @return
+     */
+
+    @Transactional(readOnly = true)
+    public MemberInfoResponseDto findMyInfo(Long memberId) {
+        return findMemberByMemberId(memberId)
+                .toFindMemberDto();
+    }
 
     /**
      * 비밀번호 수정 - 로그인된 상태인 경우
@@ -295,6 +278,7 @@ public class MemberService {
 
     }
 
+
     /**
      * information 변경
      *
@@ -302,34 +286,7 @@ public class MemberService {
      */
     @Transactional
     public void updateInformation(MemberUpdateInformationRequestDto updateInformationRequest, Long memberId) {
-
-
         Member member = findMemberByMemberId(memberId);
-        List<MemberCategory> memberCategories = member.getMemberCategories();
-        List<MemberCategoryDTO.CategoryMyInfo> categoryInfo = updateInformationRequest.getCategoryInfo();
-        for (MemberCategoryDTO.CategoryMyInfo categoryMyInfo : categoryInfo) {
-
-            boolean flag = true;
-            for (MemberCategory memberCategory : memberCategories) {
-                if (memberCategory.getCategory().getId().equals(categoryMyInfo.getCategoryId())) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (categoryMyInfo.getExist()&&flag) {
-                MemberCategory memberCategory = MemberCategory.builder()
-                        .member(Member.builder().id(memberId).build())
-                        .category(Category.builder().id(categoryMyInfo.getCategoryId()).build())
-                        .build();
-                em.persist(memberCategory);
-            }
-            else if(!categoryMyInfo.getExist()&&!flag) {
-                MemberCategory memberCategory = memberCategoryJpaRepository.findByCategoryIdAndMemberId(categoryMyInfo.getCategoryId(), memberId).orElse(null);
-                em.remove(memberCategory);
-            }
-
-        }
-
         member.updateInformation(updateInformationRequest);
     }
 
@@ -422,41 +379,11 @@ public class MemberService {
     }
 
     /**
-     * 정보 수정 화면 field 값 조회
-     *
-     * @return
-     */
-    @Transactional(readOnly = true)
-    public List<MemberCategoryDTO.CategoryMyInfo> getFieldMyInfo(Long memberId) {
-        List<MemberCategoryDTO.categoryResponseDto> memberCategoryList = memberCategoryRepository.findCategoryByMemberId(memberId);
-        List<MemberCategoryDTO.CategoryMyInfo> categoryList = memberCategoryRepository.findChildCategoryByName("field");
-
-        for (MemberCategoryDTO.CategoryMyInfo category : categoryList) {
-            for (MemberCategoryDTO.categoryResponseDto memberCategory : memberCategoryList) {
-                if (memberCategory.getId().equals(category.getCategoryId())) {
-                    category.updateExist();
-                }
-            }
-        }
-
-        return categoryList;
-    }
-
-
-    @Transactional
-    public String saveProfileImage(Long memberId, MultipartFile inputBoardImage) throws IOException {
-
-        String boardImage = s3Uploader.upload(inputBoardImage, "profileImage");
-        System.out.println("boardImage = " + boardImage);
-        return boardImage;
-    }
-    /**
      * 쿠키 제거
-     *
      * @param response
      * @param cookieName
      */
-    private void deleteCookie(HttpServletResponse response, String cookieName) {
+    private void deleteCookie(HttpServletResponse response,String cookieName) {
         Cookie cookie = new Cookie(cookieName, null); // choiceCookieName(쿠키 이름)에 대한 값을 null로 지정
         cookie.setMaxAge(0); // 유효시간을 0으로 설정
         cookie.setPath("/");

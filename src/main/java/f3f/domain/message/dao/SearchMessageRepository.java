@@ -17,7 +17,5 @@ public interface SearchMessageRepository {
     Page<MessageDTO.MessageListResponseDto> getSendListByUserId(long sender_id, Pageable pageable);
 
     Page<MessageDTO.MessageListResponseDto> getRecipientListByUserId(long recipient_id, Pageable pageable);
-
-    Page<MessageDTO.MessageListResponseDto> getRecipientUnReadListByUserId(long recipient_id, Pageable pageable);
 //    Page<MessageDTO.MessageResponseDto> findAllBySearchCondition(BoardDTO.SearchCondition condition, Pageable pageable);
 }
