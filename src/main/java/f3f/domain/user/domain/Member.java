@@ -138,6 +138,10 @@ public class Member extends MemberBase {
         this.egName = updateInformationRequest.getEgName();
     }
 
+    public void updateProfile(String profileUrl){
+        this.profile = profileUrl;
+    }
+
 
     public void addScrapList(Scrap scrap){
         this.scrapList.add(scrap);

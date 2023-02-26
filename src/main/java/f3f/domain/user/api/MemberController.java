@@ -7,6 +7,9 @@ import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 import static f3f.domain.user.dto.MemberDTO.*;
 
@@ -102,6 +105,25 @@ public class MemberController {
         CheckCurrentUser(memberId);
 
         memberService.updateInformation(updateInformationRequest,memberId);
+
+        return ResultDataResponseDTO.empty();
+    }
+
+
+    /**
+     * profile 변경
+     * @param image
+     * @param memberId
+     * @return
+     */
+    @PatchMapping("/{memberId}/change/profile")
+    public ResultDataResponseDTO updateProfile(@RequestBody MultipartFile image,
+                                                   @PathVariable Long memberId) throws IOException {
+
+        //memberId 검증
+        CheckCurrentUser(memberId);
+
+        memberService.updateProfile(image,memberId);
 
         return ResultDataResponseDTO.empty();
     }
