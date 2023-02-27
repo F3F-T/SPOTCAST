@@ -65,7 +65,7 @@ public class MemberDTO {
             this.field = field;
         }
 
-        public Member toEntity(){
+        public Member toEntity(String defaultUrl){
                 return Member.builder()
                         .email(this.email)
                         .password(this.password)
@@ -74,7 +74,7 @@ public class MemberDTO {
                         .loginType(this.loginType)
                         .authority(this.authority)
                         .field(this.field)
-                        .profile("https://shopping-phinf.pstatic.net/main_2343561/23435610490.20211228162539.jpg?type=f640")
+                        .profile(defaultUrl)
                         .build();
         }
     }

@@ -12,8 +12,6 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,14 +51,13 @@ public class S3Config {
     public String upload(Long id,MultipartFile file, String dirName) throws IOException {
         String fileName = id+"_"+file.getOriginalFilename();
 
-        bucket = bucket + "/" + dirName;
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
         metadata.setContentLength(file.getBytes().length);
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), metadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
-        return s3Client.getUrl(bucket, fileName).toString();
+        return s3Client.getUrl(bucket + "/" + dirName, fileName).toString();
     }
 
     public void delete(String fileName, String dirName) {
@@ -68,6 +65,10 @@ public class S3Config {
 
         bucket = bucket + "/" + dirName;
         s3Client.deleteObject(bucket, fileName);
+    }
+
+    public String getDefaultProfileUrl(){
+        return s3Client.getUrl(bucket+"/" + "profile", "default.png").toString();
     }
 }
 
