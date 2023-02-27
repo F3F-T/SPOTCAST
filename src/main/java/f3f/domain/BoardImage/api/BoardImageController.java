@@ -34,4 +34,6 @@ public class BoardImageController {
     public ResultDataResponseDTO<List<BoardImageDTO.BoardImageInfo>> getBoardImageList(@PathVariable long boardId){
         return ResultDataResponseDTO.of(boardImageService.getBoardImageList(boardId));
     }
+
+    //
 }
