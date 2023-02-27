@@ -19,7 +19,7 @@ import static f3f.domain.user.domain.QMember.member;
 @Repository
 @RequiredArgsConstructor
 public class SearchBookmarkRepositoryImpl implements SearchBookmarkRepository {
-
+//
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
