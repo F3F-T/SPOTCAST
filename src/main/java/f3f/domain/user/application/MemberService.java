@@ -9,6 +9,7 @@ import f3f.global.jwt.TokenProvider;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
 import f3f.global.util.CookieUtil;
+import f3f.infra.aws.S3.S3Config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -43,12 +45,15 @@ public class MemberService {
     private MemberRepository memberRepository;
     private RefreshTokenDao refreshTokenDao;
 
-    public MemberService(AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, RefreshTokenDao refreshTokenDao) {
+    private S3Config s3Uploader;
+
+    public MemberService(AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, RefreshTokenDao refreshTokenDao, S3Config s3Uploader) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
         this.memberRepository = memberRepository;
         this.refreshTokenDao = refreshTokenDao;
+        this.s3Uploader = s3Uploader;
     }
 
     /**
@@ -65,7 +70,8 @@ public class MemberService {
         }
 
         saveRequest.passwordEncryption(passwordEncoder);
-        Member member = saveRequest.toEntity();
+
+        Member member = saveRequest.toEntity(s3Uploader.getDefaultProfileUrl());
         memberRepository.save(member);
 
         return member.getId();
@@ -103,7 +109,7 @@ public class MemberService {
      * @return
      */
     @Transactional(readOnly = true)
-    public MemberLoginServiceResponseDto login(MemberLoginRequestDto loginRequest,HttpServletResponse response,HttpServletRequest request) {
+    public MemberLoginServiceResponseDto login(MemberLoginRequestDto loginRequest, HttpServletResponse response, HttpServletRequest request) {
 
         // 로그인 정보로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
@@ -124,8 +130,8 @@ public class MemberService {
 
             String refreshToken = tokenDto.getRefreshToken();
             saveRefreshTokenInStorage(refreshToken, Long.valueOf(authentication.getName())); // 추후 DB 나 어딘가 저장 예정
-            CookieUtil.deleteCookie(request,response,ACCESSTOKEN);
-            CookieUtil.addCookie(response,ACCESSTOKEN,tokenDto.getAccessToken(),  ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
+            CookieUtil.deleteCookie(request, response, ACCESSTOKEN);
+            CookieUtil.addCookie(response, ACCESSTOKEN, tokenDto.getAccessToken(), ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
 
             return memberLoginResponse;
         } catch (BadCredentialsException e) {
@@ -146,10 +152,10 @@ public class MemberService {
 
 
         Cookie cookie = CookieUtil.getCookie(request, ACCESSTOKEN).orElse(null);
-        String accessToken ;
-        if(cookie==null){
-            throw new GeneralException(ErrorCode.INVALID_REQUEST,"로그인이 필요한 서비스입니다.");
-        } else{
+        String accessToken;
+        if (cookie == null) {
+            throw new GeneralException(ErrorCode.INVALID_REQUEST, "로그인이 필요한 서비스입니다.");
+        } else {
             accessToken = cookie.getValue();
         }
 
@@ -179,7 +185,7 @@ public class MemberService {
         saveRefreshTokenInStorage(tokenDTO.getRefreshToken(), Long.valueOf(authentication.getName()));// 추후 디비에 저장
 
         // 토큰 발급
-        CookieUtil.addCookie(response,ACCESSTOKEN,tokenDTO.getAccessToken(),  ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
+        CookieUtil.addCookie(response, ACCESSTOKEN, tokenDTO.getAccessToken(), ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
     }
 
 
@@ -191,17 +197,17 @@ public class MemberService {
 
         Cookie cookie = CookieUtil.getCookie(request, ACCESSTOKEN).orElse(null);
         String accessToken;
-        if(cookie==null){
-            throw new GeneralException(ErrorCode.INVALID_REQUEST,"로그인이 필요한 서비스입니다.");
-        } else{
+        if (cookie == null) {
+            throw new GeneralException(ErrorCode.INVALID_REQUEST, "로그인이 필요한 서비스입니다.");
+        } else {
             accessToken = cookie.getValue();
         }
         Authentication auth = tokenProvider.getAuthentication(accessToken);
 
         if (auth != null && auth.isAuthenticated()) {
             refreshTokenDao.removeRefreshToken(Long.valueOf(auth.getName()));
-            deleteCookie(response,JSESSIONID);
-            deleteCookie(response,REMEMBER_ME);
+            deleteCookie(response, JSESSIONID);
+            deleteCookie(response, REMEMBER_ME);
             deleteCookie(response, ACCESSTOKEN);
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
@@ -290,6 +296,32 @@ public class MemberService {
         member.updateInformation(updateInformationRequest);
     }
 
+    /**
+     * profile 변경
+     *
+     * @param image
+     */
+    @Transactional
+    public void updateProfile(MultipartFile image, Long memberId) throws IOException {
+        Member member = findMemberByMemberId(memberId);
+
+        String imagePath = s3Uploader.upload(memberId, image, "profile");
+        member.updateProfile(imagePath);
+
+    }
+
+    /**
+     * profile default 로 변경
+     *
+     */
+    @Transactional
+    public void updateProfile(Long memberId) throws IOException {
+        Member member = findMemberByMemberId(memberId);
+
+        String imagePath = s3Uploader.getDefaultProfileUrl();
+        member.updateProfile(imagePath);
+
+    }
 
     /**
      * redis 에 refresh token 저장
@@ -380,10 +412,11 @@ public class MemberService {
 
     /**
      * 쿠키 제거
+     *
      * @param response
      * @param cookieName
      */
-    private void deleteCookie(HttpServletResponse response,String cookieName) {
+    private void deleteCookie(HttpServletResponse response, String cookieName) {
         Cookie cookie = new Cookie(cookieName, null); // choiceCookieName(쿠키 이름)에 대한 값을 null로 지정
         cookie.setMaxAge(0); // 유효시간을 0으로 설정
         cookie.setPath("/");
