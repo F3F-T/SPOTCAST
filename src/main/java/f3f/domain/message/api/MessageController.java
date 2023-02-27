@@ -32,7 +32,6 @@ public class MessageController {
     @PostMapping(value = "/send")
     public ResultDataResponseDTO sendMessage(@RequestBody MessageDTO.MessageRequestDto requestDto){
 
-        log.info(requestDto.toString());
         Long memberId = SecurityUtil.getCurrentMemberId();
         messageService.sendMessage(requestDto,memberId);
 
@@ -67,5 +66,20 @@ public class MessageController {
         Long memberId = SecurityUtil.getCurrentMemberId();
         Page<MessageDTO.MessageListResponseDto> recipientMessageList = messageService.getRecipientMessageListByUserId(memberId,pageable);
         return ResultDataResponseDTO.of(recipientMessageList);
+    }
+
+    @GetMapping(value = "/unread")
+    public ResultDataResponseDTO<Page<MessageDTO.MessageListResponseDto>> getRecipientUnReadMessageListByUserId(Pageable pageable){
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        Page<MessageDTO.MessageListResponseDto> recipientMessageList = messageService.getRecipientUnReadMessageListByUserId(memberId,pageable);
+        return ResultDataResponseDTO.of(recipientMessageList);
+    }
+
+
+    @PatchMapping(value = "/{messageId}/read")
+    public ResultDataResponseDTO readMessage(@PathVariable long messageId){
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        messageService.updateReadStatus(messageId,memberId);
+        return ResultDataResponseDTO.empty();
     }
 }

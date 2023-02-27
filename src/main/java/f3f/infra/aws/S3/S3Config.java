@@ -1,4 +1,3 @@
-
 package f3f.infra.aws.S3;
 
 import com.amazonaws.auth.AWSCredentials;
@@ -51,13 +50,14 @@ public class S3Config {
     public String upload(Long id,MultipartFile file, String dirName) throws IOException {
         String fileName = id+"_"+file.getOriginalFilename();
 
+        bucket = bucket + "/" + dirName;
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
         metadata.setContentLength(file.getBytes().length);
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), metadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
-        return s3Client.getUrl(bucket + "/" + dirName, fileName).toString();
+        return s3Client.getUrl(bucket, fileName).toString();
     }
 
     public void delete(String fileName, String dirName) {
@@ -71,4 +71,3 @@ public class S3Config {
         return s3Client.getUrl(bucket+"/" + "profile", "default.png").toString();
     }
 }
-

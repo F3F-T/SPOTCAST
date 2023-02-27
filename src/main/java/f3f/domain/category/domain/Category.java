@@ -42,7 +42,8 @@ public class Category {
     private List<MemberCategory> memberCategories = new ArrayList<>();
 
     @Builder
-    public Category(String name, Integer depth, Category parentCategory, List<Category> child) {
+    public Category(Long id, String name, Integer depth, Category parentCategory, List<Category> child) {
+        this.id = id;
         this.name = name;
         this.depth = depth;
         this.parentCategory = parentCategory;

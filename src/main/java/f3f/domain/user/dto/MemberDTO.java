@@ -66,16 +66,16 @@ public class MemberDTO {
         }
 
         public Member toEntity(String defaultUrl){
-                return Member.builder()
-                        .email(this.email)
-                        .password(this.password)
-                        .name(this.name)
-                        .loginMemberType(this.loginMemberType)
-                        .loginType(this.loginType)
-                        .authority(this.authority)
-                        .field(this.field)
-                        .profile(defaultUrl)
-                        .build();
+            return Member.builder()
+                    .email(this.email)
+                    .password(this.password)
+                    .name(this.name)
+                    .loginMemberType(this.loginMemberType)
+                    .loginType(this.loginType)
+                    .authority(this.authority)
+                    .field(this.field)
+                    .profile(defaultUrl)
+                    .build();
         }
     }
 

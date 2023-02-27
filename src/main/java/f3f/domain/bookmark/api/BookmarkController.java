@@ -31,16 +31,15 @@ public class BookmarkController {
     @PostMapping(value = "/bookmark")
     public ResultDataResponseDTO saveBookmark(@RequestBody BookmarkDTO.BookmarkRequestDto requestDto){
         Long currentMemberId = SecurityUtil.getCurrentMemberId();
-        bookmarkService.followRequest(requestDto,currentMemberId);
-        return ResultDataResponseDTO.empty();
+        Long result = bookmarkService.followRequest(requestDto, currentMemberId);
+        return ResultDataResponseDTO.of(result);
     }
 
     @DeleteMapping(value = "/bookmark")
     public ResultDataResponseDTO deleteBookmark(@RequestBody BookmarkDTO.BookmarkRequestDto requestDto){
 
-        bookmarkService.followCancel(requestDto);
-
-        return ResultDataResponseDTO.empty();
+        Long result = bookmarkService.followCancel(requestDto);
+        return ResultDataResponseDTO.of(result);
     }
 
     @GetMapping(value = "/bookmark/follower")

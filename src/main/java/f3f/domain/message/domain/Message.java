@@ -37,9 +37,11 @@ public class Message extends BaseTimeEntity {
 
     private Boolean recipientDisplayStatus;
 
+    private Boolean readStatus;
+
 
     @Builder
-    public Message(Long id, String title, String content, Member sender, Boolean senderDisplayStatus, Member recipient, Boolean recipientDisplayStatus) {
+    public Message(Long id, String title, String content, Member sender, Boolean senderDisplayStatus,  Member recipient, Boolean recipientDisplayStatus, Boolean readStatus) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -47,6 +49,7 @@ public class Message extends BaseTimeEntity {
         this.senderDisplayStatus = senderDisplayStatus;
         this.recipient = recipient;
         this.recipientDisplayStatus = recipientDisplayStatus;
+        this.readStatus = readStatus;
     }
 
 
@@ -57,8 +60,16 @@ public class Message extends BaseTimeEntity {
         } else if (memberId.equals(recipient.getId())) {
             this.recipientDisplayStatus = false;
         }
-
     }
+
+
+    public void updateReadStatus(Long memberId) {
+
+        if (memberId.equals(recipient.getId())) {
+            this.readStatus = true;
+        }
+    }
+
 
     public MessageDTO.MessageResponseDto toMessageDto() {
         return MessageDTO.MessageResponseDto.builder()
