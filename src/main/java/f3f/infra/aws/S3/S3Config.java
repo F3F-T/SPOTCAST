@@ -50,21 +50,19 @@ public class S3Config {
     public String upload(Long id,MultipartFile file, String dirName) throws IOException {
         String fileName = id+"_"+file.getOriginalFilename();
 
-        bucket = bucket + "/" + dirName;
-
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
         metadata.setContentLength(file.getBytes().length);
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), metadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
-        return s3Client.getUrl(bucket, fileName).toString();
+        return s3Client.getUrl(bucket + "/" + dirName, fileName).toString();
     }
 
     public void delete(String fileName, String dirName) {
         log.info("File Delete : " + fileName);
 
-        bucket = bucket + "/" + dirName;
-        s3Client.deleteObject(bucket, fileName);
+
+        s3Client.deleteObject(bucket + "/" + dirName, fileName);
     }
 
     public String getDefaultProfileUrl(){
