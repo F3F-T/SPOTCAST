@@ -1,4 +1,6 @@
 package f3f.domain.user.api;
+
+import f3f.domain.memberCategory.dto.MemberCategoryDTO;
 import f3f.domain.user.application.MemberService;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
@@ -7,13 +9,19 @@ import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
+import java.util.List;
+
 import static f3f.domain.user.dto.MemberDTO.*;
+
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
+
+
     /**
      * 회원 탈퇴
      * @param deleteRequest
@@ -22,12 +30,15 @@ public class MemberController {
      */
     @DeleteMapping("/{memberId}")
     public ResultDataResponseDTO deleteMember(@RequestBody MemberDeleteRequestDto deleteRequest,
-                                              @PathVariable Long memberId) {
+                                                              @PathVariable Long memberId) {
         //memberId 검증
         CheckCurrentUser(memberId);
+
         memberService.deleteMember(deleteRequest,memberId);
+
         return ResultDataResponseDTO.empty();
     }
+
     /**
      * 회원 조회
      * @param memberId
@@ -35,8 +46,10 @@ public class MemberController {
      */
     @GetMapping("/{memberId}")
     public ResultDataResponseDTO<MemberInfoResponseDto> findMemberInfoById(@PathVariable Long memberId) {
+
         return ResultDataResponseDTO.of(memberService.findMemberInfoByMemberId(memberId));
     }
+
     /**
      * 내 정보 찾기
      * @return
@@ -44,8 +57,9 @@ public class MemberController {
     @GetMapping("/myInfo")
     public ResultDataResponseDTO<MemberInfoResponseDto> findMyInfoById() {
         //memberId 검증
-        return ResultDataResponseDTO.of(memberService.findMyInfo(SecurityUtil.getCurrentMemberId()));
+        return ResultDataResponseDTO.of(memberService.findMemberInfoByMemberId(SecurityUtil.getCurrentMemberId()));
     }
+
     /**
      * 비밀번호 변경 - 로그인 X
      *
@@ -54,9 +68,12 @@ public class MemberController {
      */
     @PatchMapping("/find/password")
     public ResultDataResponseDTO changePasswordByForgot(@RequestBody MemberUpdateForgotPasswordRequestDto updatePasswordRequest) {
+
         memberService.updatePasswordByForgot(updatePasswordRequest);
+
         return ResultDataResponseDTO.empty();
     }
+
     /**
      * 비밀번호 변경  - 로그인 O
      * @param updatePasswordRequest
@@ -65,12 +82,17 @@ public class MemberController {
      */
     @PatchMapping("/{memberId}/change/password")
     public ResultDataResponseDTO changePasswordByLogin(@RequestBody MemberUpdateLoginPasswordRequestDto updatePasswordRequest,
-                                                       @PathVariable Long memberId) {
+            @PathVariable Long memberId) {
+
         //memberId 검증
         CheckCurrentUser(memberId);
+
         memberService.updatePassword(updatePasswordRequest,memberId);
+
         return ResultDataResponseDTO.empty();
     }
+
+
     /**
      * infromation 변경
      * @param updateInformationRequest
@@ -79,12 +101,31 @@ public class MemberController {
      */
     @PatchMapping("/{memberId}/change/information")
     public ResultDataResponseDTO updateInformation(@RequestBody MemberUpdateInformationRequestDto updateInformationRequest,
-                                                   @PathVariable Long memberId) {
+                                               @PathVariable Long memberId) {
+
         //memberId 검증
         CheckCurrentUser(memberId);
+
         memberService.updateInformation(updateInformationRequest,memberId);
+
         return ResultDataResponseDTO.empty();
     }
+
+    /**
+     * mypage 정보 수정 용 field 값 조회
+     * @return
+     */
+    @GetMapping("/field")
+    public ResultDataResponseDTO<List<MemberCategoryDTO.CategoryMyInfo>> getFieldMyInfo() {
+
+        Long memberId = SecurityUtil.getCurrentMemberId();
+
+        List<MemberCategoryDTO.CategoryMyInfo> fieldMyInfo = memberService.getFieldMyInfo(memberId);
+
+        return ResultDataResponseDTO.of(fieldMyInfo);
+    }
+
+
     /**
      * profile 변경
      * @param image
@@ -125,6 +166,7 @@ public class MemberController {
      */
     private static void CheckCurrentUser(Long memberId) {
         if(!memberId.equals(SecurityUtil.getCurrentMemberId())){
+
             throw new GeneralException(ErrorCode.NOTCURRENT_MEMBER,"사용자 정보가 일치하지 않습니다.");
         }
     }

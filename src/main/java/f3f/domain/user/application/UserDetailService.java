@@ -2,8 +2,6 @@ package f3f.domain.user.application;
 
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
-import f3f.global.response.ErrorCode;
-import f3f.global.response.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

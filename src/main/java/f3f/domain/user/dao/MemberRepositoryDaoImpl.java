@@ -2,14 +2,10 @@ package f3f.domain.user.dao;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import f3f.domain.bookmark.dto.BookmarkDTO;
 import f3f.domain.user.dto.MemberDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-import static f3f.domain.bookmark.domain.QBookmark.bookmark;
 import static f3f.domain.user.domain.QMember.member;
 
 @Repository

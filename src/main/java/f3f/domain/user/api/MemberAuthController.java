@@ -1,12 +1,9 @@
 package f3f.domain.user.api;
 
-import f3f.domain.category.application.CategoryService;
-import f3f.domain.category.dto.CategoryDTO;
 import f3f.domain.user.application.EmailCertificationService;
 import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dto.MemberDTO;
 import f3f.global.response.ResultDataResponseDTO;
-import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +11,6 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -48,7 +44,7 @@ public class MemberAuthController {
      */
     @PostMapping("/login")
     public ResultDataResponseDTO<MemberDTO.MemberLoginServiceResponseDto> login(@RequestBody MemberDTO.MemberLoginRequestDto
-                                                                                        loginRequestDto, HttpServletResponse response,HttpServletRequest request) {
+                                                                              loginRequestDto, HttpServletResponse response,HttpServletRequest request) {
 
         MemberDTO.MemberLoginServiceResponseDto loginResponseDto = memberService.login(loginRequestDto,response,request);
 
