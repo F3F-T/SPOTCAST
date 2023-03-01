@@ -53,7 +53,7 @@ public class S3Config {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
         metadata.setContentLength(file.getBytes().length);
-        s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), metadata)
+        s3Client.putObject(new PutObjectRequest(bucket + "/" + dirName, fileName, file.getInputStream(), metadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
         return s3Client.getUrl(bucket + "/" + dirName, fileName).toString();
     }
