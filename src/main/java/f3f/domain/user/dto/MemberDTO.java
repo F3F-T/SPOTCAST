@@ -65,16 +65,16 @@ public class MemberDTO {
             this.authority = authority;
         }
 
-        public Member toEntity(){
-                return Member.builder()
-                        .email(this.email)
-                        .password(this.password)
-                        .name(this.name)
-                        .loginMemberType(this.loginMemberType)
-                        .loginType(this.loginType)
-                        .authority(this.authority)
-                        .profile("https://shopping-phinf.pstatic.net/main_2343561/23435610490.20211228162539.jpg?type=f640")
-                        .build();
+        public Member toEntity(String defaultUrl){
+            return Member.builder()
+                    .email(this.email)
+                    .password(this.password)
+                    .name(this.name)
+                    .loginMemberType(this.loginMemberType)
+                    .loginType(this.loginType)
+                    .authority(this.authority)
+                    .profile(defaultUrl)
+                    .build();
         }
     }
 

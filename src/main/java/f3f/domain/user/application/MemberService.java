@@ -87,7 +87,7 @@ public class MemberService {
         }
 
         saveRequest.passwordEncryption(passwordEncoder);
-        Member member = saveRequest.toEntity();
+        Member member = saveRequest.toEntity(s3Uploader.getDefaultProfileUrl());
         memberRepository.save(member);
 
         return member.getId();

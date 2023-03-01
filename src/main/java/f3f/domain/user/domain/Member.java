@@ -81,7 +81,7 @@ public class Member extends MemberBase {
 
     @Builder
     public Member(Long id, String email, String name, String password, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String profile) {
-        super(id, email, name, password, loginMemberType, loginType, authority);
+        super(id, email, name, password, loginMemberType, loginType, authority,profile);
         this.profile = profile;
     }
 
