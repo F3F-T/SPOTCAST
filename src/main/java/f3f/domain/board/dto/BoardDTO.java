@@ -23,6 +23,8 @@ public class BoardDTO {
     public static class SaveRequest {
         private String title;
 
+        private String production;
+
         private String content;
 
         private long viewCount;
@@ -58,12 +60,13 @@ public class BoardDTO {
 
 
         @Builder
-        public SaveRequest(String title, String content, long viewCount, String supportEmail, String phone, long pay,
+        public SaveRequest(String title,String production, String content, long viewCount, String supportEmail, String phone, long pay,
                            int participationPeriod, int recruitVolume, String recruitType, ProfitStatus profitStatus,
                            LocalDateTime regDate, BoardType boardType, Category category, Member member) {
             this.title = title;
             this.content = content;
             this.viewCount = viewCount;
+            this.production = production;
             this.supportEmail = supportEmail;
             this.phone = phone;
             this.pay = pay;
@@ -81,6 +84,7 @@ public class BoardDTO {
             return Board.builder()
                     .title(this.title)
                     .content(this.content)
+                    .production(this.production)
                     .viewCount(this.viewCount)
                     .supportEmail(this.supportEmail)
                     .participationPeriod(this.participationPeriod)
@@ -102,7 +106,10 @@ public class BoardDTO {
     public static class BoardInfoDTO {
 
         private long id;
+
         private String title;
+
+        private String production;
 
         private String content;
 
@@ -141,13 +148,14 @@ public class BoardDTO {
         private MemberDTO.MemberBoardInfoResponseDto member;
 
         @Builder
-        public BoardInfoDTO(long id, String title, String content, long viewCount, long commentCount, long likeCount,
+        public BoardInfoDTO(long id, String title, String production,String content, long viewCount, long commentCount, long likeCount,
                             String supportEmail, String phone, long pay, int participationPeriod, int recruitVolume, String recruitType,
                             ProfitStatus profitStatus, LocalDateTime regDate, BoardType boardType, CategoryDTO.CategoryInfo category,
                             MemberDTO.MemberBoardInfoResponseDto member) {
             this.id = id;
             this.title = title;
             this.content = content;
+            this.production = production;
             this.viewCount = viewCount;
             this.commentCount = commentCount;
             this.likeCount = likeCount;

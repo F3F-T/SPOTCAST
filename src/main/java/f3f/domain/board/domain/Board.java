@@ -32,6 +32,8 @@ public class Board extends BaseTimeEntity {
 
     private String title;
 
+    private String production;
+
     private String content;
 
     private long viewCount;
@@ -39,7 +41,7 @@ public class Board extends BaseTimeEntity {
     //지원이메일
     private String supportEmail;
 
-    //지원이메일
+
     private String phone;
 
     //페이
@@ -81,13 +83,15 @@ public class Board extends BaseTimeEntity {
 
     @OneToMany(fetch = FetchType.LAZY , mappedBy = "board")
     private List<Likes> likesList = new ArrayList<>();
-
     @Builder
-    public Board(Long id, String title, String content, long viewCount, String supportEmail, String phone,
-                 long pay, int participationPeriod, int recruitVolume, String recruitType, ProfitStatus profitStatus,
-                 BoardType boardType, LocalDateTime regDate, Category category, Member member) {
+    public Board(Long id, String title, String production, String content, long viewCount,
+                 String supportEmail, String phone, long pay, int participationPeriod, int recruitVolume,
+                 String recruitType, ProfitStatus profitStatus, BoardType boardType, LocalDateTime regDate,
+                 Category category, Member member, List<BoardImage> boardImageList,
+                 List<ScrapBoard> scrapBoardList, List<Comment> comments, List<Likes> likesList) {
         this.id = id;
         this.title = title;
+        this.production = production;
         this.content = content;
         this.viewCount = viewCount;
         this.supportEmail = supportEmail;
@@ -102,6 +106,9 @@ public class Board extends BaseTimeEntity {
         this.category = category;
         this.member = member;
     }
+
+
+
 
     public BoardDTO.BoardListResponse toBoardListResponseInfo(){
         return BoardDTO.BoardListResponse.builder()
