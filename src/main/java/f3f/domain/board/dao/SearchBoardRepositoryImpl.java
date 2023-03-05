@@ -32,7 +32,7 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
     private JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<BoardListResponse> getBoardListInfoByCategoryId(long categoryId, BoardType boardType, SortType sortType, Pageable pageable) {
+    public Page<BoardListResponse> getBoardListInfoByCategoryId(long categoryId, BoardType boardType, Pageable pageable) {
         QueryResults<BoardListResponse> result = jpaQueryFactory
                 .select(Projections.fields(BoardListResponse.class,
                         board.title,
@@ -68,8 +68,7 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
     }
 
     @Override
-    public Page<BoardListResponse> getBoardListInfoByUserId(long memberId, BoardType boardType,
-                                                       SortType sortType,Pageable pageable) {
+    public Page<BoardListResponse> getBoardListInfoByUserId(long memberId, BoardType boardType, Pageable pageable) {
         QueryResults<BoardListResponse> result = jpaQueryFactory
                 .select(Projections.fields(BoardListResponse.class,
                         board.title,
@@ -94,7 +93,7 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
                 .fetchJoin()
                 .leftJoin(board.boardImageList, boardImage)
                 .fetchJoin()
-                .where(board.member.id.eq(memberId))
+                .where(board.member.id.eq(memberId).and(board.boardType.eq(boardType)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();

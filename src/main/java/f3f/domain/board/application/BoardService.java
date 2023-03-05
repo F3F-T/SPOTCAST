@@ -74,6 +74,7 @@ public class BoardService {
                 .phone(request.getPhone())
                 .category(request.getCategory())
                 .member(member)
+                .production(request.getProduction())
                 .build();
         boardRepository.save(board);
 
@@ -125,8 +126,8 @@ public class BoardService {
      * 유저 식별자로 게시글 조회
      */
     @Transactional(readOnly = true)
-    public Page<BoardListResponse> getBoardListByMemberId(long memberId, BoardType boardType, SortType sortType, Pageable pageable){
-        Page<BoardListResponse> boardListByUserId = searchBoardRepository.getBoardListInfoByUserId(memberId, boardType,sortType,pageable);
+    public Page<BoardListResponse> getBoardListByMemberId(long memberId, BoardType boardType, Pageable pageable){
+        Page<BoardListResponse> boardListByUserId = searchBoardRepository.getBoardListInfoByUserId(memberId, boardType,pageable);
 //        List<Board> boardListByCategoryId = boardRepository.getBoardListByUserId(memberId, sortType);
 //        List<BoardListResponse> boardListResponses = boardListByCategoryId.stream()
 //                .map(Board::toBoardListResponseInfo).collect(Collectors.toList());
@@ -136,15 +137,15 @@ public class BoardService {
      * 카테고리 식별자로 게시글 조회
      */
     @Transactional(readOnly = true)
-    public Page<BoardListResponse> getBoardListByCategoryId(long categoryId, BoardType boardType, SortType sortType, Pageable pageable){
-        Page<BoardListResponse> boardByCategoryId = searchBoardRepository.getBoardListInfoByCategoryId(categoryId,boardType,sortType,pageable);
+    public Page<BoardListResponse> getBoardListByCategoryId(long categoryId, BoardType boardType, Pageable pageable){
+        Page<BoardListResponse> boardByCategoryId = searchBoardRepository.getBoardListInfoByCategoryId(categoryId,boardType,pageable);
 //        List<Board> boardListByCategoryId = boardRepository.getBoardListByCategoryId(boardType, categoryId, sortType);
 //        List<BoardListResponse> boardListResponses = boardListByCategoryId.stream()
 //                .map(Board::toBoardListResponseInfo).collect(Collectors.toList());
         return boardByCategoryId;
     }
     @Transactional(readOnly = true)
-    public Page<BoardListResponse> getBoardListByBoardType(BoardType boardType, SortType sortType) {
+    public Page<BoardListResponse> getBoardListByBoardType(BoardType boardType) {
         return null;
     }
 }

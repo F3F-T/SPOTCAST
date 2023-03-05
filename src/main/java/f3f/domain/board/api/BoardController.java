@@ -46,21 +46,24 @@ public class BoardController {
         return ResultDataResponseDTO.of(board.getId());
     }
 
+    // 게시글 타입 , 카테고리 식별자,수익ㅇ여부,정렬
     @GetMapping(value = "/board/list/{boardType}/{categoryId}/{sortType}")
-    public ResultDataResponseDTO<Page<BoardDTO.BoardListResponse>> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType,@PathVariable SortType sortType, @RequestBody Pageable pageable){
+    public ResultDataResponseDTO<Page<BoardDTO.BoardListResponse>> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType, @RequestBody Pageable pageable){
         if (categoryId == 0 || categoryId == null){
-            return ResultDataResponseDTO.of(boardService.getBoardListByBoardType(boardType,sortType));
+            return ResultDataResponseDTO.of(boardService.getBoardListByBoardType(boardType));
         }else{
-            return ResultDataResponseDTO.of(boardService.getBoardListByCategoryId(categoryId,boardType,sortType,pageable));
+            return ResultDataResponseDTO.of(boardService.getBoardListByCategoryId(categoryId,boardType,pageable));
         }
     }
 
+
+    //유저 식별자, 게시글 타입 , 수익 여부,정렬
     @GetMapping(value = "/board/list/{memberId}/{boardType}/{sortType}")
-    public ResultDataResponseDTO<Page<BoardDTO.BoardListResponse>> getBoardListByMemberId(@PathVariable Long memberId, @PathVariable BoardType boardType, @PathVariable SortType sortType, @RequestBody Pageable pageable){
+    public ResultDataResponseDTO<Page<BoardDTO.BoardListResponse>> getBoardListByMemberId(@PathVariable Long memberId, @PathVariable BoardType boardType, @RequestParam Pageable pageable){
         if (boardType == null ){
             return null;
         }else{
-            return ResultDataResponseDTO.of(boardService.getBoardListByMemberId(memberId,boardType,sortType,pageable));
+            return ResultDataResponseDTO.of(boardService.getBoardListByMemberId(memberId,boardType,pageable));
         }
     }
 
