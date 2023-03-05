@@ -46,9 +46,9 @@ public class BoardController {
         return ResultDataResponseDTO.of(board.getId());
     }
 
-    // 게시글 타입 , 카테고리 식별자,수익ㅇ여부,정렬
+    //(게시글 리스트) 게시글 타입 , 카테고리 식별자,수익여부,정렬
     @GetMapping(value = "/board/list/{boardType}/{categoryId}/{sortType}")
-    public ResultDataResponseDTO<Page<BoardDTO.BoardListResponse>> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType, @RequestBody Pageable pageable){
+    public ResultDataResponseDTO<Page<BoardDTO.BoardListResponse>> getBoardListByCategoryId(@PathVariable Long categoryId,@PathVariable BoardType boardType,@RequestBody Pageable pageable){
         if (categoryId == 0 || categoryId == null){
             return ResultDataResponseDTO.of(boardService.getBoardListByBoardType(boardType));
         }else{
@@ -57,7 +57,7 @@ public class BoardController {
     }
 
 
-    //유저 식별자, 게시글 타입 , 수익 여부,정렬
+    //(마이 페이지 )유저 식별자, 게시글 타입 , 수익 여부,정렬
     @GetMapping(value = "/board/list/{memberId}/{boardType}/{sortType}")
     public ResultDataResponseDTO<Page<BoardDTO.BoardListResponse>> getBoardListByMemberId(@PathVariable Long memberId, @PathVariable BoardType boardType, @RequestParam Pageable pageable){
         if (boardType == null ){

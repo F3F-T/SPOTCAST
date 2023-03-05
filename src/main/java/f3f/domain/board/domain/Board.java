@@ -45,10 +45,10 @@ public class Board extends BaseTimeEntity {
     private String phone;
 
     //페이
-    private long pay;
+    private String pay;
 
     //참여기간
-    private int participationPeriod;
+    private String participationPeriod;
     //참여 인원
     private int  recruitVolume;
 
@@ -85,7 +85,7 @@ public class Board extends BaseTimeEntity {
     private List<Likes> likesList = new ArrayList<>();
     @Builder
     public Board(Long id, String title, String production, String content, long viewCount,
-                 String supportEmail, String phone, long pay, int participationPeriod, int recruitVolume,
+                 String supportEmail, String phone, String pay, String participationPeriod, int recruitVolume,
                  String recruitType, ProfitStatus profitStatus, BoardType boardType, LocalDateTime regDate,
                  Category category, Member member) {
         this.id = id;

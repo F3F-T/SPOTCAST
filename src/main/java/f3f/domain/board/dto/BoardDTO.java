@@ -36,10 +36,10 @@ public class BoardDTO {
         private String phone;
 
         //페이
-        private long pay;
+        private String pay;
 
         //참여기간
-        private int participationPeriod;
+        private String participationPeriod;
         //참여 인원
         private int  recruitVolume;
 
@@ -60,8 +60,8 @@ public class BoardDTO {
 
 
         @Builder
-        public SaveRequest(String title,String production, String content, long viewCount, String supportEmail, String phone, long pay,
-                           int participationPeriod, int recruitVolume, String recruitType, ProfitStatus profitStatus,
+        public SaveRequest(String title,String production, String content, long viewCount, String supportEmail, String phone, String pay,
+                           String participationPeriod, int recruitVolume, String recruitType, ProfitStatus profitStatus,
                            LocalDateTime regDate, BoardType boardType, Category category, Member member) {
             this.title = title;
             this.content = content;
@@ -126,10 +126,10 @@ public class BoardDTO {
         private String phone;
 
         //페이
-        private long pay;
+        private String pay;
 
         //참여기간
-        private int participationPeriod;
+        private String participationPeriod;
         //참여 인원
         private int  recruitVolume;
 
@@ -149,7 +149,7 @@ public class BoardDTO {
 
         @Builder
         public BoardInfoDTO(long id, String title, String production,String content, long viewCount, long commentCount, long likeCount,
-                            String supportEmail, String phone, long pay, int participationPeriod, int recruitVolume, String recruitType,
+                            String supportEmail, String phone, String pay, String participationPeriod, int recruitVolume, String recruitType,
                             ProfitStatus profitStatus, LocalDateTime regDate, BoardType boardType, CategoryDTO.CategoryInfo category,
                             MemberDTO.MemberBoardInfoResponseDto member) {
             this.id = id;
@@ -228,5 +228,13 @@ public class BoardDTO {
     @AllArgsConstructor
     public static class SearchCondition {
         private String keyword;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class getBoardCondition {
+        private ProfitStatus profitStatus;
     }
 }
