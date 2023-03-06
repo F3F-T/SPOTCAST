@@ -93,7 +93,7 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
                 .fetchJoin()
                 .leftJoin(board.boardImageList, boardImage)
                 .fetchJoin()
-                .where(board.member.id.eq(memberId).and(board.boardType.eq(boardType)))
+                .where(board.member.id.eq(memberId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
@@ -132,6 +132,11 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
         return (hasText(keyword)) ? board.title.containsIgnoreCase(keyword)
                 .or(board.title.containsIgnoreCase(keyword))
                 : null;
+    }
+
+
+    private BooleanExpression boardTypeEqual(BoardType boardType){
+        return null;
     }
 
 }
