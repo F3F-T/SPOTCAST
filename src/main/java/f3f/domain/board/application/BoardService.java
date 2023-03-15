@@ -3,6 +3,7 @@ package f3f.domain.board.application;
 import f3f.domain.board.dao.BoardRepository;
 import f3f.domain.board.dao.SearchBoardRepository;
 import f3f.domain.board.domain.Board;
+import f3f.domain.board.domain.ProfitStatus;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
 import f3f.domain.board.dto.BoardDTO.BoardListResponse;
@@ -126,26 +127,16 @@ public class BoardService {
      * 유저 식별자로 게시글 조회
      */
     @Transactional(readOnly = true)
-    public Page<BoardListResponse> getBoardListByMemberId(long memberId, BoardType boardType, Pageable pageable){
+    public Page<BoardListResponse> getBoardListByMemberId(Long memberId, BoardType boardType, Pageable pageable){
         Page<BoardListResponse> boardListByUserId = searchBoardRepository.getBoardListInfoByUserId(memberId, boardType,pageable);
-//        List<Board> boardListByCategoryId = boardRepository.getBoardListByUserId(memberId, sortType);
-//        List<BoardListResponse> boardListResponses = boardListByCategoryId.stream()
-//                .map(Board::toBoardListResponseInfo).collect(Collectors.toList());
         return boardListByUserId;
     }
     /*
      * 카테고리 식별자로 게시글 조회
      */
     @Transactional(readOnly = true)
-    public Page<BoardListResponse> getBoardListByCategoryId(long categoryId, BoardType boardType, Pageable pageable){
-        Page<BoardListResponse> boardByCategoryId = searchBoardRepository.getBoardListInfoByCategoryId(categoryId,boardType,pageable);
-//        List<Board> boardListByCategoryId = boardRepository.getBoardListByCategoryId(boardType, categoryId, sortType);
-//        List<BoardListResponse> boardListResponses = boardListByCategoryId.stream()
-//                .map(Board::toBoardListResponseInfo).collect(Collectors.toList());
+    public Page<BoardListResponse> getBoardListByCategoryId(BoardType boardType, Long categoryId, ProfitStatus profitStatus, Pageable pageable){
+        Page<BoardListResponse> boardByCategoryId = searchBoardRepository.getBoardListInfoByCategoryId(boardType,categoryId,profitStatus,pageable);
         return boardByCategoryId;
-    }
-    @Transactional(readOnly = true)
-    public Page<BoardListResponse> getBoardListByBoardType(BoardType boardType) {
-        return null;
     }
 }

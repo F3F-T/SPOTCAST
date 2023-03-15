@@ -5,6 +5,7 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import f3f.domain.board.domain.ProfitStatus;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
 import f3f.domain.board.dto.BoardDTO.BoardListResponse;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -27,12 +29,12 @@ import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.util.StringUtils.parseLocale;
 
 @RequiredArgsConstructor
-public class SearchBoardRepositoryImpl implements SearchBoardRepository{
+public class SearchBoardRepositoryImpl implements SearchBoardRepository {
 
     private JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<BoardListResponse> getBoardListInfoByCategoryId(long categoryId, BoardType boardType, Pageable pageable) {
+    public Page<BoardListResponse> getBoardListInfoByCategoryId(BoardType boardType, Long categoryId, ProfitStatus profitStatus, Pageable pageable) {
         QueryResults<BoardListResponse> result = jpaQueryFactory
                 .select(Projections.fields(BoardListResponse.class,
                         board.title,
@@ -51,26 +53,27 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
                 .fetchJoin()
                 .leftJoin(board.comments, comment)
                 .fetchJoin()
-                .leftJoin(board.member,member)
+                .leftJoin(board.member, member)
                 .fetchJoin()
-                .leftJoin(board.category,category)
+                .leftJoin(board.category, category)
                 .fetchJoin()
                 .leftJoin(board.boardImageList, boardImage)
                 .fetchJoin()
-                .where(board.category.id.eq(categoryId).and(board.boardType.eq(boardType)))
+                .where(eqBoardType(boardType),eqCategoryId(categoryId),eqProfitStatus(profitStatus))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
         List<BoardListResponse> products = result.getResults();
         long total = result.getTotal();
 
-        return new PageImpl<>(products,pageable,total);
+        return new PageImpl<>(products, pageable, total);
     }
 
     @Override
-    public Page<BoardListResponse> getBoardListInfoByUserId(long memberId, BoardType boardType, Pageable pageable) {
+    public Page<BoardListResponse> getBoardListInfoByUserId(Long memberId, BoardType boardType, Pageable pageable) {
         QueryResults<BoardListResponse> result = jpaQueryFactory
                 .select(Projections.fields(BoardListResponse.class,
+                        board.id,
                         board.title,
                         board.content,
                         board.recruitType,
@@ -87,20 +90,20 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
                 .fetchJoin()
                 .leftJoin(board.comments, comment)
                 .fetchJoin()
-                .leftJoin(board.member,member)
+                .leftJoin(board.member, member)
                 .fetchJoin()
-                .leftJoin(board.category,category)
+                .leftJoin(board.category, category)
                 .fetchJoin()
                 .leftJoin(board.boardImageList, boardImage)
                 .fetchJoin()
-                .where(board.member.id.eq(memberId))
+                .where(eqMemberId(memberId),eqBoardType(boardType))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
         List<BoardListResponse> products = result.getResults();
         long total = result.getTotal();
 
-        return new PageImpl<>(products,pageable,total);
+        return new PageImpl<>(products, pageable, total);
     }
 
     @Override
@@ -125,7 +128,7 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
         List<BoardInfoDTO> boardInfoDTOList = results.getResults();
         long total = results.getTotal();
 
-        return new PageImpl<>(boardInfoDTOList,pageable,total);
+        return new PageImpl<>(boardInfoDTOList, pageable, total);
     }
 
     private BooleanExpression containsKeyword(String keyword) {
@@ -135,8 +138,31 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
     }
 
 
-    private BooleanExpression boardTypeEqual(BoardType boardType){
+    private BooleanExpression eqBoardType(BoardType boardType) {
+        if(boardType != null){
+            return board.boardType.eq(boardType);
+        }
         return null;
     }
 
+    private BooleanExpression eqCategoryId(Long categoryId) {
+        if(categoryId != null && categoryId != 0){
+            return board.category.id.eq(categoryId);
+        }
+        return null;
+    }
+
+    private BooleanExpression eqMemberId(Long memberId) {
+        if(memberId != null &&  memberId != 0){
+            return board.member.id.eq(memberId);
+        }
+        return null;
+    }
+
+    private BooleanExpression eqProfitStatus(ProfitStatus profitStatus) {
+        if(profitStatus != null){
+            return board.profitStatus.eq(profitStatus);
+        }
+        return null;
+    }
 }
