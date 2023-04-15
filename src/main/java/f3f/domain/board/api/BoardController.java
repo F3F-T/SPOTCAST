@@ -48,19 +48,18 @@ public class BoardController {
     }
 
     //(게시글 리스트) 게시글 타입 , 카테고리 식별자,수익여부,정렬
-    @GetMapping(value = "/board/list/{boardType}")
-    public ResultDataResponseDTO<Page<BoardListResponse>> getBoardListByCategoryId(@PathVariable BoardType boardType, @RequestParam Long categoryId,
-                                                                                   @RequestParam ProfitStatus profitStatus, @RequestParam Pageable pageable) {
+    @GetMapping(value = "/board/list/boardType/{boardType}")
+    public ResultDataResponseDTO<Page<BoardListResponse>> getBoardListByCategoryId(@PathVariable String boardType, @RequestParam Long categoryId,
+                                                                                   @RequestParam String profitStatus, Pageable pageable) {
 
         return of(boardService.getBoardListByCategoryId(boardType, categoryId, profitStatus, pageable));
     }
 
     //(마이 페이지 )유저 식별자, 게시글 타입 , 수익 여부,정렬
-    @GetMapping(value = "/board/list/{memberId}")
-    public ResultDataResponseDTO<Page<BoardListResponse>> getBoardListByMemberId(@PathVariable Long memberId, @RequestParam BoardType boardType,
-                                                                                 @RequestParam Pageable pageable) {
-
-        return of(boardService.getBoardListByMemberId(memberId, boardType, pageable));
+    @GetMapping(value = "/board/list/memberInfo/{memberId}")
+    public ResultDataResponseDTO<Page<BoardListResponse>> getBoardListByMemberId(@PathVariable Long memberId, @RequestParam String boardType,
+                                                                                 @RequestParam String profitStatus,  Pageable pageable) {
+        return of(boardService.getBoardListByMemberId(memberId, boardType, profitStatus,pageable));
     }
 
     //게시글 조회

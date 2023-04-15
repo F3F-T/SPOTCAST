@@ -121,7 +121,8 @@ public class Board extends BaseTimeEntity {
                 .likeCount(this.likesList.size())
                 .commentCount(this.comments.size())
                 .category(changeCategoryBoardInfo(this.category))
-                .member(changeMemberBoardInfoDTO(this.member))
+                .memberId(this.member.getId())
+                .memberName(this.member.getName())
                 .build();
     }
 

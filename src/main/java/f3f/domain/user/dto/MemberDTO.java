@@ -288,16 +288,11 @@ public class MemberDTO {
 
         private String name;
 
-        private String nickname;
-
-
-
         @Builder
-        public MemberBoardInfoResponseDto(Long id, String email, String name, String nickname) {
+        public MemberBoardInfoResponseDto(Long id, String email, String name) {
             this.id = id;
             this.email = email;
             this.name = name;
-            this.nickname = nickname;
         }
     }
 

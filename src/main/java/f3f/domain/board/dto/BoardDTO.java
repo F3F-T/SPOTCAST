@@ -7,10 +7,7 @@ import f3f.domain.category.dto.CategoryDTO;
 import f3f.domain.publicModel.BoardType;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -177,6 +174,7 @@ public class BoardDTO {
 
     }
     @Getter
+    @Setter
     @NoArgsConstructor
     public static class BoardListResponse{
 
@@ -201,12 +199,13 @@ public class BoardDTO {
 
         private CategoryDTO.CategoryInfo category;
 
-        private MemberDTO.MemberBoardInfoResponseDto member;
+        private Long memberId;
+
+        private String memberName;
 
         @Builder
         public BoardListResponse(long id, String title, String content, long viewCount, long likeCount, long commentCount,
-                                 LocalDateTime regDate, BoardType boardType,String recruitType, CategoryDTO.CategoryInfo category,
-                                 MemberDTO.MemberBoardInfoResponseDto member) {
+                                 String recruitType, LocalDateTime regDate, BoardType boardType, CategoryDTO.CategoryInfo category, Long memberId, String memberName) {
             this.id = id;
             this.title = title;
             this.content = content;
@@ -217,9 +216,9 @@ public class BoardDTO {
             this.regDate = regDate;
             this.boardType = boardType;
             this.category = category;
-            this.member = member;
+            this.memberId = memberId;
+            this.memberName = memberName;
         }
-
     }
 
     @Getter
