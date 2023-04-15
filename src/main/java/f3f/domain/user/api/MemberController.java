@@ -1,5 +1,6 @@
 package f3f.domain.user.api;
 
+import f3f.domain.memberCategory.dto.MemberCategoryDTO;
 import f3f.domain.user.application.MemberService;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 import static f3f.domain.user.dto.MemberDTO.*;
 
@@ -55,7 +57,7 @@ public class MemberController {
     @GetMapping("/myInfo")
     public ResultDataResponseDTO<MemberInfoResponseDto> findMyInfoById() {
         //memberId 검증
-        return ResultDataResponseDTO.of(memberService.findMyInfo(SecurityUtil.getCurrentMemberId()));
+        return ResultDataResponseDTO.of(memberService.findMemberInfoByMemberId(SecurityUtil.getCurrentMemberId()));
     }
 
     /**
@@ -109,6 +111,20 @@ public class MemberController {
         return ResultDataResponseDTO.empty();
     }
 
+    /**
+     * mypage 정보 수정 용 field 값 조회
+     * @return
+     */
+    @GetMapping("/field")
+    public ResultDataResponseDTO<List<MemberCategoryDTO.CategoryMyInfo>> getFieldMyInfo() {
+
+        Long memberId = SecurityUtil.getCurrentMemberId();
+
+        List<MemberCategoryDTO.CategoryMyInfo> fieldMyInfo = memberService.getFieldMyInfo(memberId);
+
+        return ResultDataResponseDTO.of(fieldMyInfo);
+    }
+
 
     /**
      * profile 변경
@@ -118,13 +134,10 @@ public class MemberController {
      */
     @PatchMapping("/{memberId}/change/profile")
     public ResultDataResponseDTO updateProfile(@RequestBody MultipartFile image,
-                                                   @PathVariable Long memberId) throws IOException {
-
+                                               @PathVariable Long memberId) throws IOException {
         //memberId 검증
         CheckCurrentUser(memberId);
-
         memberService.updateProfile(image,memberId);
-
         return ResultDataResponseDTO.empty();
     }
 

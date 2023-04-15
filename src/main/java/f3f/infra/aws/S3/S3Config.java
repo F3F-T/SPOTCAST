@@ -1,4 +1,3 @@
-
 package f3f.infra.aws.S3;
 
 import com.amazonaws.auth.AWSCredentials;
@@ -51,11 +50,10 @@ public class S3Config {
     public String upload(Long id,MultipartFile file, String dirName) throws IOException {
         String fileName = id+"_"+file.getOriginalFilename();
 
-
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
         metadata.setContentLength(file.getBytes().length);
-        s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), metadata)
+        s3Client.putObject(new PutObjectRequest(bucket + "/" + dirName, fileName, file.getInputStream(), metadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
         return s3Client.getUrl(bucket + "/" + dirName, fileName).toString();
     }
@@ -63,12 +61,11 @@ public class S3Config {
     public void delete(String fileName, String dirName) {
         log.info("File Delete : " + fileName);
 
-        bucket = bucket + "/" + dirName;
-        s3Client.deleteObject(bucket, fileName);
+
+        s3Client.deleteObject(bucket + "/" + dirName, fileName);
     }
 
     public String getDefaultProfileUrl(){
         return s3Client.getUrl(bucket+"/" + "profile", "default.png").toString();
     }
 }
-

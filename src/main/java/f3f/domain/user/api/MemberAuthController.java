@@ -4,7 +4,6 @@ import f3f.domain.user.application.EmailCertificationService;
 import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dto.MemberDTO;
 import f3f.global.response.ResultDataResponseDTO;
-import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +11,6 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -106,6 +104,5 @@ public class MemberAuthController {
 
         return ResultDataResponseDTO.of(memberService.emailDuplicateCheck(email));
     }
-
 
 }
