@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -21,8 +22,9 @@ public class LikeController {
 
     /*게시글 좋아요 추가*/
     @PostMapping("/board/{boardId}/like")
-    public ResultDataResponseDTO addLike(@PathVariable Long boardId,@RequestBody LikeDTO.SaveRequest request ){
-        return ResultDataResponseDTO.of(likeService.addLike(request));
+    public ResultDataResponseDTO addLike(@PathVariable Long boardId){
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        return ResultDataResponseDTO.of(likeService.addLike(boardId,memberId));
     }
 
     /*게시글 좋아요 삭제*/
@@ -34,8 +36,8 @@ public class LikeController {
     }
 
     @GetMapping("/board/{boardId}/likeList")
-    public ResultDataResponseDTO<List<LikeDTO.LikeInfo>> getLikeList(@PathVariable Long boardId) {
-        List<LikeDTO.LikeInfo> listListByBoardId = likeService.getListListByBoardId(boardId);
+    public ResultDataResponseDTO<Map<String ,Object>> getLikeList(@PathVariable Long boardId) {
+        Map<String ,Object> listListByBoardId = likeService.getListListByBoardId(boardId);
         return ResultDataResponseDTO.of(listListByBoardId);
     }
 }

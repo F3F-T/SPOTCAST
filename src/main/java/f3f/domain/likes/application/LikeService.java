@@ -15,9 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -28,10 +26,10 @@ public class LikeService extends BaseTimeEntity {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public Long addLike(LikeDTO.SaveRequest saveRequest) {
+    public Long addLike(long boardId, long memberId) {
 
-        Board board = boardRepository.findById(saveRequest.getBoard().getId()).orElseThrow(NotFoundBoardByIdException::new);
-        Optional<Member> member = Optional.ofNullable(memberRepository.findById(saveRequest.getMember().getId()).orElseThrow(MemberNotFoundException::new));
+        Board board = boardRepository.findById(boardId).orElseThrow(NotFoundBoardByIdException::new);
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 
 
         //중복 좋아요 방지
@@ -41,7 +39,8 @@ public class LikeService extends BaseTimeEntity {
 
         //likesRepository.save(new Likes(member, board));
 
-        Likes likes = saveRequest.toEntity();
+        Likes likes = Likes.builder()
+                .member(member).board(board).build();
         board.getLikesList().add(likes);
         likesRepository.save(likes);
 
@@ -56,16 +55,17 @@ public class LikeService extends BaseTimeEntity {
 
 
     //사용자가 이미 좋아요 한 게시물인지 체크
-    private boolean isAlreadyLike(Optional<Member> member, Board board) {
-        return !(likesRepository.findByMemberIdAndBoardId(member, board).isEmpty());
+    private boolean isAlreadyLike(Member member, Board board) {
+        return (!likesRepository.findByMemberAndBoard(member, board).isEmpty());
     }
 
 
 
     @Transactional(readOnly = true)
-    public List<LikeDTO.LikeInfo> getListListByBoardId(long boardId){
+    public Map<String ,Object> getListListByBoardId(long boardId){
         //todo 쿼리 최적화 필요
         List<LikeDTO.LikeInfo> likeInfoList = new ArrayList<>();
+        Map<String,Object> map = new LinkedHashMap<>();
         List<Likes> likeList = likesRepository.findByBoardId(boardId);
         for (Likes likes : likeList) {
             LikeDTO.LikeInfo likeInfo = LikeDTO.LikeInfo.builder()
@@ -75,7 +75,9 @@ public class LikeService extends BaseTimeEntity {
                     .build();
             likeInfoList.add(likeInfo);
         }
-        return likeInfoList;
+        map.put("likeCount",likeInfoList.size());
+        map.put("likeDetailList",likeInfoList);
+        return map;
     }
 
 
