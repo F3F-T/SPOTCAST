@@ -4,6 +4,7 @@ import f3f.domain.comment.application.CommentService;
 import f3f.domain.comment.dto.CommentDTO;
 import f3f.domain.comment.dto.CommentResponseDto;
 import f3f.global.response.ResultDataResponseDTO;
+import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +21,18 @@ public class CommentController {
     private final CommentService commentService;
     /* CREATE */
     @PostMapping("/board/{boardId}/comment")
-    public ResultDataResponseDTO saveComment(@PathVariable Long boardId, @RequestBody CommentDTO.SaveRequest request) {
+    public ResultDataResponseDTO saveComment(@PathVariable Long boardId, @RequestBody CommentDTO.TempSaveRequest request) {
+        request.setMemberId(SecurityUtil.getCurrentMemberId());
+        if(request.getParentCommentId() == null){
+            request.setParentCommentId(0L);
+        }
         return ResultDataResponseDTO.of(commentService.saveComment(boardId,request));
     }
 
 
     /* UPDATE */
-    @PatchMapping({"/board/comment/{commentId}"})
-    public ResultDataResponseDTO<Long> updateComment(@PathVariable Long commentId, @RequestBody CommentDTO.SaveRequest  dto) {
+    @PutMapping({"/board/comment/{commentId}"})
+    public ResultDataResponseDTO<Long> updateComment(@PathVariable Long commentId, @RequestBody CommentDTO.TempSaveRequest  dto) {
         commentService.updateComment(commentId, dto);
         return  ResultDataResponseDTO.of(commentId);
     }

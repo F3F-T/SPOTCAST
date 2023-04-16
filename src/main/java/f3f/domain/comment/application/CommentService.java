@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -38,14 +39,14 @@ public class CommentService {
 
     /*CREATE*/
     @Transactional
-    public Long saveComment(Long boardId, CommentDTO.SaveRequest saveRequest) { //TODO 파라미터에 ( HttpServletRequest request ) 동혁이뭐시기
+    public Long saveComment(Long boardId, CommentDTO.TempSaveRequest saveRequest) { //TODO 파라미터에 ( HttpServletRequest request ) 동혁이뭐시기
 
         Comment parent = null;
 
-        Member author = userRepository.findById(saveRequest.getAuthor().getId()).orElseThrow(NotFoundUserException::new);
-        Board board = boardRepository.findById(saveRequest.getBoard().getId()).orElseThrow(NotFoundBoardByIdException::new);
+        Member author = userRepository.findById(saveRequest.getMemberId()).orElseThrow(NotFoundUserException::new);
+        Board board = boardRepository.findById(saveRequest.getBoardId()).orElseThrow(NotFoundBoardByIdException::new);
 
-        if (board.getId() != boardId) {
+        if (!board.getId().equals(boardId)) {
             throw new IllegalArgumentException();
         }
         //댓글생성
@@ -56,8 +57,8 @@ public class CommentService {
                 .build();
 
         //부모댓글 존재하면
-        if (saveRequest.getParentComment() != null) {
-            parent = commentRepository.findById(saveRequest.getParentComment().getId())
+        if (saveRequest.getParentCommentId() == null||saveRequest.getParentCommentId() != 0) {
+            parent = commentRepository.findById(saveRequest.getParentCommentId())
                     .orElseThrow(NotFoundParentException::new);
 
             //대댓글까지만 허용
@@ -68,6 +69,8 @@ public class CommentService {
             comment.updateParent(parent); //부모 update
             //parent.getChildComment().add(comment); //TODO 해줘야되나 ? ->nope
             comment.setDepth(parent.getDepth() + 1);
+        }else{
+            comment.setDepth(1L);
         }
 
         commentRepository.save(comment);//댓글 저장
@@ -106,13 +109,11 @@ public class CommentService {
 
     /* UPDATE */
     @Transactional
-    public void updateComment(Long id, CommentDTO.SaveRequest dto) {
+    public void updateComment(Long id, CommentDTO.TempSaveRequest dto) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다. " + id));
 
         comment.updateComment(dto.getContent());
-
-
         //save해줘야함
     }
 

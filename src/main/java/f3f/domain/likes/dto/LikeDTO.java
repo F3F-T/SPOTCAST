@@ -50,5 +50,6 @@ public class LikeDTO {
         private Long likeId;
         private Long boardId;
         private Long memberId;
+        private Long likeCount;
     }
 }

@@ -1,21 +1,26 @@
 package f3f.domain.board.dao;
 
-import com.querydsl.core.Query;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import f3f.domain.board.domain.Board;
+import f3f.domain.board.domain.ProfitStatus;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
 import f3f.domain.board.dto.BoardDTO.BoardListResponse;
+import f3f.domain.message.domain.Message;
 import f3f.domain.publicModel.BoardType;
-import f3f.domain.publicModel.SortType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Locale;
 
 import static f3f.domain.BoardImage.domain.QBoardImage.boardImage;
 import static f3f.domain.board.domain.QBoard.board;
@@ -24,84 +29,61 @@ import static f3f.domain.comment.domain.QComment.comment;
 import static f3f.domain.likes.domain.QLikes.*;
 import static f3f.domain.user.domain.QMember.member;
 import static org.springframework.util.StringUtils.hasText;
-import static org.springframework.util.StringUtils.parseLocale;
 
-@RequiredArgsConstructor
-public class SearchBoardRepositoryImpl implements SearchBoardRepository{
+@Repository
+public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport implements SearchBoardRepository {
 
     private JPAQueryFactory jpaQueryFactory;
 
-    @Override
-    public Page<BoardListResponse> getBoardListInfoByCategoryId(long categoryId, BoardType boardType, SortType sortType, Pageable pageable) {
-        QueryResults<BoardListResponse> result = jpaQueryFactory
-                .select(Projections.fields(BoardListResponse.class,
-                        board.title,
-                        board.content,
-                        board.recruitType,
-                        board.viewCount,
-                        board.regDate,
-                        board.boardType,
-                        board.category.id,
-                        board.category.name,
-                        board.member,
-                        board.comments.size().as("commentCount"),
-                        board.likesList.size().as("likesCount")))
-                .from(board)
-                .leftJoin(board.likesList, likes)
-                .fetchJoin()
-                .leftJoin(board.comments, comment)
-                .fetchJoin()
-                .leftJoin(board.member,member)
-                .fetchJoin()
-                .leftJoin(board.category,category)
-                .fetchJoin()
-                .leftJoin(board.boardImageList, boardImage)
-                .fetchJoin()
-                .where(board.category.id.eq(categoryId).and(board.boardType.eq(boardType)))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetchResults();
-        List<BoardListResponse> products = result.getResults();
-        long total = result.getTotal();
-
-        return new PageImpl<>(products,pageable,total);
+    public SearchBoardRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
+        super(Board.class);
+        this.jpaQueryFactory = jpaQueryFactory;
     }
 
     @Override
-    public Page<BoardListResponse> getBoardListInfoByUserId(long memberId, BoardType boardType,
-                                                       SortType sortType,Pageable pageable) {
-        QueryResults<BoardListResponse> result = jpaQueryFactory
+    public Page<BoardListResponse> getBoardListInfoByCategoryId(String boardType, Long categoryId, String profitStatus, Pageable pageable) {
+        JPQLQuery<BoardListResponse> result = jpaQueryFactory
                 .select(Projections.fields(BoardListResponse.class,
+                        board.id,
                         board.title,
                         board.content,
                         board.recruitType,
                         board.viewCount,
                         board.regDate,
                         board.boardType,
-                        board.category.id,
+                        board.category.id.as("categoryId"),
                         board.category.name,
-                        board.member,
-                        board.comments.size().as("commentCount"),
-                        board.likesList.size().as("likesCount")))
+                        board.member.id.as("memberId"),
+                        board.member.name.as("memberName")))
                 .from(board)
-                .leftJoin(board.likesList, likes)
-                .fetchJoin()
-                .leftJoin(board.comments, comment)
-                .fetchJoin()
-                .leftJoin(board.member,member)
-                .fetchJoin()
-                .leftJoin(board.category,category)
-                .fetchJoin()
-                .leftJoin(board.boardImageList, boardImage)
-                .fetchJoin()
-                .where(board.member.id.eq(memberId))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetchResults();
-        List<BoardListResponse> products = result.getResults();
-        long total = result.getTotal();
+                .where(eqBoardType(boardType),eqCategoryId(categoryId),eqProfitStatus(profitStatus));
+        long total = result.fetchCount();
+        List<BoardListResponse> products = result.fetch();
 
-        return new PageImpl<>(products,pageable,total);
+        return new PageImpl<>(products, pageable, total);
+    }
+
+    @Override
+    public Page<BoardListResponse> getBoardListInfoByMemberId(Long memberId, String boardType, String profitStatus, Pageable pageable) {
+        JPQLQuery<BoardListResponse> result = jpaQueryFactory
+                .select(Projections.fields(BoardListResponse.class,
+                        board.id,
+                        board.title,
+                        board.content,
+                        board.recruitType,
+                        board.viewCount,
+                        board.regDate,
+                        board.boardType,
+                        board.category.id.as("categoryId"),
+                        board.category.name,
+                        board.member.id.as("memberId"),
+                        board.member.name.as("memberName")))
+                .from(board)
+                .where(board.member.id.eq(memberId),eqBoardType(boardType),eqProfitStatus(profitStatus));
+        long total = result.fetchCount();
+        List<BoardListResponse> products = result.fetch();
+
+        return new PageImpl<>(products, pageable, total);
     }
 
     @Override
@@ -126,7 +108,7 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
         List<BoardInfoDTO> boardInfoDTOList = results.getResults();
         long total = results.getTotal();
 
-        return new PageImpl<>(boardInfoDTOList,pageable,total);
+        return new PageImpl<>(boardInfoDTOList, pageable, total);
     }
 
     private BooleanExpression containsKeyword(String keyword) {
@@ -135,4 +117,25 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository{
                 : null;
     }
 
+
+    private BooleanExpression eqBoardType(String boardType) {
+        if(boardType == null || boardType.equals("null")){
+            return null;
+        }
+        return board.boardType.eq(BoardType.valueOf(boardType.toUpperCase(Locale.ROOT)));
+    }
+
+    private BooleanExpression eqCategoryId(Long categoryId) {
+        if(categoryId == null || categoryId == 0){
+            return null;
+        }
+        return board.category.id.eq(categoryId);
+    }
+
+    private BooleanExpression eqProfitStatus(String profitStatus) {
+        if(profitStatus == null || profitStatus.equals("null")){
+            return null;
+        }
+        return board.profitStatus.eq(ProfitStatus.valueOf(profitStatus));
+    }
 }

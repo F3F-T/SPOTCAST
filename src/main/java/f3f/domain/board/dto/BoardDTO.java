@@ -7,10 +7,7 @@ import f3f.domain.category.dto.CategoryDTO;
 import f3f.domain.publicModel.BoardType;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -23,6 +20,8 @@ public class BoardDTO {
     public static class SaveRequest {
         private String title;
 
+        private String production;
+
         private String content;
 
         private long viewCount;
@@ -34,10 +33,10 @@ public class BoardDTO {
         private String phone;
 
         //페이
-        private long pay;
+        private String pay;
 
         //참여기간
-        private int participationPeriod;
+        private String participationPeriod;
         //참여 인원
         private int  recruitVolume;
 
@@ -58,12 +57,13 @@ public class BoardDTO {
 
 
         @Builder
-        public SaveRequest(String title, String content, long viewCount, String supportEmail, String phone, long pay,
-                           int participationPeriod, int recruitVolume, String recruitType, ProfitStatus profitStatus,
+        public SaveRequest(String title,String production, String content, long viewCount, String supportEmail, String phone, String pay,
+                           String participationPeriod, int recruitVolume, String recruitType, ProfitStatus profitStatus,
                            LocalDateTime regDate, BoardType boardType, Category category, Member member) {
             this.title = title;
             this.content = content;
             this.viewCount = viewCount;
+            this.production = production;
             this.supportEmail = supportEmail;
             this.phone = phone;
             this.pay = pay;
@@ -81,6 +81,7 @@ public class BoardDTO {
             return Board.builder()
                     .title(this.title)
                     .content(this.content)
+                    .production(this.production)
                     .viewCount(this.viewCount)
                     .supportEmail(this.supportEmail)
                     .participationPeriod(this.participationPeriod)
@@ -102,7 +103,10 @@ public class BoardDTO {
     public static class BoardInfoDTO {
 
         private long id;
+
         private String title;
+
+        private String production;
 
         private String content;
 
@@ -119,10 +123,10 @@ public class BoardDTO {
         private String phone;
 
         //페이
-        private long pay;
+        private String pay;
 
         //참여기간
-        private int participationPeriod;
+        private String participationPeriod;
         //참여 인원
         private int  recruitVolume;
 
@@ -141,13 +145,14 @@ public class BoardDTO {
         private MemberDTO.MemberBoardInfoResponseDto member;
 
         @Builder
-        public BoardInfoDTO(long id, String title, String content, long viewCount, long commentCount, long likeCount,
-                            String supportEmail, String phone, long pay, int participationPeriod, int recruitVolume, String recruitType,
+        public BoardInfoDTO(long id, String title, String production,String content, long viewCount, long commentCount, long likeCount,
+                            String supportEmail, String phone, String pay, String participationPeriod, int recruitVolume, String recruitType,
                             ProfitStatus profitStatus, LocalDateTime regDate, BoardType boardType, CategoryDTO.CategoryInfo category,
                             MemberDTO.MemberBoardInfoResponseDto member) {
             this.id = id;
             this.title = title;
             this.content = content;
+            this.production = production;
             this.viewCount = viewCount;
             this.commentCount = commentCount;
             this.likeCount = likeCount;
@@ -169,6 +174,7 @@ public class BoardDTO {
 
     }
     @Getter
+    @Setter
     @NoArgsConstructor
     public static class BoardListResponse{
 
@@ -193,12 +199,13 @@ public class BoardDTO {
 
         private CategoryDTO.CategoryInfo category;
 
-        private MemberDTO.MemberBoardInfoResponseDto member;
+        private Long memberId;
+
+        private String memberName;
 
         @Builder
         public BoardListResponse(long id, String title, String content, long viewCount, long likeCount, long commentCount,
-                                 LocalDateTime regDate, BoardType boardType,String recruitType, CategoryDTO.CategoryInfo category,
-                                 MemberDTO.MemberBoardInfoResponseDto member) {
+                                 String recruitType, LocalDateTime regDate, BoardType boardType, CategoryDTO.CategoryInfo category, Long memberId, String memberName) {
             this.id = id;
             this.title = title;
             this.content = content;
@@ -209,9 +216,9 @@ public class BoardDTO {
             this.regDate = regDate;
             this.boardType = boardType;
             this.category = category;
-            this.member = member;
+            this.memberId = memberId;
+            this.memberName = memberName;
         }
-
     }
 
     @Getter
@@ -220,5 +227,13 @@ public class BoardDTO {
     @AllArgsConstructor
     public static class SearchCondition {
         private String keyword;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class getBoardCondition {
+        private ProfitStatus profitStatus;
     }
 }
