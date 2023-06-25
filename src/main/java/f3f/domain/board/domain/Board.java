@@ -32,6 +32,8 @@ public class Board extends BaseTimeEntity {
 
     private String title;
 
+    private String production;
+
     private String content;
 
     private long viewCount;
@@ -39,14 +41,14 @@ public class Board extends BaseTimeEntity {
     //지원이메일
     private String supportEmail;
 
-    //지원이메일
+
     private String phone;
 
     //페이
-    private long pay;
+    private String pay;
 
     //참여기간
-    private int participationPeriod;
+    private String participationPeriod;
     //참여 인원
     private int  recruitVolume;
 
@@ -81,13 +83,14 @@ public class Board extends BaseTimeEntity {
 
     @OneToMany(fetch = FetchType.LAZY , mappedBy = "board")
     private List<Likes> likesList = new ArrayList<>();
-
     @Builder
-    public Board(Long id, String title, String content, long viewCount, String supportEmail, String phone,
-                 long pay, int participationPeriod, int recruitVolume, String recruitType, ProfitStatus profitStatus,
-                 BoardType boardType, LocalDateTime regDate, Category category, Member member) {
+    public Board(Long id, String title, String production, String content, long viewCount,
+                 String supportEmail, String phone, String pay, String participationPeriod, int recruitVolume,
+                 String recruitType, ProfitStatus profitStatus, BoardType boardType, LocalDateTime regDate,
+                 Category category, Member member) {
         this.id = id;
         this.title = title;
+        this.production = production;
         this.content = content;
         this.viewCount = viewCount;
         this.supportEmail = supportEmail;
@@ -103,6 +106,9 @@ public class Board extends BaseTimeEntity {
         this.member = member;
     }
 
+
+
+
     public BoardDTO.BoardListResponse toBoardListResponseInfo(){
         return BoardDTO.BoardListResponse.builder()
                 .id(this.id)
@@ -115,7 +121,8 @@ public class Board extends BaseTimeEntity {
                 .likeCount(this.likesList.size())
                 .commentCount(this.comments.size())
                 .category(changeCategoryBoardInfo(this.category))
-                .member(changeMemberBoardInfoDTO(this.member))
+                .memberId(this.member.getId())
+                .memberName(this.member.getName())
                 .build();
     }
 

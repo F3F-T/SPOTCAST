@@ -1,7 +1,13 @@
 package f3f.domain.user.application;
 
+import f3f.domain.category.domain.Category;
+import f3f.domain.memberCategory.dao.MemberCategoryJpaRepository;
+import f3f.domain.memberCategory.dao.MemberCategoryRepository;
+import f3f.domain.memberCategory.domain.MemberCategory;
+import f3f.domain.memberCategory.dto.MemberCategoryDTO;
 import f3f.domain.publicModel.LoginType;
 import f3f.domain.user.dao.MemberRepository;
+import f3f.domain.user.dao.MemberRepositoryDao;
 import f3f.domain.user.dao.RefreshTokenDao;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.TokenDTO;
@@ -22,10 +28,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 import static f3f.domain.user.dto.MemberDTO.*;
 import static f3f.global.constants.JwtConstants.ACCESSTOKEN;
@@ -37,22 +45,31 @@ import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 @Slf4j
 public class MemberService {
 
-
+    private EntityManager em;
     private AuthenticationManagerBuilder authenticationManagerBuilder;
     private PasswordEncoder passwordEncoder;
 
     private TokenProvider tokenProvider;
     private MemberRepository memberRepository;
+    private MemberCategoryRepository memberCategoryRepository;
+
+    private MemberCategoryJpaRepository memberCategoryJpaRepository;
     private RefreshTokenDao refreshTokenDao;
+
+    private MemberRepositoryDao memberRepositoryDao;
 
     private S3Config s3Uploader;
 
-    public MemberService(AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, RefreshTokenDao refreshTokenDao, S3Config s3Uploader) {
+    public MemberService(EntityManager em, AuthenticationManagerBuilder authenticationManagerBuilder, @Lazy PasswordEncoder passwordEncoder, TokenProvider tokenProvider, MemberRepository memberRepository, MemberCategoryRepository memberCategoryRepository, MemberCategoryJpaRepository memberCategoryJpaRepository, RefreshTokenDao refreshTokenDao, MemberRepositoryDao memberRepositoryDao, S3Config s3Uploader) {
+        this.em = em;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
         this.memberRepository = memberRepository;
+        this.memberCategoryRepository = memberCategoryRepository;
+        this.memberCategoryJpaRepository = memberCategoryJpaRepository;
         this.refreshTokenDao = refreshTokenDao;
+        this.memberRepositoryDao = memberRepositoryDao;
         this.s3Uploader = s3Uploader;
     }
 
@@ -70,7 +87,6 @@ public class MemberService {
         }
 
         saveRequest.passwordEncryption(passwordEncoder);
-
         Member member = saveRequest.toEntity(s3Uploader.getDefaultProfileUrl());
         memberRepository.save(member);
 
@@ -223,21 +239,13 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public MemberInfoResponseDto findMemberInfoByMemberId(Long memberId) {
-        return findMemberByMemberId(memberId)
-                .toFindMemberDto();
+
+        MemberInfoResponseDto memberInfo = memberRepositoryDao.getMemberInfo(memberId);
+        List<MemberCategoryDTO.CategoryMyInfo> field = getFieldMyInfo(memberId);
+        memberInfo.addField(field);
+        return memberInfo;
     }
 
-    /**
-     * 내 정보 조회
-     *
-     * @return
-     */
-
-    @Transactional(readOnly = true)
-    public MemberInfoResponseDto findMyInfo(Long memberId) {
-        return findMemberByMemberId(memberId)
-                .toFindMemberDto();
-    }
 
     /**
      * 비밀번호 수정 - 로그인된 상태인 경우
@@ -284,7 +292,6 @@ public class MemberService {
 
     }
 
-
     /**
      * information 변경
      *
@@ -292,36 +299,37 @@ public class MemberService {
      */
     @Transactional
     public void updateInformation(MemberUpdateInformationRequestDto updateInformationRequest, Long memberId) {
+
+
         Member member = findMemberByMemberId(memberId);
+        List<MemberCategory> memberCategories = member.getMemberCategories();
+        List<MemberCategoryDTO.CategoryMyInfo> categoryInfo = updateInformationRequest.getCategoryInfo();
+        for (MemberCategoryDTO.CategoryMyInfo categoryMyInfo : categoryInfo) {
+
+            boolean flag = true;
+            for (MemberCategory memberCategory : memberCategories) {
+                if (memberCategory.getCategory().getId().equals(categoryMyInfo.getCategoryId())) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (categoryMyInfo.getExist()&&flag) {
+                MemberCategory memberCategory = MemberCategory.builder()
+                        .member(Member.builder().id(memberId).build())
+                        .category(Category.builder().id(categoryMyInfo.getCategoryId()).build())
+                        .build();
+                em.persist(memberCategory);
+            }
+            else if(!categoryMyInfo.getExist()&&!flag) {
+                MemberCategory memberCategory = memberCategoryJpaRepository.findByCategoryIdAndMemberId(categoryMyInfo.getCategoryId(), memberId).orElse(null);
+                em.remove(memberCategory);
+            }
+
+        }
+
         member.updateInformation(updateInformationRequest);
     }
 
-    /**
-     * profile 변경
-     *
-     * @param image
-     */
-    @Transactional
-    public void updateProfile(MultipartFile image, Long memberId) throws IOException {
-        Member member = findMemberByMemberId(memberId);
-
-        String imagePath = s3Uploader.upload(memberId, image, "profile");
-        member.updateProfile(imagePath);
-
-    }
-
-    /**
-     * profile default 로 변경
-     *
-     */
-    @Transactional
-    public void updateProfile(Long memberId) throws IOException {
-        Member member = findMemberByMemberId(memberId);
-
-        String imagePath = s3Uploader.getDefaultProfileUrl();
-        member.updateProfile(imagePath);
-
-    }
 
     /**
      * redis 에 refresh token 저장
@@ -410,6 +418,53 @@ public class MemberService {
         return memberRepository.existsByEmail(email);
     }
 
+    /**
+     * 정보 수정 화면 field 값 조회
+     *
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<MemberCategoryDTO.CategoryMyInfo> getFieldMyInfo(Long memberId) {
+        List<MemberCategoryDTO.categoryResponseDto> memberCategoryList = memberCategoryRepository.findCategoryByMemberId(memberId);
+        List<MemberCategoryDTO.CategoryMyInfo> categoryList = memberCategoryRepository.findChildCategoryByName("field");
+
+        for (MemberCategoryDTO.CategoryMyInfo category : categoryList) {
+            for (MemberCategoryDTO.categoryResponseDto memberCategory : memberCategoryList) {
+                if (memberCategory.getId().equals(category.getCategoryId())) {
+                    category.updateExist();
+                }
+            }
+        }
+
+        return categoryList;
+    }
+
+
+    /**
+     * profile 변경
+     *
+     * @param image
+     */
+    @Transactional
+    public void updateProfile(MultipartFile image, Long memberId) throws IOException {
+        Member member = findMemberByMemberId(memberId);
+        String imagePath = s3Uploader.upload(memberId, image, "profile");
+        member.updateProfile(imagePath);
+
+    }
+
+    /**
+     * profile default 로 변경
+     *
+     */
+    @Transactional
+    public void updateProfile(Long memberId) throws IOException {
+        Member member = findMemberByMemberId(memberId);
+
+        String imagePath = s3Uploader.getDefaultProfileUrl();
+        member.updateProfile(imagePath);
+
+    }
     /**
      * 쿠키 제거
      *

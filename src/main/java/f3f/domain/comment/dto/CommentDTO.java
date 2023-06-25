@@ -3,15 +3,24 @@ package f3f.domain.comment.dto;
 import f3f.domain.board.domain.Board;
 import f3f.domain.comment.domain.Comment;
 import f3f.domain.user.domain.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class CommentDTO {
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static  class TempSaveRequest{
+        private String content;
+        private Long memberId;
+        private Long parentCommentId;
+        private Long boardId;
+    }
+
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor

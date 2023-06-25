@@ -3,6 +3,7 @@ package f3f.domain.board.application;
 import f3f.domain.board.dao.BoardRepository;
 import f3f.domain.board.dao.SearchBoardRepository;
 import f3f.domain.board.domain.Board;
+import f3f.domain.board.domain.ProfitStatus;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
 import f3f.domain.board.dto.BoardDTO.BoardListResponse;
@@ -10,8 +11,9 @@ import f3f.domain.board.exception.BoardMissMatchUserException;
 import f3f.domain.board.exception.NotFoundBoardCategoryException;
 import f3f.domain.board.exception.NotFoundBoardException;
 import f3f.domain.category.dao.CategoryRepository;
+import f3f.domain.comment.dao.CommentRepository;
+import f3f.domain.likes.dao.LikesRepository;
 import f3f.domain.publicModel.BoardType;
-import f3f.domain.publicModel.SortType;
 import f3f.domain.user.dao.MemberRepository;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.exception.MemberNotFoundException;
@@ -20,8 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /*
  * 필요한 기능
@@ -49,6 +49,8 @@ public class BoardService {
     private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
     private final SearchBoardRepository searchBoardRepository;
+    private final CommentRepository commentRepository;
+    private final LikesRepository likesRepository;
 
     @Transactional
     public Long saveBoard(BoardDTO.SaveRequest request) {
@@ -74,6 +76,7 @@ public class BoardService {
                 .phone(request.getPhone())
                 .category(request.getCategory())
                 .member(member)
+                .production(request.getProduction())
                 .build();
         boardRepository.save(board);
 
@@ -125,26 +128,25 @@ public class BoardService {
      * 유저 식별자로 게시글 조회
      */
     @Transactional(readOnly = true)
-    public Page<BoardListResponse> getBoardListByMemberId(long memberId, BoardType boardType, SortType sortType, Pageable pageable){
-        Page<BoardListResponse> boardListByUserId = searchBoardRepository.getBoardListInfoByUserId(memberId, boardType,sortType,pageable);
-//        List<Board> boardListByCategoryId = boardRepository.getBoardListByUserId(memberId, sortType);
-//        List<BoardListResponse> boardListResponses = boardListByCategoryId.stream()
-//                .map(Board::toBoardListResponseInfo).collect(Collectors.toList());
+    public Page<BoardListResponse> getBoardListByMemberId(Long memberId, String boardType, String profitStatus, Pageable pageable){
+        Page<BoardListResponse> boardListByUserId = searchBoardRepository.getBoardListInfoByMemberId(memberId, boardType,profitStatus,pageable);
+        for (BoardListResponse boardListResponse : boardListByUserId) {
+            boardListResponse.setCommentCount(commentRepository.findByBoardId(boardListResponse.getId()).size());
+            boardListResponse.setLikeCount(likesRepository.findByBoardId(boardListResponse.getId()).size());
+        }
         return boardListByUserId;
     }
     /*
      * 카테고리 식별자로 게시글 조회
      */
     @Transactional(readOnly = true)
-    public Page<BoardListResponse> getBoardListByCategoryId(long categoryId, BoardType boardType, SortType sortType, Pageable pageable){
-        Page<BoardListResponse> boardByCategoryId = searchBoardRepository.getBoardListInfoByCategoryId(categoryId,boardType,sortType,pageable);
-//        List<Board> boardListByCategoryId = boardRepository.getBoardListByCategoryId(boardType, categoryId, sortType);
-//        List<BoardListResponse> boardListResponses = boardListByCategoryId.stream()
-//                .map(Board::toBoardListResponseInfo).collect(Collectors.toList());
+    public Page<BoardListResponse> getBoardListByCategoryId(String boardType, Long categoryId, String profitStatus, Pageable pageable){
+        Page<BoardListResponse> boardByCategoryId = searchBoardRepository.getBoardListInfoByCategoryId(boardType,categoryId,profitStatus,pageable);
+        for (BoardListResponse boardListResponse : boardByCategoryId) {
+            boardListResponse.setCommentCount(commentRepository.findByBoardId(boardListResponse.getId()).size());
+            boardListResponse.setLikeCount(likesRepository.findByBoardId(boardListResponse.getId()).size());
+        }
+
         return boardByCategoryId;
-    }
-    @Transactional(readOnly = true)
-    public Page<BoardListResponse> getBoardListByBoardType(BoardType boardType, SortType sortType) {
-        return null;
     }
 }

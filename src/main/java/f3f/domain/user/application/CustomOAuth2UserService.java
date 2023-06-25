@@ -10,13 +10,13 @@ import f3f.global.oauth.OAuth2UserInfo;
 import f3f.global.oauth.OAuth2UserInfoFactory;
 import f3f.global.response.ErrorCode;
 import f3f.global.response.GeneralException;
+import f3f.infra.aws.S3.S3Config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -30,10 +30,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 
     private PasswordEncoder passwordEncoder;
+    private S3Config s3Uploader;
 
-    CustomOAuth2UserService(MemberRepository memberRepository, @Lazy PasswordEncoder passwordEncoder) {
+    CustomOAuth2UserService(MemberRepository memberRepository, @Lazy PasswordEncoder passwordEncoder, S3Config s3Uploader) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
+        this.s3Uploader = s3Uploader;
     }
 
     @Override
@@ -55,14 +57,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             }
         } else {
             // 회원가입 안된 경우 회원가입 진행
-            findMember = createUser(userInfo,loginType);
+            findMember = createUser(userInfo,loginType,s3Uploader.getDefaultProfileUrl());
         }
 
         return UserPrincipal.create(findMember, oAuth2User.getAttributes());
     }
 
 
-    private Member createUser(OAuth2UserInfo memberInfo, LoginType loginType) {
+    private Member createUser(OAuth2UserInfo memberInfo, LoginType loginType,String defaultUrl){
         String password = passwordEncoder.encode(memberInfo.getId());
         Member createMember = Member.builder()
                 .email(memberInfo.getEmail())
@@ -71,6 +73,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 .loginType(loginType)
                 .loginMemberType(LoginMemberType.GENERAL_USER)
                 .authority(Authority.ROLE_USER)
+                .profile(defaultUrl)
                 .build();
 
         return memberRepository.save(createMember);
