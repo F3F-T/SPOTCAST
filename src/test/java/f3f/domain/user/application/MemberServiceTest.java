@@ -60,9 +60,7 @@ class MemberServiceTest {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
-    public Member createMember(MemberDTO.MemberSaveRequestDto memberSaveRequestDto) {
-        return memberSaveRequestDto.toEntity();
-    }
+
 
     private MemberDTO.MemberSaveRequestDto createMemberDto() {
         MemberDTO.MemberSaveRequestDto memberSaveRequestDto = MemberDTO.MemberSaveRequestDto.builder()
