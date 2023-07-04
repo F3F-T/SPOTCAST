@@ -28,7 +28,7 @@ public class CookieUtil {
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
 //        cookie.setSecure(true);
-//        cookie.setDomain("localhost");
+        cookie.setDomain("127.0.0.1");
 
         response.addCookie(cookie);
     }
