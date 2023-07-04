@@ -168,8 +168,6 @@ public class MemberDTO {
 
         private LoginMemberType loginMemberType;
 
-        //delete 예정
-        private String test;
 
         @Builder
         public MemberLoginServiceResponseDto(Long id, String email, Authority authority, String name, LoginMemberType loginMemberType) {
