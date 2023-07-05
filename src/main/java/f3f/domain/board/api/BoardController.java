@@ -51,7 +51,6 @@ public class BoardController {
     @GetMapping(value = "/board/list/boardType/{boardType}")
     public ResultDataResponseDTO<Page<BoardListResponse>> getBoardListByCategoryId(@PathVariable String boardType, @RequestParam Long categoryId,
                                                                                    @RequestParam String profitStatus, Pageable pageable) {
-
         return of(boardService.getBoardListByCategoryId(boardType, categoryId, profitStatus, pageable));
     }
 

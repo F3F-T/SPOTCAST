@@ -141,7 +141,12 @@ public class BoardService {
      */
     @Transactional(readOnly = true)
     public Page<BoardListResponse> getBoardListByCategoryId(String boardType, Long categoryId, String profitStatus, Pageable pageable){
-        Page<BoardListResponse> boardByCategoryId = searchBoardRepository.getBoardListInfoByCategoryId(boardType,categoryId,profitStatus,pageable);
+        Page<BoardListResponse> boardByCategoryId;
+        if (categoryId == 0){
+            boardByCategoryId = searchBoardRepository.getBoardList(boardType,profitStatus,pageable);
+        }else{
+            boardByCategoryId = searchBoardRepository.getBoardListInfoByCategoryId(boardType,categoryId,profitStatus,pageable);
+        }
         for (BoardListResponse boardListResponse : boardByCategoryId) {
             boardListResponse.setCommentCount(commentRepository.findByBoardId(boardListResponse.getId()).size());
             boardListResponse.setLikeCount(likesRepository.findByBoardId(boardListResponse.getId()).size());

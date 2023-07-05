@@ -199,6 +199,8 @@ public class BoardDTO {
 
         private CategoryDTO.CategoryInfo category;
 
+        private String categoryName;
+
         private Long memberId;
 
         private String memberName;

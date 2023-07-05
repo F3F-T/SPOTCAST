@@ -64,6 +64,30 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
     }
 
     @Override
+    public Page<BoardListResponse> getBoardList(String boardType,  String profitStatus, Pageable pageable) {
+        JPQLQuery<BoardListResponse> result = jpaQueryFactory
+                .select(Projections.fields(BoardListResponse.class,
+                        board.id,
+                        board.title,
+                        board.content,
+                        board.recruitType,
+                        board.viewCount,
+                        board.regDate,
+                        board.boardType,
+                        board.category.id.as("categoryId"),
+                        board.category.name,
+                        board.category.name.as("categoryName"),
+                        board.member.id.as("memberId"),
+                        board.member.name.as("memberName")))
+                .from(board)
+                .where(eqBoardType(boardType),eqProfitStatus(profitStatus));
+        long total = result.fetchCount();
+        List<BoardListResponse> products = result.fetch();
+
+        return new PageImpl<>(products, pageable, total);
+    }
+
+    @Override
     public Page<BoardListResponse> getBoardListInfoByMemberId(Long memberId, String boardType, String profitStatus, Pageable pageable) {
         JPQLQuery<BoardListResponse> result = jpaQueryFactory
                 .select(Projections.fields(BoardListResponse.class,
