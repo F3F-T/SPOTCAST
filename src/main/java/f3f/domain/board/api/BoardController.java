@@ -3,11 +3,9 @@ package f3f.domain.board.api;
 
 import f3f.domain.board.application.BoardService;
 import f3f.domain.board.domain.Board;
-import f3f.domain.board.domain.ProfitStatus;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
 import f3f.domain.board.dto.BoardDTO.BoardListResponse;
-import f3f.domain.publicModel.BoardType;
 import f3f.global.response.ResultDataResponseDTO;
 import f3f.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
