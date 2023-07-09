@@ -44,14 +44,18 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
                         board.recruitType,
                         board.viewCount,
                         board.regDate,
+                        board.production,
+                        board.profitStatus,
                         board.boardType,
                         board.category.id.as("categoryId"),
                         board.category.name,
                         board.member.id.as("memberId"),
                         board.member.name.as("memberName")))
                 .from(board)
-                .where(eqBoardType(boardType),eqCategoryId(categoryId),eqProfitStatus(profitStatus)).offset(pageable.getOffset())
-                .limit(pageable.getPageSize()).fetch();
+                .where(eqBoardType(boardType),eqCategoryId(categoryId),eqProfitStatus(profitStatus))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
         return new PageImpl<>(result, pageable, result.size());
     }
@@ -66,6 +70,8 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
                         board.recruitType,
                         board.viewCount,
                         board.regDate,
+                        board.production,
+                        board.profitStatus,
                         board.boardType,
                         board.category.id.as("categoryId"),
                         board.category.name,
@@ -89,6 +95,8 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
                         board.recruitType,
                         board.viewCount,
                         board.regDate,
+                        board.production,
+                        board.profitStatus,
                         board.boardType,
                         board.category.id.as("categoryId"),
                         board.category.name,
