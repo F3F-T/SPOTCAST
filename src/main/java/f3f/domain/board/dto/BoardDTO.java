@@ -188,6 +188,10 @@ public class BoardDTO {
 
         private long likeCount;
 
+        private ProfitStatus profitStatus;
+
+        private String production;
+
         private long commentCount;
 
         private String recruitType;

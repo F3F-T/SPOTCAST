@@ -32,7 +32,6 @@ public class Board extends BaseTimeEntity {
 
     private String title;
 
-    private String production;
 
     private String content;
 
@@ -58,6 +57,7 @@ public class Board extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private ProfitStatus profitStatus;
 
+    private String production;
     @Enumerated(EnumType.STRING)
     private BoardType boardType;
     //작업일, 마감일
