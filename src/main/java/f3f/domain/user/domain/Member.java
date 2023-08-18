@@ -65,9 +65,9 @@ public class Member extends MemberBase {
     private List<Bookmark> followingList = new ArrayList<>();
 
 
-    @OneToOne(fetch = FetchType.LAZY , mappedBy = "member")
-    @JoinColumn(name = "portfolio_id" )
-    private Portfolio portfolio;
+//    @OneToOne(fetch = FetchType.LAZY , mappedBy = "member")
+//    @JoinColumn(name = "portfolio_id" )
+//    private Portfolio portfolio;
 
     @OneToMany(mappedBy = "sender")
     private List<Message> sendMessageList = new ArrayList<>();

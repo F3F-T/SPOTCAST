@@ -24,7 +24,7 @@ public class Portfolio {
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
