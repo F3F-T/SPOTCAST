@@ -74,7 +74,7 @@ public class MemberAuthController {
     public ResultDataResponseDTO logout(HttpServletResponse response, HttpServletRequest request) throws IOException {
         memberService.logout(response, request);
         log.info("------------logout------------");
-        return ResultDataResponseDTO.empty();
+        return ResultDataResponseDTO.of("로그아웃이 되었습니다.");
     }
     /**
      * 이메일 인증 번호 전송
