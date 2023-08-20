@@ -5,6 +5,7 @@ import f3f.domain.user.application.MemberService;
 import f3f.domain.user.dto.MemberDTO;
 import f3f.global.response.ResultDataResponseDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -18,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class MemberAuthController {
 
     private final MemberService memberService;
@@ -67,10 +69,11 @@ public class MemberAuthController {
      * @param response
      * @return
      */
+
     @PostMapping("/logout")
     public ResultDataResponseDTO logout(HttpServletResponse response, HttpServletRequest request) throws IOException {
         memberService.logout(response, request);
-
+        log.info("------------logout------------");
         return ResultDataResponseDTO.empty();
     }
     /**
