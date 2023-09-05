@@ -34,7 +34,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static f3f.domain.memberCategory.dto.MemberCategoryDTO.*;
 import static f3f.domain.user.dto.MemberDTO.*;
 import static f3f.global.constants.JwtConstants.ACCESSTOKEN;
 import static f3f.global.constants.JwtConstants.ACCESS_TOKEN_COOKIE_EXPIRE_TIME;
@@ -43,6 +45,7 @@ import static f3f.global.constants.SecurityConstants.REMEMBER_ME;
 
 @Service
 @Slf4j
+@Transactional(readOnly = true)
 public class MemberService {
 
     private EntityManager em;
@@ -88,9 +91,9 @@ public class MemberService {
 
         saveRequest.passwordEncryption(passwordEncoder);
         Member member = saveRequest.toEntity(s3Uploader.getDefaultProfileUrl());
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
 
-        return member.getId();
+        return savedMember.getId();
     }
 
     /**
@@ -124,7 +127,6 @@ public class MemberService {
      * @param loginRequest
      * @return
      */
-    @Transactional(readOnly = true)
     public MemberLoginServiceResponseDto login(MemberLoginRequestDto loginRequest, HttpServletResponse response, HttpServletRequest request) {
 
         // 로그인 정보로 AuthenticationToken 생성
@@ -145,7 +147,7 @@ public class MemberService {
             MemberLoginServiceResponseDto memberLoginResponse = tokenDto.toLoginEntity(findMember);
 
             String refreshToken = tokenDto.getRefreshToken();
-            saveRefreshTokenInStorage(refreshToken, Long.valueOf(authentication.getName())); // 추후 DB 나 어딘가 저장 예정
+            saveRefreshTokenInStorage(refreshToken, Long.valueOf(authentication.getName()));
             CookieUtil.deleteCookie(request, response, ACCESSTOKEN);
             CookieUtil.addCookie(response, ACCESSTOKEN, tokenDto.getAccessToken(), ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
 
@@ -198,7 +200,7 @@ public class MemberService {
         TokenDTO tokenDTO = tokenProvider.generateTokenDto(authentication);
 
         // 6. 저장소 정보 업데이트
-        saveRefreshTokenInStorage(tokenDTO.getRefreshToken(), Long.valueOf(authentication.getName()));// 추후 디비에 저장
+        saveRefreshTokenInStorage(tokenDTO.getRefreshToken(), Long.valueOf(authentication.getName()));
 
         // 토큰 발급
         CookieUtil.addCookie(response, ACCESSTOKEN, tokenDTO.getAccessToken(), ACCESS_TOKEN_COOKIE_EXPIRE_TIME);
@@ -241,7 +243,7 @@ public class MemberService {
     public MemberInfoResponseDto findMemberInfoByMemberId(Long memberId) {
 
         MemberInfoResponseDto memberInfo = memberRepositoryDao.getMemberInfo(memberId);
-        List<MemberCategoryDTO.CategoryMyInfo> field = getFieldMyInfo(memberId);
+        List<CategoryMyInfo> field = getFieldMyInfo(memberId);
         memberInfo.addField(field);
         return memberInfo;
     }
@@ -303,8 +305,8 @@ public class MemberService {
 
         Member member = findMemberByMemberId(memberId);
         List<MemberCategory> memberCategories = member.getMemberCategories();
-        List<MemberCategoryDTO.CategoryMyInfo> categoryInfo = updateInformationRequest.getCategoryInfo();
-        for (MemberCategoryDTO.CategoryMyInfo categoryMyInfo : categoryInfo) {
+        List<CategoryMyInfo> categoryInfo = updateInformationRequest.getCategoryInfo();
+        for (CategoryMyInfo categoryMyInfo : categoryInfo) {
 
             boolean flag = true;
             for (MemberCategory memberCategory : memberCategories) {
@@ -424,17 +426,19 @@ public class MemberService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<MemberCategoryDTO.CategoryMyInfo> getFieldMyInfo(Long memberId) {
-        List<MemberCategoryDTO.categoryResponseDto> memberCategoryList = memberCategoryRepository.findCategoryByMemberId(memberId);
-        List<MemberCategoryDTO.CategoryMyInfo> categoryList = memberCategoryRepository.findChildCategoryByName("field");
+    public List<CategoryMyInfo> getFieldMyInfo(Long memberId) {
+        List<categoryResponseDto> memberCategoryList
+                = memberCategoryRepository.findCategoryByMemberId(memberId);
+        List<CategoryMyInfo> categoryList
+                = memberCategoryRepository.findChildCategoryByName("field");
 
-        for (MemberCategoryDTO.CategoryMyInfo category : categoryList) {
-            for (MemberCategoryDTO.categoryResponseDto memberCategory : memberCategoryList) {
-                if (memberCategory.getId().equals(category.getCategoryId())) {
-                    category.updateExist();
-                }
-            }
-        }
+
+        categoryList.forEach(category ->
+                memberCategoryList.stream()
+                        .filter(memberCategory -> memberCategory.getId().equals(category.getCategoryId()))
+                        .findFirst()
+                        .ifPresent(memberCategory -> category.updateExist())
+        );
 
         return categoryList;
     }
