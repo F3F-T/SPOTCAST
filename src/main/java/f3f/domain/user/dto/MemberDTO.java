@@ -16,6 +16,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
@@ -27,24 +28,20 @@ public class MemberDTO {
     public static class MemberSaveRequestDto {
 
         @Email
-        @NotBlank
+        @NotBlank(message = "이메일은 필수입니다.")
         private String email;
 
-        @Length(min = 8, max = 20)
-        @NotBlank
+        @Length(min = 8, max = 20,message = "비밀번호의 길이는 8글자 이상 20글자 이하입니다.")
+        @NotBlank(message = "비밀번호는 필수입니다.")
         private String password;
 
-        @NotBlank
+        @NotBlank(message = "이름은 필수입니다.")
         private String name;
 
-
-        @Enumerated(value = EnumType.STRING)
         private LoginMemberType loginMemberType;
 
-        @Enumerated(value = EnumType.STRING)
         private LoginType loginType;
 
-        @Enumerated(value = EnumType.STRING)
         private Authority authority;
 
 
