@@ -39,32 +39,6 @@ public class ScrapBoard {
         this.board = board;
     }
 
-    public BoardDTO.BoardInfoDTO toBoardInfoByScrapBoxDTO(){
-        return BoardDTO.BoardInfoDTO.builder()
-                .title(this.board.getTitle())
-                .content(this.board.getContent())
-                .viewCount(this.board.getViewCount())
-                .boardType(this.board.getBoardType())
-                .category(changeCategoryBoardInfo(this.board.getCategory()))
-                .member(changeMemberBoardInfoDTO(this.board.getMember()))
-                .build();
-    }
-
-    private CategoryDTO.CategoryInfo changeCategoryBoardInfo(Category category) {
-        return CategoryDTO.CategoryInfo.builder()
-                .categoryId(category.getId())
-                .name(category.getName())
-                .depth(category.getDepth())
-                .build();
-    }
-
-    private MemberDTO.MemberBoardInfoResponseDto changeMemberBoardInfoDTO(Member member) {
-        return MemberDTO.MemberBoardInfoResponseDto.builder()
-                .id(member.getId())
-                .email(member.getEmail())
-                .name(member.getName())
-                .build();
-    }
 
 
 }

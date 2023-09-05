@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static f3f.domain.scrap.dto.ScrapDTO.*;
+
 /**
  * 필요 기능들
  * 1. 스크랩 박스 리스트 조회
@@ -38,7 +40,7 @@ public class ScrapService {
      * @param request
      */
     @Transactional
-    public Scrap saveScrapBox(ScrapDTO.SaveRequest request,Long memberId){
+    public Scrap saveScrapBox(SaveRequest request, Long memberId){
 
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다."));
@@ -54,7 +56,7 @@ public class ScrapService {
      * @param memberId
      */
     @Transactional
-    public void updateScrapBox(ScrapDTO.UpdateRequest request,Long memberId) {
+    public void updateScrapBox(UpdateRequest request, Long memberId) {
 
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다."));
@@ -71,7 +73,7 @@ public class ScrapService {
      * @param memberId
      */
     @Transactional
-    public void deleteScrapBox(ScrapDTO.ScrapDeleteRequestDTO deleteRequest, Long memberId){
+    public void deleteScrapBox(ScrapDeleteRequestDTO deleteRequest, Long memberId){
 
         Long scrapId = deleteRequest.getScrapId();
         Member findMember = memberRepository.findById(memberId)
@@ -94,12 +96,12 @@ public class ScrapService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<ScrapDTO.ScrapInfoDTO> getScrapBoxList(Long memberId){
+    public List<ScrapInfoDTO> getScrapBoxList(Long memberId){
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOTFOUND_MEMBER,"존재하지 않는 사용자입니다."));
 
-        List<ScrapDTO.ScrapInfoDTO> scrapList = findMember.getScrapList().stream()
-                .map(Scrap::toScrapInfoDTO).collect(Collectors.toList());
+        List<ScrapInfoDTO> scrapList = findMember.getScrapList().stream()
+                .map(scrap -> ScrapInfoDTO.of(scrap)).collect(Collectors.toList());
 
         return scrapList;
 

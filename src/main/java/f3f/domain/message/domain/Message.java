@@ -71,14 +71,4 @@ public class Message extends BaseTimeEntity {
         }
     }
 
-
-    public MessageDTO.MessageResponseDto toMessageDto() {
-        return MessageDTO.MessageResponseDto.builder()
-                .id(this.getId())
-                .content(this.content)
-                .recipient(MemberDTO.MemberBoardInfoResponseDto.of(this.recipient))
-                .sender(MemberDTO.MemberBoardInfoResponseDto.of(this.sender))
-                .build();
-    }
-
 }

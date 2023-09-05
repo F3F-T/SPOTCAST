@@ -74,6 +74,14 @@ public class CategoryDTO {
             this.parentCategory = parentCategory;
             this.child = child;
         }
+
+        public static CategoryInfo of(Category category) {
+            return CategoryInfo.builder()
+                    .categoryId(category.getId())
+                    .name(category.getName())
+                    .depth(category.getDepth())
+                    .build();
+        }
     }
 
 }

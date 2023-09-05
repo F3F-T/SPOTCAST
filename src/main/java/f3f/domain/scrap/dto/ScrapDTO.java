@@ -1,7 +1,10 @@
 package f3f.domain.scrap.dto;
 
+import f3f.domain.message.domain.Message;
+import f3f.domain.message.dto.MessageDTO;
 import f3f.domain.scrap.domain.Scrap;
 import f3f.domain.user.domain.Member;
+import f3f.domain.user.dto.MemberDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -56,6 +59,14 @@ public class ScrapDTO {
         public ScrapInfoDTO(Long scrapId, String name) {
             this.scrapId = scrapId;
             this.name = name;
+        }
+
+        public static ScrapInfoDTO of(Scrap scrap) {
+
+            return ScrapInfoDTO.builder()
+                    .scrapId(scrap.getId())
+                    .name(scrap.getName())
+                    .build();
         }
     }
 

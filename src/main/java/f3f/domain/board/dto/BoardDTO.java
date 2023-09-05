@@ -5,6 +5,7 @@ import f3f.domain.board.domain.ProfitStatus;
 import f3f.domain.category.domain.Category;
 import f3f.domain.category.dto.CategoryDTO;
 import f3f.domain.publicModel.BoardType;
+import f3f.domain.scrapBoard.domain.ScrapBoard;
 import f3f.domain.user.domain.Member;
 import f3f.domain.user.dto.MemberDTO;
 import lombok.*;
@@ -12,6 +13,9 @@ import lombok.*;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
+
+import static f3f.domain.category.dto.CategoryDTO.*;
+import static f3f.domain.user.dto.MemberDTO.*;
 
 public class BoardDTO {
 
@@ -140,15 +144,15 @@ public class BoardDTO {
 
         private BoardType boardType;
 
-        private CategoryDTO.CategoryInfo category;
+        private CategoryInfo category;
 
-        private MemberDTO.MemberBoardInfoResponseDto member;
+        private MemberBoardInfoResponseDto member;
 
         @Builder
         public BoardInfoDTO(long id, String title, String production,String content, long viewCount, long commentCount, long likeCount,
                             String supportEmail, String phone, String pay, String participationPeriod, int recruitVolume, String recruitType,
-                            ProfitStatus profitStatus, LocalDateTime regDate, BoardType boardType, CategoryDTO.CategoryInfo category,
-                            MemberDTO.MemberBoardInfoResponseDto member) {
+                            ProfitStatus profitStatus, LocalDateTime regDate, BoardType boardType, CategoryInfo category,
+                            MemberBoardInfoResponseDto member) {
             this.id = id;
             this.title = title;
             this.content = content;
@@ -168,6 +172,18 @@ public class BoardDTO {
             this.category = category;
             this.member = member;
         }
+
+        public static BoardInfoDTO of (ScrapBoard scrapBoard){
+            return BoardDTO.BoardInfoDTO.builder()
+                    .title(scrapBoard.getBoard().getTitle())
+                    .content(scrapBoard.getBoard().getContent())
+                    .viewCount(scrapBoard.getBoard().getViewCount())
+                    .boardType(scrapBoard.getBoard().getBoardType())
+                    .category(CategoryInfo.of(scrapBoard.getBoard().getCategory()))
+                    .member(MemberBoardInfoResponseDto.of(scrapBoard.getBoard().getMember()))
+                    .build();
+        }
+
     }
     @Getter
     public static class BoardDetailInfoDTO {
@@ -201,7 +217,7 @@ public class BoardDTO {
         @Enumerated(EnumType.STRING)
         private BoardType boardType;
 
-        private CategoryDTO.CategoryInfo category;
+        private CategoryInfo category;
 
         private String categoryName;
 
@@ -211,7 +227,7 @@ public class BoardDTO {
 
         @Builder
         public BoardListResponse(long id, String title, String content, long viewCount, long likeCount, long commentCount,
-                                 String recruitType, LocalDateTime regDate, BoardType boardType, CategoryDTO.CategoryInfo category, Long memberId, String memberName) {
+                                 String recruitType, LocalDateTime regDate, BoardType boardType, CategoryInfo category, Long memberId, String memberName) {
             this.id = id;
             this.title = title;
             this.content = content;

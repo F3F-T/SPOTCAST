@@ -35,6 +35,16 @@ public class MessageDTO {
             this.sender = MemberDTO.MemberBoardInfoResponseDto.of(sender);
             this.recipient = MemberDTO.MemberBoardInfoResponseDto.of(recipient);
         }
+
+        public static MessageResponseDto of(Message message) {
+
+            return MessageResponseDto.builder()
+                    .id(message.getId())
+                    .content(message.getContent())
+                    .recipient(MemberDTO.MemberBoardInfoResponseDto.of(message.getRecipient()))
+                    .sender(MemberDTO.MemberBoardInfoResponseDto.of(message.getSender()))
+                    .build();
+        }
     }
 
     @Getter

@@ -107,7 +107,7 @@ public class ScrapBoardService {
         List<ScrapBoard> scrapList = scrapBoardRepository.findByScrapId(scrapId);
 
         List<BoardDTO.BoardInfoDTO> scrapBoardInfoList = scrapList.stream()
-                .map(ScrapBoard::toBoardInfoByScrapBoxDTO).collect(Collectors.toList());
+                .map(scrapBoard -> BoardDTO.BoardInfoDTO.of(scrapBoard)).collect(Collectors.toList());
         return scrapBoardInfoList;
     }
 }

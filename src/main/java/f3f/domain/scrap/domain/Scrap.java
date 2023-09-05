@@ -13,6 +13,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static f3f.domain.scrap.dto.ScrapDTO.*;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -40,15 +42,9 @@ public class Scrap {
         this.member = member;
     }
 
-    public void updateScrap(ScrapDTO.UpdateRequest request){
+    public void updateScrap(UpdateRequest request){
         this.name = request.getName();
     }
 
-    public ScrapDTO.ScrapInfoDTO toScrapInfoDTO(){
-        return ScrapDTO.ScrapInfoDTO.builder()
-                .scrapId(this.id)
-                .name(this.name)
-                .build();
-    }
 
 }
