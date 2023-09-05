@@ -32,8 +32,8 @@ public class MessageDTO {
         public MessageResponseDto(long id, String content, Member sender, Member recipient) {
             this.id = id;
             this.content = content;
-            this.sender = sender.toMessageMemberDTO();
-            this.recipient = recipient.toMessageMemberDTO();
+            this.sender = MemberDTO.MemberBoardInfoResponseDto.of(sender);
+            this.recipient = MemberDTO.MemberBoardInfoResponseDto.of(recipient);
         }
     }
 

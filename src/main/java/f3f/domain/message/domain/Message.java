@@ -4,6 +4,7 @@ package f3f.domain.message.domain;
 import f3f.domain.message.dto.MessageDTO;
 import f3f.domain.publicModel.BaseTimeEntity;
 import f3f.domain.user.domain.Member;
+import f3f.domain.user.dto.MemberDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -75,8 +76,8 @@ public class Message extends BaseTimeEntity {
         return MessageDTO.MessageResponseDto.builder()
                 .id(this.getId())
                 .content(this.content)
-                .recipient(this.recipient.toMessageMemberDTO())
-                .sender(this.sender.toMessageMemberDTO())
+                .recipient(MemberDTO.MemberBoardInfoResponseDto.of(this.recipient))
+                .sender(MemberDTO.MemberBoardInfoResponseDto.of(this.sender))
                 .build();
     }
 

@@ -86,43 +86,6 @@ public class Member extends MemberBase {
     }
 
 
-
-
-
-
-
-    public MemberInfoResponseDto toFindMemberDto(){
-        return MemberInfoResponseDto.builder()
-                .id(this.getId())
-                .email(this.getEmail())
-                .name(this.getName())
-                .loginMemberType(this.getLoginMemberType())
-                .loginType(this.getLoginType())
-                .authority(this.getAuthority())
-                .information(this.getInformation())
-                .instagram(instagram)
-                .twitter(twitter)
-                .otherSns(otherSns)
-                .profile(profile)
-                .egName(this.getEgName())
-                .build();
-    }
-
-    public MemberDTO.MemberBoardInfoResponseDto toMessageMemberDTO(){
-        return MemberDTO.MemberBoardInfoResponseDto.builder()
-                .id(this.getId())
-                .email(this.getEmail())
-                .name(this.getName())
-                .build();
-    }
-
-    public MemberDTO.MemberBoardInfoResponseDto toBoardMemberDTO(){
-        return MemberDTO.MemberBoardInfoResponseDto.builder()
-                .id(this.getId())
-                .email(this.getEmail())
-                .name(this.getName())
-                .build();
-    }
     public void updatePassword(String password){
         this.password = password;
     }

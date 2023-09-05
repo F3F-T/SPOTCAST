@@ -78,8 +78,8 @@ public class ApplyService {
         Apply apply = applyRepository.findById(applyId)
                 .orElseThrow(() -> new NotfoundException("존재하지 않는 지원"));
 
-        MemberBoardInfoResponseDto recruiter = apply.getRecruiter().toBoardMemberDTO();
-        MemberBoardInfoResponseDto volunteer = apply.getVolunteer().toBoardMemberDTO();
+        MemberBoardInfoResponseDto recruiter = MemberBoardInfoResponseDto.of(apply.getRecruiter());
+        MemberBoardInfoResponseDto volunteer =MemberBoardInfoResponseDto.of(apply.getVolunteer());
         BoardDTO.BoardInfoDTO boardInfoDTO = apply.getBoard().toBoardInfoDTO();
         if(apply.getVolunteer().getId() == member.getId() || apply.getRecruiter().getId() == member.getId()){
             ApplyDTO.ApplyInfo applyInfo = ApplyDTO.ApplyInfo.builder()

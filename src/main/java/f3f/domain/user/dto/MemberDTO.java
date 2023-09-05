@@ -48,8 +48,6 @@ public class MemberDTO {
         private Authority authority;
 
 
-
-
         public void passwordEncryption(PasswordEncoder passwordEncoder) {
             this.password = passwordEncoder.encode(password);
         }
@@ -65,7 +63,7 @@ public class MemberDTO {
             this.authority = authority;
         }
 
-        public Member toEntity(String defaultUrl){
+        public Member toEntity(String defaultUrl) {
             return Member.builder()
                     .email(this.email)
                     .password(this.password)
@@ -117,6 +115,7 @@ public class MemberDTO {
         private Integer follower;
 
         private Integer following;
+
         @Builder
         public MemberInfoResponseDto(Long id, String email, String name, String twitter, String instagram, String otherSns, String egName, LoginMemberType loginMemberType, LoginType loginType, Authority authority, String information, String profile, Integer follower, Integer following) {
             this.id = id;
@@ -150,8 +149,8 @@ public class MemberDTO {
         }
 
 
-        public UsernamePasswordAuthenticationToken toAuthentication(){
-            return new UsernamePasswordAuthenticationToken(email,password);
+        public UsernamePasswordAuthenticationToken toAuthentication() {
+            return new UsernamePasswordAuthenticationToken(email, password);
         }
     }
 
@@ -178,8 +177,6 @@ public class MemberDTO {
             this.loginMemberType = loginMemberType;
         }
     }
-
-
 
 
     @Getter
@@ -234,7 +231,6 @@ public class MemberDTO {
     }
 
 
-
     @Getter
     @NoArgsConstructor
     public static class MemberUpdateInformationRequestDto {
@@ -265,10 +261,9 @@ public class MemberDTO {
     }
 
 
-
     @Getter
     @NoArgsConstructor
-    public static class EmailCertificationRequest{
+    public static class EmailCertificationRequest {
         private String email;
         private String certificationNumber;
 
@@ -294,6 +289,15 @@ public class MemberDTO {
             this.email = email;
             this.name = name;
         }
+
+        public static MemberBoardInfoResponseDto of(Member member) {
+
+            return MemberBoardInfoResponseDto.builder()
+                    .id(member.getId())
+                    .name(member.getName())
+                    .email(member.getEmail())
+                    .build();
+        }
     }
 
     @Getter
@@ -312,6 +316,7 @@ public class MemberDTO {
         private String instagram;
 
         private String otherSns;
+
         @Builder
         public OtherMemberInfoResponseDto(Long id, String email, String name, String information, String twitter, String instagram, String otherSns) {
             this.id = id;
@@ -323,8 +328,6 @@ public class MemberDTO {
             this.otherSns = otherSns;
         }
     }
-
-
 
 
 }
