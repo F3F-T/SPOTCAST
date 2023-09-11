@@ -7,7 +7,9 @@ import f3f.global.response.GeneralException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -17,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
 import static f3f.global.constants.EmailConstants.TITLE;
+import static f3f.global.response.ErrorCode.EMAIL_SEND_EXCEPTION;
 import static javax.mail.Message.RecipientType.TO;
 
 @Slf4j
@@ -31,16 +34,24 @@ public class EmailCertificationService {
     private String from;
 
     //    인증번호 전송
-    public void sendEmailForCertification(String email) throws MessagingException, UnsupportedEncodingException {
+    @Async
+
+    public void sendEmailForCertification(String email) {
+
         String randomNumber = UUID.randomUUID().toString().substring(0, 6);
         String content = makeEmailContent(randomNumber);
 
-        MimeMessage message = mailSender.createMimeMessage();
-        message.addRecipients(TO, email);
-        message.setFrom(new InternetAddress(from, "SPOTCAST"));
-        message.setSubject(TITLE);
-        message.setText(content, "utf-8", "html");
-        mailSender.send(message);
+        try {
+
+            MimeMessage message = mailSender.createMimeMessage();
+            message.addRecipients(TO, email);
+            message.setFrom(new InternetAddress(from, "SPOTCAST"));
+            message.setSubject(TITLE);
+            message.setText(content, "utf-8", "html");
+            mailSender.send(message);
+        }catch (MailException | MessagingException | UnsupportedEncodingException e){
+            throw new GeneralException(EMAIL_SEND_EXCEPTION,"이메일 전송에 실패했습니다.");
+        }
 
         emailCertificationDao.createEmailCertification(email, randomNumber);
 

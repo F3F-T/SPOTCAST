@@ -45,6 +45,7 @@ public enum ErrorCode {
     //멤버 없음
     NOTFOUND_MEMBER(404,HttpStatus.NOT_FOUND),
 
+    EMAIL_SEND_EXCEPTION(400,HttpStatus.BAD_REQUEST),
 
     //메세지 없음
     NOTFOUND_MESSAGE(404,HttpStatus.NOT_FOUND),

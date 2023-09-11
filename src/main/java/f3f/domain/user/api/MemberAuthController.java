@@ -85,7 +85,7 @@ public class MemberAuthController {
      * @return
      */
     @PostMapping("/email-certification/sends")
-    public ResultDataResponseDTO sendEmailCertification(@RequestBody EmailCertificationRequest request) throws MessagingException, UnsupportedEncodingException {
+    public ResultDataResponseDTO sendEmailCertification(@RequestBody EmailCertificationRequest request){
         emailCertificationService.sendEmailForCertification(request.getEmail());
         return ResultDataResponseDTO.empty();
     }
