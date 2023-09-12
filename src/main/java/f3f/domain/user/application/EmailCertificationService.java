@@ -29,9 +29,11 @@ public class EmailCertificationService {
 
     private final JavaMailSender mailSender;
     private final EmailCertificationDao emailCertificationDao;
-
     @Value("${spring.mail.from-mail}")
     private String from;
+
+    @Value("${spring.mail.from-mail-personal}")
+    private String personal;
 
     //    인증번호 전송
     @Async
@@ -45,7 +47,7 @@ public class EmailCertificationService {
 
             MimeMessage message = mailSender.createMimeMessage();
             message.addRecipients(TO, email);
-            message.setFrom(new InternetAddress(from, "SPOTCAST"));
+            message.setFrom(new InternetAddress(from, personal));
             message.setSubject(TITLE);
             message.setText(content, "utf-8", "html");
             mailSender.send(message);
