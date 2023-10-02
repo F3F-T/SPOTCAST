@@ -3,6 +3,8 @@ package f3f.domain.board.dao;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.domain.ProfitStatus;
@@ -13,11 +15,13 @@ import f3f.domain.publicModel.BoardType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import static f3f.domain.board.domain.QBoard.board;
 import static f3f.domain.comment.domain.QComment.comment;
@@ -36,7 +40,7 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
 
     @Override
     public Page<BoardListResponse> getBoardListInfoByCategoryId(String boardType, Long categoryId, String profitStatus, Pageable pageable) {
-        List<BoardListResponse> result = jpaQueryFactory
+        JPQLQuery<BoardListResponse> query = querydsl().applyPagination(pageable, jpaQueryFactory
                 .select(Projections.fields(BoardListResponse.class,
                         board.id,
                         board.title,
@@ -52,17 +56,16 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
                         board.member.id.as("memberId"),
                         board.member.name.as("memberName")))
                 .from(board)
-                .where(eqBoardType(boardType),eqCategoryId(categoryId),eqProfitStatus(profitStatus))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+                .where(eqBoardType(boardType), eqCategoryId(categoryId), eqProfitStatus(profitStatus)));
 
-        return new PageImpl<>(result, pageable, result.size());
+        long size = query.fetchCount();
+        List<BoardListResponse> result = query.fetch();
+        return new PageImpl<>(result, pageable, size);
     }
 
     @Override
     public Page<BoardListResponse> getBoardList(String boardType, String profitStatus, Pageable pageable) {
-        List<BoardListResponse> result = jpaQueryFactory
+        JPQLQuery<BoardListResponse> query = querydsl().applyPagination(pageable, jpaQueryFactory
                 .select(Projections.fields(BoardListResponse.class,
                         board.id,
                         board.title,
@@ -79,15 +82,16 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
                         board.member.id.as("memberId"),
                         board.member.name.as("memberName")))
                 .from(board)
-                .where(eqBoardType(boardType),eqProfitStatus(profitStatus)) .offset(pageable.getOffset())
-                .limit(pageable.getPageSize()).fetch();
+                .where(eqBoardType(boardType),eqProfitStatus(profitStatus)));
 
-        return new PageImpl<>(result, pageable, result.size());
+        long size = query.fetchCount();
+        List<BoardListResponse> result = query.fetch();
+        return new PageImpl<>(result, pageable, size);
     }
 
     @Override
     public Page<BoardListResponse> getBoardListInfoByMemberId(Long memberId, String boardType, String profitStatus, Pageable pageable) {
-        QueryResults<BoardListResponse> result = jpaQueryFactory
+        JPQLQuery<BoardListResponse> query = querydsl().applyPagination(pageable, jpaQueryFactory
                 .select(Projections.fields(BoardListResponse.class,
                         board.id,
                         board.title,
@@ -104,16 +108,16 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
                         board.member.id.as("memberId"),
                         board.member.name.as("memberName")))
                 .from(board)
-                .where(board.member.id.eq(memberId),eqBoardType(boardType),eqProfitStatus(profitStatus))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize()).fetchResults();
+                .where(board.member.id.eq(memberId),eqBoardType(boardType),eqProfitStatus(profitStatus)));
 
-        return new PageImpl<>(result.getResults(), pageable, result.getTotal());
+        long size = query.fetchCount();
+        List<BoardListResponse> result = query.fetch();
+        return new PageImpl<>(result, pageable, size);
     }
 
     @Override
     public Page<BoardInfoDTO> findAllBySearchCondition(BoardDTO.SearchCondition condition, Pageable pageable) {
-        QueryResults<BoardInfoDTO> results = jpaQueryFactory
+        JPQLQuery<BoardInfoDTO> query = querydsl().applyPagination(pageable, jpaQueryFactory
                 .select(Projections.fields(BoardInfoDTO.class,
                         board.title,
                         board.content,
@@ -126,14 +130,11 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
                 .fetchJoin()
                 .leftJoin(board.comments, comment)
                 .fetchJoin()
-                .where(containsKeyword(condition.getKeyword()))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetchResults();
-        List<BoardInfoDTO> boardInfoDTOList = results.getResults();
-        long total = results.getTotal();
+                .where(containsKeyword(condition.getKeyword())));
 
-        return new PageImpl<>(boardInfoDTOList, pageable, total);
+        long size = query.fetchCount();
+        List<BoardInfoDTO> result = query.fetch();
+        return new PageImpl<>(result, pageable, size);
     }
 
     private BooleanExpression containsKeyword(String keyword) {
@@ -162,5 +163,8 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
             return null;
         }
         return board.profitStatus.eq(ProfitStatus.valueOf(profitStatus));
+    }
+    private Querydsl querydsl() {
+        return Objects.requireNonNull(getQuerydsl());
     }
 }
