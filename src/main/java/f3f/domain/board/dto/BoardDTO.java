@@ -174,10 +174,11 @@ public class BoardDTO {
         }
 
         public static BoardInfoDTO of (ScrapBoard scrapBoard){
-            return BoardDTO.BoardInfoDTO.builder()
+            return BoardInfoDTO.builder()
                     .title(scrapBoard.getBoard().getTitle())
                     .content(scrapBoard.getBoard().getContent())
                     .viewCount(scrapBoard.getBoard().getViewCount())
+                    .production(scrapBoard.getBoard().getProduction())
                     .boardType(scrapBoard.getBoard().getBoardType())
                     .category(CategoryInfo.of(scrapBoard.getBoard().getCategory()))
                     .member(MemberBoardInfoResponseDto.of(scrapBoard.getBoard().getMember()))
