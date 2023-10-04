@@ -37,7 +37,7 @@ public class BoardDTO {
         private String phone;
 
         //페이
-        private String pay;
+        private int pay;
 
         //참여기간
         private String participationPeriod;
@@ -61,7 +61,7 @@ public class BoardDTO {
 
 
         @Builder
-        public SaveRequest(String title,String production, String content, long viewCount, String supportEmail, String phone, String pay,
+        public SaveRequest(String title,String production, String content, long viewCount, String supportEmail, String phone, int pay,
                            String participationPeriod, int recruitVolume, String recruitType, ProfitStatus profitStatus,
                            LocalDateTime regDate, BoardType boardType, Category category, Member member) {
             this.title = title;
@@ -127,7 +127,7 @@ public class BoardDTO {
         private String phone;
 
         //페이
-        private String pay;
+        private int pay;
 
         //참여기간
         private String participationPeriod;
@@ -150,7 +150,7 @@ public class BoardDTO {
 
         @Builder
         public BoardInfoDTO(long id, String title, String production,String content, long viewCount, long commentCount, long likeCount,
-                            String supportEmail, String phone, String pay, String participationPeriod, int recruitVolume, String recruitType,
+                            String supportEmail, String phone, int pay, String participationPeriod, int recruitVolume, String recruitType,
                             ProfitStatus profitStatus, LocalDateTime regDate, BoardType boardType, CategoryInfo category,
                             MemberBoardInfoResponseDto member) {
             this.id = id;
@@ -218,7 +218,7 @@ public class BoardDTO {
         @Enumerated(EnumType.STRING)
         private BoardType boardType;
 
-        private CategoryInfo category;
+//        private CategoryInfo category;
 
         private String categoryName;
 
@@ -238,7 +238,7 @@ public class BoardDTO {
             this.recruitType = recruitType;
             this.regDate = regDate;
             this.boardType = boardType;
-            this.category = category;
+//            this.category = category;
             this.memberId = memberId;
             this.memberName = memberName;
         }
