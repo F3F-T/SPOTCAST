@@ -55,6 +55,7 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
                         board.boardType,
                         board.category.id.as("categoryId"),
                         board.category.name,
+                        board.category.name.as("categoryName"),
                         board.member.id.as("memberId"),
                         board.member.name.as("memberName")))
                 .from(board)
