@@ -165,10 +165,10 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
             return null;
         }
 
-        if(RegStatus.valueOf(regStatus).equals(RegStatus.END))
+        if(RegStatus.valueOf(regStatus).equals(RegStatus.ONGOING))
             return board.regDate.after(LocalDateTime.now());
 
-        if(RegStatus.valueOf(regStatus).equals(RegStatus.ONGOING))
+        if(RegStatus.valueOf(regStatus).equals(RegStatus.END))
             return board.regDate.before(LocalDateTime.now());
 
         return null;
