@@ -1,7 +1,9 @@
 package f3f.global.configuration;
 
 import com.nimbusds.oauth2.sdk.token.AccessToken;
+import f3f.global.common.StringToEnumConverter;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -18,5 +20,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
 
                 .maxAge(3000);
+    }
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new StringToEnumConverter());
     }
 }

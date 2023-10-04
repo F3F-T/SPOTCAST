@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import f3f.domain.board.domain.Board;
 import f3f.domain.board.domain.ProfitStatus;
+import f3f.domain.board.domain.RegStatus;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
 import f3f.domain.board.dto.BoardDTO.BoardListResponse;
@@ -19,6 +20,7 @@ import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -39,7 +41,7 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
     }
 
     @Override
-    public Page<BoardListResponse> getBoardListInfoByCategoryId(String boardType, Long categoryId, String profitStatus, Pageable pageable) {
+    public Page<BoardListResponse> getBoardListInfoByCategoryId(String boardType, Long categoryId, String profitStatus, Pageable pageable,String regStatus) {
         JPQLQuery<BoardListResponse> query = querydsl().applyPagination(pageable, jpaQueryFactory
                 .select(Projections.fields(BoardListResponse.class,
                         board.id,
@@ -56,7 +58,7 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
                         board.member.id.as("memberId"),
                         board.member.name.as("memberName")))
                 .from(board)
-                .where(eqBoardType(boardType), eqCategoryId(categoryId), eqProfitStatus(profitStatus)));
+                .where(eqBoardType(boardType), eqCategoryId(categoryId), eqProfitStatus(profitStatus),inRegDate(regStatus)));
 
         long size = query.fetchCount();
         List<BoardListResponse> result = query.fetch();
@@ -64,7 +66,7 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
     }
 
     @Override
-    public Page<BoardListResponse> getBoardList(String boardType, String profitStatus, Pageable pageable) {
+    public Page<BoardListResponse> getBoardList(String boardType, String profitStatus, Pageable pageable, String regStatus) {
         JPQLQuery<BoardListResponse> query = querydsl().applyPagination(pageable, jpaQueryFactory
                 .select(Projections.fields(BoardListResponse.class,
                         board.id,
@@ -82,7 +84,7 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
                         board.member.id.as("memberId"),
                         board.member.name.as("memberName")))
                 .from(board)
-                .where(eqBoardType(boardType),eqProfitStatus(profitStatus)));
+                .where(eqBoardType(boardType),eqProfitStatus(profitStatus),inRegDate(regStatus)));
 
         long size = query.fetchCount();
         List<BoardListResponse> result = query.fetch();
@@ -156,6 +158,20 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
             return null;
         }
         return board.category.id.eq(categoryId);
+    }
+
+    private BooleanExpression inRegDate(String regStatus) {
+        if(regStatus == null || regStatus.equals("null") || RegStatus.valueOf(regStatus).equals(RegStatus.ALL)){
+            return null;
+        }
+
+        if(RegStatus.valueOf(regStatus).equals(RegStatus.END))
+            return board.regDate.after(LocalDateTime.now());
+
+        if(RegStatus.valueOf(regStatus).equals(RegStatus.ONGOING))
+            return board.regDate.before(LocalDateTime.now());
+
+        return null;
     }
 
     private BooleanExpression eqProfitStatus(String profitStatus) {

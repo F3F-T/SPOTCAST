@@ -3,6 +3,7 @@ package f3f.domain.board.application;
 import f3f.domain.board.dao.BoardRepository;
 import f3f.domain.board.dao.SearchBoardRepository;
 import f3f.domain.board.domain.Board;
+import f3f.domain.board.domain.RegStatus;
 import f3f.domain.board.dto.BoardDTO;
 import f3f.domain.board.dto.BoardDTO.BoardInfoDTO;
 import f3f.domain.board.dto.BoardDTO.BoardListResponse;
@@ -138,12 +139,12 @@ public class BoardService {
      * 카테고리 식별자로 게시글 조회
      */
     @Transactional(readOnly = true)
-    public Page<BoardListResponse> getBoardListByCategoryId(String boardType, Long categoryId, String profitStatus, Pageable pageable){
+    public Page<BoardListResponse> getBoardListByCategoryId(String boardType, Long categoryId, String profitStatus, Pageable pageable, String isOngoing){
         Page<BoardListResponse> boardByCategoryId;
         if (categoryId == 0){
-            boardByCategoryId = searchBoardRepository.getBoardList(boardType,profitStatus,pageable);
+            boardByCategoryId = searchBoardRepository.getBoardList(boardType,profitStatus,pageable,isOngoing);
         }else{
-            boardByCategoryId = searchBoardRepository.getBoardListInfoByCategoryId(boardType,categoryId,profitStatus,pageable);
+            boardByCategoryId = searchBoardRepository.getBoardListInfoByCategoryId(boardType,categoryId,profitStatus,pageable,isOngoing);
         }
         for (BoardListResponse boardListResponse : boardByCategoryId) {
             boardListResponse.setCommentCount(commentRepository.findByBoardId(boardListResponse.getId()).size());
