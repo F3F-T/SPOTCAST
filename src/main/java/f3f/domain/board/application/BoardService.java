@@ -58,25 +58,8 @@ public class BoardService {
             throw new NotFoundBoardCategoryException("게시글에 카테고리 정보가 존재하지 않습니다.");
         }
 
-        Member member = memberRepository.findById(request.getMember().getId()).orElseThrow(() -> new MemberNotFoundException());
-        Board board = Board.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .category(request.getCategory())
-                .boardType(request.getBoardType())
-                .member(member)
-                .supportEmail(request.getSupportEmail())
-                .participationPeriod(request.getParticipationPeriod())
-                .pay(request.getPay())
-                .recruitType(request.getRecruitType())
-                .recruitVolume(request.getRecruitVolume())
-                .profitStatus(request.getProfitStatus())
-                .regDate(request.getRegDate())
-                .phone(request.getPhone())
-                .category(request.getCategory())
-                .member(member)
-                .production(request.getProduction())
-                .build();
+        memberRepository.findById(request.getMember().getId()).orElseThrow(() -> new MemberNotFoundException());
+        Board board = request.toEntity();
         boardRepository.save(board);
 
         return board.getId();
@@ -129,10 +112,10 @@ public class BoardService {
     @Transactional(readOnly = true)
     public Page<BoardListResponse> getBoardListByMemberId(Long memberId, String boardType, String profitStatus, Pageable pageable){
         Page<BoardListResponse> boardListByUserId = searchBoardRepository.getBoardListInfoByMemberId(memberId, boardType,profitStatus,pageable);
-        for (BoardListResponse boardListResponse : boardListByUserId) {
-            boardListResponse.setCommentCount(commentRepository.findByBoardId(boardListResponse.getId()).size());
-            boardListResponse.setLikeCount(likesRepository.findByBoardId(boardListResponse.getId()).size());
-        }
+//        for (BoardListResponse boardListResponse : boardListByUserId) {
+//            boardListResponse.setCommentCount(commentRepository.findByBoardId(boardListResponse.getId()).size());
+//            boardListResponse.setLikeCount(likesRepository.findByBoardId(boardListResponse.getId()).size());
+//        }
         return boardListByUserId;
     }
     /*
@@ -146,10 +129,11 @@ public class BoardService {
         }else{
             boardByCategoryId = searchBoardRepository.getBoardListInfoByCategoryId(boardType,categoryId,profitStatus,pageable,isOngoing);
         }
-        for (BoardListResponse boardListResponse : boardByCategoryId) {
-            boardListResponse.setCommentCount(commentRepository.findByBoardId(boardListResponse.getId()).size());
-            boardListResponse.setLikeCount(likesRepository.findByBoardId(boardListResponse.getId()).size());
-        }
+
+//        for (BoardListResponse boardListResponse : boardByCategoryId) {
+//            boardListResponse.setCommentCount(commentRepository.findByBoardId(boardListResponse.getId()).size());
+//            boardListResponse.setLikeCount(likesRepository.findByBoardId(boardListResponse.getId()).size());
+//        }
 
         return boardByCategoryId;
     }

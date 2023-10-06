@@ -82,6 +82,7 @@ public class BoardDTO {
         }
 
         public Board toEntity() {
+
             return Board.builder()
                     .title(this.title)
                     .content(this.content)
