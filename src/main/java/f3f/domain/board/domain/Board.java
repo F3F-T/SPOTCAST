@@ -131,6 +131,7 @@ public class Board extends BaseTimeEntity {
                 .title(this.title)
                 .content(this.content)
                 .viewCount(this.viewCount)
+                .pay(this.pay)
                 .boardType(this.boardType)
                 .supportEmail(this.supportEmail)
                 .phone(this.phone)
