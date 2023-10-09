@@ -37,12 +37,12 @@ public class BoardDTO {
         private String phone;
 
         //페이
-        private int pay;
+        private String pay;
 
         //참여기간
         private String participationPeriod;
         //참여 인원
-        private int  recruitVolume;
+        private String  recruitVolume;
 
         //모집분야
         private String recruitType;
@@ -61,8 +61,8 @@ public class BoardDTO {
 
 
         @Builder
-        public SaveRequest(String title,String production, String content, long viewCount, String supportEmail, String phone, int pay,
-                           String participationPeriod, int recruitVolume, String recruitType, ProfitStatus profitStatus,
+        public SaveRequest(String title,String production, String content, long viewCount, String supportEmail, String phone, String pay,
+                           String participationPeriod, String recruitVolume, String recruitType, ProfitStatus profitStatus,
                            LocalDateTime regDate, BoardType boardType, Category category, Member member) {
             this.title = title;
             this.content = content;
@@ -128,12 +128,12 @@ public class BoardDTO {
         private String phone;
 
         //페이
-        private int pay;
+        private String pay;
 
         //참여기간
         private String participationPeriod;
         //참여 인원
-        private int  recruitVolume;
+        private String  recruitVolume;
 
         //모집분야
         private String recruitType;
@@ -151,7 +151,7 @@ public class BoardDTO {
 
         @Builder
         public BoardInfoDTO(long id, String title, String production,String content, long viewCount, long commentCount, long likeCount,
-                            String supportEmail, String phone, int pay, String participationPeriod, int recruitVolume, String recruitType,
+                            String supportEmail, String phone, String pay, String participationPeriod, String recruitVolume, String recruitType,
                             ProfitStatus profitStatus, LocalDateTime regDate, BoardType boardType, CategoryInfo category,
                             MemberBoardInfoResponseDto member) {
             this.id = id;
